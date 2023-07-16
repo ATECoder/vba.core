@@ -28,11 +28,12 @@ The main types provided by this library are:
 ## Scripts
 
 * _Deploy_: copies files to the build folder.
-* _cc.isr.core.test.unit.test_: run unit tests.
+* _run.unit.tests.ps1_: a generic script for running unit tests.
+* _cc.isr.test.fx.unit.tests_: a shortcut for running the unit tests.
 
 ## [Testing]
 
-Unit testing can be accomplished using the power shell [Test Script]. 
+Unit testing can be accomplished using the power shell [Generic Test Script] which is inoked by the [Test Script shortcut]. 
 
 Tests can also run by running the _Run Tests_ method from the _Testing_ worksheet.
 
@@ -44,7 +45,8 @@ Bug reports and contributions are welcome at the [cc.isr.Core] repository.
 [cc.isr.Core]: https://github.com/ATECoder/vba.core
 [cc.isr.Core.IO]: https://github.com/ATECoder/vba.core/io
 [cc.isr.test.fx]: https://github.com/ATECoder/vba.core/src/testFx
-[Test Script]: ./cc.isr.test.fx.unit.test.ps1
+[Test Script shortcut]: ./cc.isr.test.fx.unit.test
+[Generic Test Script]: ./run.unit.tests.ps1
 
 [ISR]: https://www.integratedscientificresources.com
 

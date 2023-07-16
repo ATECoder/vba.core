@@ -23,14 +23,15 @@
 
 ## [Testing]
 
-Unit testing can be accomplished using the power shell [Test Script]. Tests can also run from the _Testing_ worksheet as described in [Testing].
+Unit testing is run from the [Test Script Shortcut] which calls the [Test Script].
 
 [cc.isr.Core]: https://github.com/ATECoder/vba.core
 [cc.isr.Core.Test]: https://github.com/ATECoder/vba.core/src/test
 [cc.isr.Test.Fx]: https://github.com/ATECoder/vba.core/src/testFx
 [cc.isr.Core.IO]: https://github.com/ATECoder/vba.core/src/io
-[Test Script]: ./cc.isr.core.test.unit.test.ps1
-[Testing]: ./cc.isr.core.testing.md
+[Test Script]: ../TestFx/run.unit.tests.ps1
+[Test Script Shortcut]: ./cc.isr.core.test.unit.test
+[Testing]: ../cc.isr.core.testing.md
 
 [ISR]: https://www.integratedscientificresources.com
 

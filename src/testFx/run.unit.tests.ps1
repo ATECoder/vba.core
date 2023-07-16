@@ -1,9 +1,31 @@
+# ----------------------------------------------------------------------
+# Run Unit Tests
+#
+# PURPOSE: Executes the unit tests defined in the provided workbook.
+#
+# CALLING SCRIPT:
+#
+# PowerShell.EXE -file <script> -RelativePath <relative-path> -BookName <excel-file-name>
+#
+# EXAMPLE:
+#
+# PowerShell.EXE -file cc.isr.core.test.ps1 -RelativePath ".\" -BookName "cc.isr.core.test.xlsm"
+#
+# ----------------------------------------------------------------------
 
-$CWD = (Resolve-Path .\).Path
-# $BUILD_DIRECTORY = [IO.Path]::Combine($CWD, "..\..\bin\test")
-$BUILD_DIRECTORY = $CWD
-$BUILD_DIRECTORY = (Resolve-Path $BUILD_DIRECTORY).Path
-$FILENAME = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.core.test.xlsm")
+# Must be the first statement in your script (not counting comments)
+# 
+param(
+
+    # relative path
+    [string]$RelativePath = ".\",
+
+    [string]$BookName = "cc.isr.test.fx.xlsm"
+) 
+
+
+# ----------------------------------------------------------------------
+# FUNCTIONS
 
 Function LogInfo($message)
 {
@@ -15,11 +37,75 @@ Function LogEmptyLine()
     echo ""
 }
 
-LogInfo "Collecting tests"
+Function HasSuiteFlag($flags, $flag)
+{
+    Return ($flags -band $flag) -eq $flag
+}
+
+Function LogSummary($title, $passed, $failed)
+{
+    Write-Host $title -NoNewline
+    Write-Host "$passed passed" -ForegroundColor Green -NoNewline
+
+    if ($failed -gt 0)
+    {
+        Write-Host ", " -NoNewline
+        Write-Host "${failed} failed" -ForegroundColor Red -NoNewline
+    }
+
+    $total = $passed + $failed
+    Write-Host ", $total total"
+}
+
+# END FUNCTIONS
+# ----------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------
+# SCRIPT ENTRY POINT
+
+
+$DEBUG = $true
+
+if ( $DEBUG ) { LogInfo ( "Relative Path: '" + $RelativePath + "', Book Name: '" + $BookName + "'"  ) }
+
+# Build paths
+
+Try {
+
+    $CWD = (Resolve-Path .\).Path
+
+    $BUILD_DIRECTORY = [IO.Path]::Combine($CWD, $RelativePath)
+    # $BUILD_DIRECTORY = $CWD
+    $BUILD_DIRECTORY = (Resolve-Path $BUILD_DIRECTORY).Path
+
+    $FILENAME = [IO.Path]::Combine($BUILD_DIRECTORY, $BookName)
+
+} Catch {
+
+    echo $_.Exception.Message
+    LogEmptyLine
+    $z = Read-Host "Press enter to exit"
+    exit -1
+    return
+}
+
+LogInfo ( "Collecting tests " + $FILENAME )
 
 $missing = [System.Reflection.Missing]::Value
+
+# start Excel
 $excel = New-Object -ComObject Excel.Application
+
 $book = $excel.Workbooks.Open($FILENAME, $missing, $true)
+
+IF ( $DEBUG ) { LogInfo ( "Opened " + $book.Name ) }  
+
+# select the active workbook
+$book = $excel.ActiveWorkbook
+
+IF ( $DEBUG ) { LogInfo ( "Active workbook " + $book.Name ) }  
+
 $modules = $book.VBProject.VBComponents;
 $suites = @{}
 $suiteFlags = @{}
@@ -82,16 +168,11 @@ For ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++)
     }
 }
 
-LogInfo "Found $($suites.Count) suites with $testCount tests"
+LogInfo "Found $($suites.Count) suites with $testCount tests in $($book.Name)"
 LogEmptyLine
 
 $passedSuites = 0
 $passedTests = 0
-
-Function HasSuiteFlag($flags, $flag)
-{
-    Return ($flags -band $flag) -eq $flag
-}
 
 ForEach ($suite in $suites.Keys)
 {
@@ -167,27 +248,36 @@ ForEach ($suite in $suites.Keys)
     echo ""
 }
 
+{ LogInfo "Closing the active workbook." }
+$book.Close()
+
+if ( $DEBUG ) { LogInfo "Closing workbooks." }
+$excel.Workbooks.Close()
+
+if ( $DEBUG ) { LogInfo "Quiting Excel." }
 $excel.Quit()
 
-Function LogSummary($title, $passed, $failed)
-{
-    Write-Host $title -NoNewline
-    Write-Host "$passed passed" -ForegroundColor Green -NoNewline
-
-    if ($failed -gt 0)
-    {
-        Write-Host ", " -NoNewline
-        Write-Host "${failed} failed" -ForegroundColor Red -NoNewline
-    }
-
-    $total = $passed + $failed
-    Write-Host ", $total total"
-}
+if ( $DEBUG ) { LogEmptyLine }
 
 LogSummary "Test suites: " $passedSuites ($suites.Count - $passedSuites)
 LogSummary "Tests:       " $passedTests ($testCount - $passedTests)
-LogInfo "Ran all test suites."
+LogEmptyLine
+if ( $DEBUG ) { LogInfo "Ran all test suites." }
 LogEmptyLine
 $z = Read-Host "Press enter to exit"
+
+# https://stackoverflow.com/questions/27798567/excel-save-and-close-after-run
+if ( $DEBUG ) { LogInfo "finalize." }
+[System.GC]::Collect()
+[System.GC]::WaitForPendingFinalizers()
+
+if ( $DEBUG ) { LogInfo "Release COM Objects." }
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($modules) | Out-Null
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($book) | Out-Null
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
+
+# LogInfo "Disposing Excel."
+Remove-Variable -Name excel;
+
 exit 0
 
