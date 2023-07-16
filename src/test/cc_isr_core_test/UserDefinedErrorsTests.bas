@@ -48,7 +48,7 @@ exit_Handler:
 err_Handler:
   
     ' build the error source
-    cc_isr_Core.UserDefinedErrors.SetErrSource thisProcedureName, m_moduleName
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource thisProcedureName, m_moduleName
     
     Set TestErrorMessageShouldBuild = Assert.IsTrue(Len(Err.Source) > 0, "Err.Source should not be empty")
     
@@ -57,7 +57,7 @@ err_Handler:
     
     Set TestErrorMessageShouldBuild = Assert.AreEqual(p_expectedErrorSource, Err.Source, "Err.Source should equal the expected value")
     
-    Dim p_errorMessage As String: p_errorMessage = cc_isr_Core.UserDefinedErrors.BuildStandardErrorMessage()
+    Dim p_errorMessage As String: p_errorMessage = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage()
     
     Set TestErrorMessageShouldBuild = Assert.IsTrue(Len(p_errorMessage) > 0, "error message should build")
     

@@ -41,10 +41,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core.UserDefinedErrors.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
     
     ' display the error message
-    MsgBox cc_isr_Core.UserDefinedErrors.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -63,7 +63,7 @@ Private Sub Workbook_AfterSave(ByVal a_success As Boolean)
     On Error GoTo err_Handler
     
     If a_success And Me.ExportCodeAfterSave Then
-        cc_isr_Core.WorkbookExport.ExportProjectCodeFiles ThisWorkbook.VBProject
+        cc_isr_Core_IO.WorkbookExport.ExportProjectCodeFiles ThisWorkbook.VBProject
     End If
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -76,10 +76,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core.UserDefinedErrors.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
     
     ' display the error message
-    MsgBox cc_isr_Core.UserDefinedErrors.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -97,8 +97,9 @@ Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
-    ' tag the referenced workbooks as saved.
-    Workbooks("cc.isr.core.xlsm").Saved = True
+    ' this disables the save dialog on read only workbooks.
+    Workbooks("cc.isr.core.io.xlsm").Saved = cc_isr_Core_IO.ThisWorkbook.ReadOnly
+    Workbooks("cc.isr.core.xlsm").Saved = cc_isr_Core.ThisWorkbook.ReadOnly
     
     ' dispose the disposable worksheets
     TimerSheet.Dispose
@@ -113,10 +114,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core.UserDefinedErrors.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
     
     ' display the error message
-    MsgBox cc_isr_Core.UserDefinedErrors.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -155,10 +156,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core.UserDefinedErrors.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
     
     ' display the error message
-    MsgBox cc_isr_Core.UserDefinedErrors.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next

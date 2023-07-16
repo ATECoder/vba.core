@@ -36,10 +36,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core.UserDefinedErrors.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
     
     ' display the error message
-    MsgBox cc_isr_Core.UserDefinedErrors.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next

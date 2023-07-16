@@ -41,7 +41,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -76,7 +76,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -97,9 +97,6 @@ Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
-    ' this disables the save dialog on read only workbooks.
-    Workbooks("cc.isr.core.io.xlsm").Saved = cc_isr_Core_IO.ThisWorkbook.ReadOnly
-    
     ' dispose the disposable worksheets
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -112,7 +109,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -132,17 +129,10 @@ Private Sub Workbook_Open()
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
-    ' hide and turn off code saving on the referenced workbooks
-    cc_isr_Core_IO.ThisWorkbook.ExportCodeAfterSave = Not cc_isr_Core_IO.ThisWorkbook.ReadOnly
-    Application.Windows(Workbooks("cc.isr.core.io.xlsm").name).Visible = False
-    
     ' turn on code exporting for this work book
     ThisWorkbook.ExportCodeAfterSave = True
     
-    Application.Windows(ThisWorkbook.name).Visible = True
-    
-    ' init the user defined errors.
-    cc_isr_Core.UserDefinedErrors.Initialize
+    Application.Windows(ThisWorkbook.Name).Visible = True
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -154,7 +144,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation

@@ -2,13 +2,11 @@
 
 [cc.isr.test.fx] provides a test framework for Visual Basic for Applications.
 
-## Dependencies
+## Workbook references
 
-The [cc.isr.test.fx] is self contained.
+* [cc.isr.core.io] - Core I/O workbook.
 
-## References
-
-The following object libraries are used as references:
+## Object Libraries references
 
 * [Microsoft Scripting Runtime]
 * [Microsoft Visual Basic for Applications Extensibility 5.3]
@@ -44,6 +42,7 @@ Tests can also run by running the _Run Tests_ method from the _Testing_ workshee
 Bug reports and contributions are welcome at the [cc.isr.Core] repository.
 
 [cc.isr.Core]: https://github.com/ATECoder/vba.core
+[cc.isr.Core.IO]: https://github.com/ATECoder/vba.core/io
 [cc.isr.test.fx]: https://github.com/ATECoder/vba.core/src/testFx
 [Test Script]: ./cc.isr.test.fx.unit.test.ps1
 

@@ -2,14 +2,14 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "UserDefinedErrors"
+Attribute VB_Name = "ErrorMessageBuilder"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 '
-' UserDefinedErrors.cls
+' ErrorMessageBuilder.cls
 '
 ' Dependencies:
 '
@@ -76,33 +76,32 @@ End Sub
 Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boolean = False, _
                 Optional a_descriptionDelimiter As String = ": ") As String
 
-    Dim p_builder As StringBuilder: Set p_builder = New StringBuilder
+    Dim p_builder As String: p_builder = VBA.vbNullString
   
     ' check if we have an error
     If Err.Number <> 0 Then
     
-        p_builder.Append IIf(a_displayWarning, "Warning ", "Error ")
-        p_builder.Append Format$(Err.Number)
+        p_builder = p_builder & IIf(a_displayWarning, "Warning ", "Error ")
+        p_builder = p_builder & Format$(Err.Number)
         
         Dim p_errNumber As Long: p_errNumber = Err.Number - vbObjectError
         
         If Abs(p_errNumber) < &HFFFF& Then
             p_errNumber = p_errNumber - &H200
-            p_builder.Append " (+0x"
+            p_builder = p_builder & " (+0x"
         Else
             p_errNumber = Err.Number
-            p_builder.Append " (0x"
+            p_builder = p_builder & " (0x"
         End If
-        p_builder.Append Hex$(p_errNumber)
-        p_builder.Append ") "
-        p_builder.Append "occurred in "
-        p_builder.Append Err.Source
-        p_builder.Append a_descriptionDelimiter
-        p_builder.Append Err.Description
+        p_builder = p_builder & Hex$(p_errNumber)
+        p_builder = p_builder & ") occurred in "
+        p_builder = p_builder & Err.Source
+        p_builder = p_builder & a_descriptionDelimiter
+        p_builder = p_builder & Err.Description
         
     End If
 
-    BuildStandardErrorMessage = p_builder.ToString
+    BuildStandardErrorMessage = p_builder
 
 End Function
 

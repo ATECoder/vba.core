@@ -2,13 +2,11 @@
 
 [cc.isr.Core] is an Excel workbook with core Visual Basic for Applications modules and classes that support [ISR] workbooks.
 
-## Dependencies
+## Workbook references
 
-The [cc.isr.Core] has no additional dependencies.
+* [cc.isr.core.io] - Core I/O workbook.
 
-## References
-
-The following object libraries are used as references:
+## Object Libraries references
 
 * [Microsoft Scripting Runtime]
 * [Microsoft Visual Basic for Applications Extensibility 5.3]
@@ -29,15 +27,13 @@ The main types provided by this library are:
 * _MacroInfo_ - Holds information such as name and module name about Excel Macro methods.
 * _Marshal_ - Singleton. Supports Endianess.
 * _ModuleInfo_ - Holds information such as name and project name about Excel modules.
-* _PathExtensions_ - Singleton. Build builder with  file and folder deletion and existence methods.
 * _EventTimer_ - A timer class capable of issuing events with millisecond time resolution.
 * _StopWatch_ - A high resolution stop watch using the Windows API.
 * _StringBuilder_ - A fast string builder.
 * _StringExtensions_ - Singleton. String extensions.
 * _TestExecutive_ - Singleton. A rudimentary unit test executive.
 * _UserDefinedError_ - A user defined error class.
-* _VbComponentExtensions_ - Singleton. Extension methods for the VBA VB Component object.
-* _WorkbookExport_ - Singleton. Exports code files.
+* _UserDefinedErrors_ - Manages the user defined errors.
 * _WorkbookUnilities_ - Singleton. Enumerates test methods.
 
 ## Scripts
@@ -59,6 +55,7 @@ issue per the above link.
 Bug reports and contributions are welcome at the [cc.isr.Core] repository.
 
 [cc.isr.Core]: https://github.com/ATECoder/vba.core
+[cc.isr.core.io]: https://github.com/ATECoder/vba.core/src/io
 [cc.isr.core.test]: https://github.com/ATECoder/vba.core/src/test
 
 [ISR]: https://www.integratedscientificresources.com

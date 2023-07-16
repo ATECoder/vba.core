@@ -2,15 +2,13 @@
 
 [cc.isr.Core.Test] is an Excel workbook for testing the [cc.isr.Core] workbook software.
 
-## Dependencies
+## Workbook references
 
-The [cc.isr.Core.Test] workbook depends on the following Workbooks:
+* [cc.isr.core] - Core workbook.
+* [cc.isr.core.io] - Core I/O workbook.
+* [cc.isr.test.fx] - Test framework workbook.
 
-* [cc.isr.Core] - Includes core Visual Basic for Applications classes and modules.
-
-## References
-
-The following object libraries are used as references:
+## Object Libraries references
 
 * [Microsoft Scripting Runtime]
 * [Microsoft Visual Basic for Applications Extensibility 5.3]
@@ -29,6 +27,8 @@ Unit testing can be accomplished using the power shell [Test Script]. Tests can 
 
 [cc.isr.Core]: https://github.com/ATECoder/vba.core
 [cc.isr.Core.Test]: https://github.com/ATECoder/vba.core/src/test
+[cc.isr.Test.Fx]: https://github.com/ATECoder/vba.core/src/testFx
+[cc.isr.Core.IO]: https://github.com/ATECoder/vba.core/src/io
 [Test Script]: ./cc.isr.core.test.unit.test.ps1
 [Testing]: ./cc.isr.core.testing.md
 

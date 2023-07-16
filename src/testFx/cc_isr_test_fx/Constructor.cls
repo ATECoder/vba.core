@@ -66,13 +66,3 @@ Public Function CreateStopWatch() As StopWatch
     Set CreateStopWatch = New StopWatch
 End Function
 
-''' <summary>   Creates a new instance of the <see cref="StringBuilder"/> class to share
-''' with external workbooks. </summary>
-''' <remarks>
-''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
-''' </remarks>
-''' <returns>   A new instance of the <see cref="StringBuilder"/> class. </returns>
-Public Function CreateStringBuilder() As StringBuilder
-    Set CreateStringBuilder = New StringBuilder
-End Function
-

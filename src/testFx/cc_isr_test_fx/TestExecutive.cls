@@ -144,7 +144,7 @@ Finally:
     
     p_rowNo = p_rowNo + 1
     a_testSheet.Range(TestNameColumn & p_rowNo).value = "Test execution failed"
-    a_testSheet.Range(OutcomeColumn & p_rowNo).value = cc_isr_Test_Fx.UserDefinedErrors.FormattedErr
+    a_testSheet.Range(OutcomeColumn & p_rowNo).value = cc_isr_Core_IO.ErrorMessageBuilder.FormattedErr
     a_testSheet.Range(OutcomeColumn & p_rowNo).Interior.ColorIndex = FailColorIndex
     p_rowNo = p_rowNo + 1
     If 0 <> Err.LastDllError Then
