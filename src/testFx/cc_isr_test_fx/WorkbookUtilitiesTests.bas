@@ -24,7 +24,7 @@ Public Function ContainsKey(ByVal a_col As VBA.Collection, ByVal a_key As Varian
     p_found = False
     Dim colItem As Variant
     For Each colItem In a_col
-        DoEvents
+        VBA.DoEvents
         If colItem = a_key Then
             p_found = True
             Exit For
@@ -44,7 +44,7 @@ Public Function ContainsAll(ByVal a_col As VBA.Collection, ByVal a_contained As 
     Dim p_result As Boolean: p_result = True
     Dim p_key As Variant
     For Each p_key In a_contained
-        DoEvents
+        VBA.DoEvents
         If Not ContainsKey(a_col, p_key) Then
             p_result = False
             Exit For
@@ -64,7 +64,7 @@ Public Function FindMissingItem(ByVal a_col As VBA.Collection, ByVal a_contained
     Dim p_result As Variant: Set p_result = Nothing
     Dim p_key As Variant
     For Each p_key In a_contained
-        DoEvents
+        VBA.DoEvents
         If Not ContainsKey(a_col, p_key) Then
             p_result = p_key
             Exit For
@@ -76,7 +76,7 @@ End Function
 
 Private Sub AddModule(ByVal a_col As VBA.Collection, ByVal a_moduleFullName As String)
     
-    Dim p_module As ModuleInfo
+    Dim p_module As cc_isr_Test_Fx.ModuleInfo
     Set p_module = Constructor.CreateModuleInfo
     p_module.FromModuleFullName a_moduleFullName
     a_col.Add p_module
@@ -87,9 +87,9 @@ Public Function ContainsModule(ByVal a_col As VBA.Collection, ByVal a_findModule
     
     Dim p_found As Boolean
     p_found = False
-    Dim p_moduleInfo As ModuleInfo
+    Dim p_moduleInfo As cc_isr_Test_Fx.ModuleInfo
     For Each p_moduleInfo In a_col
-        DoEvents
+        VBA.DoEvents
         If p_moduleInfo.Equals(a_findModule) Then
             p_found = True
             Exit For
@@ -102,9 +102,9 @@ End Function
 Private Function ContainsAllModules(ByVal a_leftCol As VBA.Collection, ByVal a_rightCol As VBA.Collection)
 
     Dim p_result As Boolean: p_result = False
-    Dim p_rightModuleInfo As ModuleInfo
+    Dim p_rightModuleInfo As cc_isr_Test_Fx.ModuleInfo
     For Each p_rightModuleInfo In a_rightCol
-        DoEvents
+        VBA.DoEvents
         If Not ContainsModule(a_leftCol, p_rightModuleInfo) Then
             p_result = False
             Exit Function
@@ -118,9 +118,25 @@ End Function
 ''' <summary>   Adds the test modules. </summary>
 Private Sub AddTestModules(ByVal a_knownTestModules As VBA.Collection)
     
-    Dim p_projectName As String: p_projectName = Application.ActiveWorkbook.VBProject.Name
+    Dim p_projectName As String: p_projectName = Excel.Application.ActiveWorkbook.VBProject.Name
     AddModule a_knownTestModules, p_projectName & ".WorkbookUtilitiesTests"
 
+End Sub
+
+Public Sub BeforeAll()
+    Debug.Print "@ Before All macro"
+End Sub
+
+Public Sub BeforeEach()
+    Debug.Print "@ Before Each macro"
+End Sub
+
+Public Sub AfterEach()
+    Debug.Print "@ After Each macro"
+End Sub
+
+Public Sub AfterAll()
+    Debug.Print "@ After All macro"
 End Sub
 
 ''' <summary>   Unit test. Asserts creating a list of test modules. </summary>
@@ -156,7 +172,8 @@ Public Function TestModuleList() As Assert
     
     If Not p_missingItem Is Nothing Then
         Set TestModuleList = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
-            "item " & CStr(p_missingItem) & " from the actual test module is not found in the exected collection of test modules")
+            "item " & CStr(p_missingItem) & _
+            " from the actual test module is not found in the exected collection of test modules")
         Exit Function
     End If
   

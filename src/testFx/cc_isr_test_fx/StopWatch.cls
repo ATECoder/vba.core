@@ -92,29 +92,37 @@ End Property
 ''' <summary>   Returns the elapsed time in seconds. </summary>
 ''' <value>   [Double] Elapsed time in seconds. </value>
 Property Get ElapsedSeconds() As Double
+    
     ElapsedSeconds = Me.ElapsedCounts / m_frequency
+
 End Property
 
 ''' <summary>   Returns the elapsed time in milliseconds. </summary>
 ''' <value>   [Double] Elapsed time in milliseconds. </value>
 Property Get ElapsedMilliseconds() As Double
+    
     ElapsedMilliseconds = 1000# * Me.ElapsedSeconds
+
 End Property
 
 ''' <summary>   Suspends the thread for the specified duration in milliseconds. </summary>
 ''' <param name="a_duration">   Sleep time in milliseconds. </param>
 Public Sub Sleep(ByVal a_duration As Long)
+    
     SleepMilliseconds a_duration
+
 End Sub
 
-''' <summary>   Loop around <see cref="DoEvents"> for the specified duration. </summary>
+''' <summary>   Loop around <see cref="VBA.DoEvents"> for the specified duration. </summary>
 ''' <param name="a_duration">   [Long] Wait time in milliseconds. </param>
 Public Function Wait(ByVal a_duration As Long) As Long
+    
     Me.Restart
     While Me.ElapsedMilliseconds < a_duration
-        DoEvents
+        VBA.DoEvents
     Wend
     Wait = Me.ElapsedMilliseconds
+
 End Function
 
 

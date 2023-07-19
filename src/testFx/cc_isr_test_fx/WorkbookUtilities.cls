@@ -29,7 +29,7 @@ Public Function AddItems(ByVal a_source As VBA.Collection, ByVal a_destination A
     Dim p_count As Integer: p_count = 0
     Dim p_item As Variant
     For Each p_item In a_source
-        DoEvents
+        VBA.DoEvents
         a_destination.Add p_item
         p_count = p_count + 1
     Next p_item
@@ -74,7 +74,7 @@ Public Function EnumerateModules(Optional ByVal a_macroNamePrefix As String = "T
     Dim p_modules As VBA.Collection: Set p_modules = New VBA.Collection
     Dim p_vbProject As VBProject
     For Each p_vbProject In Application.VBE.VBProjects
-        DoEvents
+        VBA.DoEvents
         Me.AddItems EnumerateProjectModules(p_vbProject, _
                                         a_macroNamePrefix, a_moduleNameSuffix), _
                                         p_modules
@@ -99,7 +99,7 @@ Public Function EnumerateProjectModules(ByVal a_project As VBProject, _
     
     Dim p_vbComponent As VBComponent
     For Each p_vbComponent In a_project.VBComponents
-        DoEvents
+        VBA.DoEvents
         If IsObject(p_vbComponent) Then
             p_newModule.Initialize a_project.Name, p_vbComponent.CodeModule
             If Not p_newModule.Equals(p_currentModule) Then
@@ -149,7 +149,7 @@ Public Function FindProjectByName(ByVal a_projectName As String) As VBProject
     
     Dim p_vbProject As VBProject
     For Each p_vbProject In Application.VBE.VBProjects
-        DoEvents
+        VBA.DoEvents
         If 0 = StrComp(p_vbProject.Name, a_projectName, vbTextCompare) Then
             Set FindProjectByName = p_vbProject
             Exit For
@@ -167,7 +167,7 @@ Public Function FindCodeModuleByName(ByVal a_project As VBProject, ByVal a_modul
     If Not a_project Is Nothing Then
         Dim p_vbComponent As VBComponent
         For Each p_vbComponent In a_project.VBComponents
-            DoEvents
+            VBA.DoEvents
             If 0 = StrComp(p_vbComponent.CodeModule, a_moduleName, vbTextCompare) Then
                 Set FindCodeModuleByName = p_vbComponent
                 Exit For
@@ -218,7 +218,8 @@ End Function
 ''' <param name="a_component">   [<see cref="VBComponent"/>] The component to check for macro methods. </param>
 ''' <returns>   A Collection of macro names. </returns>
 Public Function EnumerateComponentMacros(ByVal a_module As ModuleInfo, _
-        ByVal a_component As VBComponent, Optional ByVal a_prefix As String = "Test") As VBA.Collection
+        ByVal a_component As VBComponent, _
+        Optional ByVal a_prefix As String = "Test") As VBA.Collection
 
     Dim p_macros As VBA.Collection: Set p_macros = New VBA.Collection
     Dim p_currentName As String: p_currentName = vbNullString
@@ -238,4 +239,79 @@ Public Function EnumerateComponentMacros(ByVal a_module As ModuleInfo, _
     Set EnumerateComponentMacros = p_macros
 
 End Function
+
+''' <summary>   Enumerates all macros in the specified module. <summary>
+''' <remarks>
+''' <see href="https://stackoverflow.com/questions/28132276/get-a-list-of-the-macros-of-a-module-in-excel-and-then-call-all-those-macros"/>
+''' <remarks>
+''' <param name="a_module">    [<see cref="ModuleInfo"/>] ]The module info of the module containing the macros. </param>
+''' <param name="a_methods">   [ModuleTestMethods, Ref] Indicate module level test methods exit. </param>
+''' <returns>   A Collection of macro names. </returns>
+Public Function EnumerateTestMacros(ByVal a_module As ModuleInfo, _
+        ByRef a_methods As ModuleTestMethods) As VBA.Collection
+
+    Dim p_macros As Collection: Set p_macros = New Collection
+    If Not a_module Is Nothing Then
+    
+        Dim p_vbProject As VBProject: Set p_vbProject = FindProjectByName(a_module.ProjectName)
+        
+        If Not p_vbProject Is Nothing Then
+        
+            Dim p_vbComponent As VBComponent
+            Set p_vbComponent = FindCodeModuleByName(p_vbProject, a_module.ModuleName)
+            
+            If Not p_vbComponent Is Nothing Then
+            
+                Set p_macros = EnumerateComponentTestMacros(a_module, p_vbComponent, a_methods)
+            
+            End If
+        
+        End If
+    
+    End If
+    Set EnumerateTestMacros = p_macros
+
+End Function
+
+''' <summary>   Enumerates all test macros in the specified module. <summary>
+''' <remarks>
+''' <see href="https://stackoverflow.com/questions/28132276/get-a-list-of-the-macros-of-a-module-in-excel-and-then-call-all-those-macros"/>
+''' <remarks>
+''' <param name="a_module">      [<see cref="ModuleInfo"/> The module info of the module containing the macros. </param>
+''' <param name="a_component">   [<see cref="VBComponent"/>] The component to check for macro methods. </param>
+''' <param name="a_methods">     [ModuleTestMethods, Ref] Indicate module level test methods exit. </param>
+''' <returns>   A Collection of macro names. </returns>
+Public Function EnumerateComponentTestMacros(ByVal a_module As ModuleInfo, _
+        ByVal a_component As VBComponent, _
+        ByRef a_methods As ModuleTestMethods) As VBA.Collection
+
+    a_methods = None
+    Dim p_macros As VBA.Collection: Set p_macros = New VBA.Collection
+    Dim p_currentName As String: p_currentName = vbNullString
+    Dim p_newName As String
+    Dim p_lineNo As Integer
+    For p_lineNo = 1 To a_component.CodeModule.CountOfLines
+        p_newName = a_component.CodeModule.ProcOfLine(Line:=p_lineNo, prockind:=vbext_pk_Proc)
+        If p_currentName <> p_newName Then
+            p_currentName = p_newName
+            If Me.StartsWith(p_currentName, TestMethodPrefix) Then
+                Dim p_macroInfo As MacroInfo: Set p_macroInfo = Constructor.CreateMacroInfo()
+                p_macroInfo.InitializeModuelMacro a_module, p_currentName
+                p_macros.Add p_macroInfo
+            ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.BeforeAllMethodName, vbTextCompare) Then
+                a_methods = a_methods Or ModuleTestMethods.BeforeAll
+            ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.AfterAllMethodName, vbTextCompare) Then
+                a_methods = a_methods Or ModuleTestMethods.AfterAll
+            ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.BeforeEachMethodName, vbTextCompare) Then
+                a_methods = a_methods Or ModuleTestMethods.BeforeEach
+            ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.AfterEachMethodName, vbTextCompare) Then
+                a_methods = a_methods Or ModuleTestMethods.AfterEach
+            End If
+        End If
+    Next
+    Set EnumerateComponentTestMacros = p_macros
+
+End Function
+
+
 

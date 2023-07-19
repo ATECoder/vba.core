@@ -97,16 +97,41 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     a_testSheet.Range(TestNameColumn & p_rowNo).value = TestNameLabel
     a_testSheet.Range(OutcomeColumn & p_rowNo).value = TestOutcomeLabel
     
-    Dim p_macros As Collection: Set p_macros = WorkbookUtilities.EnumerateMacros(p_moduleInfo)
+    Dim p_moduleTestMethods As ModuleTestMethods
+    Dim p_macros As Collection: Set p_macros = WorkbookUtilities.EnumerateTestMacros(p_moduleInfo, p_moduleTestMethods)
     Dim p_macroInfo As MacroInfo
     
     Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Test_Fx.Constructor.CreateStopWatch
     
+    Dim p_macroFullName As String
+    
+    Dim p_moduleMacroInfo As MacroInfo: Set p_moduleMacroInfo = Constructor.CreateMacroInfo()
+    
+    If ModuleTestMethods.BeforeAll = (p_moduleTestMethods And ModuleTestMethods.BeforeAll) Then
+        p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.BeforeAllMethodName
+        p_macroFullName = p_moduleMacroInfo.FullName
+        If a_usingRemoteWorkbook Then
+            p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
+        End If
+        Application.Run (p_macroFullName)
+    End If
+    
     For Each p_macroInfo In p_macros
         
-        DoEvents
+        VBA.DoEvents
         
-        Dim p_macroFullName As String: p_macroFullName = p_macroInfo.FullName
+        ' execute the Before Each module test method.
+        
+        If ModuleTestMethods.BeforeEach = (p_moduleTestMethods And ModuleTestMethods.BeforeEach) Then
+            p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.BeforeEachMethodName
+            p_macroFullName = p_moduleMacroInfo.FullName
+            If a_usingRemoteWorkbook Then
+                p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
+            End If
+            Application.Run (p_macroFullName)
+        End If
+        
+        p_macroFullName = p_macroInfo.FullName
         If a_usingRemoteWorkbook Then
             p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
         End If
@@ -130,7 +155,30 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
             a_testSheet.Range(OutcomeColumn & p_rowNo).value = "assert not defined"
         End If
         
+        ' execute the After Each module test method.
+        
+        If ModuleTestMethods.AfterEach = (p_moduleTestMethods And ModuleTestMethods.AfterEach) Then
+            p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.AfterEachMethodName
+            p_macroFullName = p_moduleMacroInfo.FullName
+            If a_usingRemoteWorkbook Then
+                p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
+            End If
+            Application.Run (p_macroFullName)
+        End If
+        
     Next p_macroInfo
+    
+    ' execute the After All module test method.
+    
+    If ModuleTestMethods.AfterAll = (p_moduleTestMethods And ModuleTestMethods.AfterAll) Then
+        p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.AfterAllMethodName
+        p_macroFullName = p_moduleMacroInfo.FullName
+        If a_usingRemoteWorkbook Then
+            p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
+        End If
+        Application.Run (p_macroFullName)
+    End If
+    
     
     p_stopper.StopCounter
     

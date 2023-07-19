@@ -54,9 +54,9 @@ Public Sub FromMacroFullName(ByVal a_macroFullName As String)
 End Sub
 
 ''' <summary>   Creates a clone of the this macro info. </summary>
-Public Function Clone() As MacroInfo
+Public Function Clone() As cc_isr_Test_Fx.MacroInfo
     
-    Set Clone = New MacroInfo
+    Set Clone = New cc_isr_Test_Fx.MacroInfo
     Clone.Initialize Me.ProjectName, Me.ModuleName, Me.MacroName
 
 End Function
@@ -96,7 +96,7 @@ End Property
 ''' <param name="a_macro">   [<see cref=MacroInfo"/>] The macro to check for equality. </param>
 Public Function Equals(ByVal a_macro As MacroInfo) As Boolean
     
-    If IsObject(a_macro) Then
+    If VBA.IsObject(a_macro) Then
         Equals = (0 = StrComp(Me.ProjectName, a_macro.ProjectName)) And _
                  (0 = StrComp(Me.ModuleName, a_macro.ModuleName)) And _
                  (0 = StrComp(Me.MacroName, a_macro.MacroName))
