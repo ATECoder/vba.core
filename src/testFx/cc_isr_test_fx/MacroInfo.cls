@@ -19,13 +19,13 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type MyType
+Private Type ThisType
     ProjectName As String
     ModuleName As String
     MacroName As String
 End Type
 
-Private This As MyType
+Private This As ThisType
 
 
 ''' <summary>   Initializes this class. </summary>

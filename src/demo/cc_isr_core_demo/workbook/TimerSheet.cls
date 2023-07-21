@@ -9,11 +9,11 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Type MyType
+Private Type ThisType
     PauseRequested As Boolean
 End Type
 
-Private This As MyType
+Private This As ThisType
 
 Private WithEvents m_eventTimer As cc_isr_Core.EventTimer
 Attribute m_eventTimer.VB_VarHelpID = -1

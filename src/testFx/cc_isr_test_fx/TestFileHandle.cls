@@ -19,12 +19,12 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private Type MyType
+Private Type ThisType
     FileName As String
     FileStream As TextStream
 End Type
 
-Private This As MyType
+Private This As ThisType
 
 
 ''' <summary>   Creates a temporary test file. </summary>

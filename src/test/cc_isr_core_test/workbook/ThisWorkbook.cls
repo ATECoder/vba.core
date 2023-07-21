@@ -9,11 +9,11 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Type MyType
+Private Type ThisType
     ExportCodeAfterSave As Boolean
 End Type
 
-Private This As MyType
+Private This As ThisType
 
 ''' <summary>   Gets the option for exporting code files after save. </summary>
 ''' <value> </value>

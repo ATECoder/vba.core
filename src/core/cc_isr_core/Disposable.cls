@@ -39,7 +39,7 @@ Attribute TryDispose.VB_Description = "True if a Dispose method was successfully
         p_disposableTarget.Dispose
         TryDispose = True
     
-    ElseIf TryLateBound Then
+    ElseIf a_tryLateBound Then
         
         ' if allowing a late bound dispose, just assume this can be done.
         On Error Resume Next
