@@ -164,15 +164,32 @@ End Function
 
 ''' <summary>   Replaces braced numerical value with tokens similar to VB.NET String.Format
 ''' by without formatting suffixes. </summary>
-''' <param name="a_mask">     [String] The mask such as 'A{0} b{1}'. </param>
-''' <param name="a_tokens">   [ParamArray, Variant] The parameter list matching the mask. </param>
-Public Function StringFormat(ByVal a_mask As String, ParamArray a_tokens() As Variant) As String
+''' <param name="a_format">   [String] The format string 'A{0} b{1}'. </param>
+''' <param name="a_tokens">   [Variant, ParamArray] The parameter list matching the mask. </param>
+Public Function StringFormat(ByVal a_format As String, ParamArray a_tokens() As Variant) As String
     
     Dim i As Long
-    For i = 0 To UBound(a_tokens)
-        a_mask = Replace$(a_mask, "{" & i & "}", a_tokens(i))
-    Next
-    StringFormat = a_mask
+    
+    If VBA.vbNullString = a_format Then
+        
+        UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
+                    "cc_isr_Core.StringExtensions.StringFormat", _
+                    "Argument name: 'a_format'."
+    
+    Else
+    
+        ' unbox the paramter array in case it came from another
+        ' function which argument too is a paramter array.
+    
+        Dim p_tokens As Variant
+        p_tokens = CoreExtensions.UnboxParameterArray(a_tokens)
+        
+        For i = LBound(p_tokens) To UBound(p_tokens)
+            a_format = Replace$(a_format, "{" & i & "}", p_tokens(i))
+        Next
+        StringFormat = a_format
+    
+    End If
 
 End Function
 

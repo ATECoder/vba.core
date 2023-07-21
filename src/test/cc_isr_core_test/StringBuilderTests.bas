@@ -71,5 +71,20 @@ Public Function TestAppendingLineFeed() As cc_isr_Test_Fx.Assert
 
 End Function
 
+''' <summary>   Unit test. Tests appending a formatted stringto the string builder. </summary>
+''' <returns>   An instance of the <see cref="cc_isr_Test_Fx.Assert"/>   class. </returns>
+Public Function TestAppendFormat() As cc_isr_Test_Fx.Assert
+    
+    Dim p_builder As StringBuilder
+    Set p_builder = cc_isr_Core.Constructor.CreateStringBuilder
+    Dim p_expected As String
+    p_expected = "a+b+c"
+    Dim p_format As String: p_format = "{0}+{1}+{2}"
+    p_builder.Appendformat p_format, "a", "b", "c"
+    
+    Set TestAppendFormat = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+            "Appended value with line feed should equal expected value")
+
+End Function
 
 

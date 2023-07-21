@@ -50,6 +50,19 @@ Public Sub Append(ByVal a_text As String)
 
 End Sub
 
+''' < summary>   Appends a formatted string to this StringBuilder. </summary>
+''' <param name="a_format">   [String] the format string. </param>
+''' <param name="a_tokens">   [Variant, ParamArray] The parameter list matching the mask. </param>
+Public Sub AppendFormat(ByVal a_format As String, ParamArray a_tokens() As Variant)
+
+    If IsArray(a_tokens(LBound(a_tokens))) Then
+        Me.Append StringExtensions.StringFormat(a_format, a_tokens(LBound(a_tokens)))
+    Else
+        Me.Append StringExtensions.StringFormat(a_format, a_tokens)
+    End If
+
+End Sub
+
 ''' <summary>   Returns the current length. </summary>
 ''' <value>   [Long]. </value>
 Public Property Get Length() As Long
