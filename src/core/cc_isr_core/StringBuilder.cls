@@ -21,13 +21,13 @@ Option Explicit
 
 Private Const initialSize As Integer = 16
 
-Private Type MyType
+Private Type ThisType
     Buffer() As String
     CurrentIndex As Long
     MaxIndex As Long
 End Type
 
-Private This As MyType
+Private This As ThisType
 
 ''' < summary>   Initializes this class. </summary>
 ''' <remarks>
@@ -57,13 +57,14 @@ End Sub
 
 ''' < summary>   Appends a formatted string to this StringBuilder. </summary>
 ''' <param name="a_format">   [String] the format string. </param>
-''' <param name="a_tokens">   [Variant, ParamArray] The parameter list matching the mask. </param>
-Public Sub AppendFormat(ByVal a_format As String, ParamArray a_tokens() As Variant)
+''' <param name="a_values">   [Variant, ParamArray] The parameter values matching the
+'''                           <ParamRef name="a_format"/>. </param>
+Public Sub AppendFormat(ByVal a_format As String, ParamArray a_values() As Variant)
 
-    If IsArray(a_tokens(LBound(a_tokens))) Then
-        Me.Append StringExtensions.StringFormat(a_format, a_tokens(LBound(a_tokens)))
+    If IsArray(a_values(LBound(a_values))) Then
+        Me.Append StringExtensions.StringFormat(a_format, a_values(LBound(a_values)))
     Else
-        Me.Append StringExtensions.StringFormat(a_format, a_tokens)
+        Me.Append StringExtensions.StringFormat(a_format, a_values)
     End If
 
 End Sub

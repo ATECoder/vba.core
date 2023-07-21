@@ -19,13 +19,13 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type MyType
+Private Type ThisType
     Code As Long
     Name As String
     Description As String
 End Type
 
-Private This As MyType
+Private This As ThisType
 
 
 ''' <summary>   Initializes a user defined error. </summary>

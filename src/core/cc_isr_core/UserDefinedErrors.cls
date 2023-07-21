@@ -19,7 +19,7 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type MyType
+Private Type ThisType
     ErrorsDix As Dictionary
     WinsockCleanupError As UserDefinedError
     SocketCreationError As UserDefinedError
@@ -39,7 +39,7 @@ Private Type MyType
     TimeoutError As UserDefinedError
 End Type
 
-Private This As MyType
+Private This As ThisType
 
 ''' <summary>   Initializes the user defined errors. </summary>
 Private Sub Class_Initialize()
@@ -328,3 +328,4 @@ Public Sub RaiseError(ByVal a_error As UserDefinedError, ByVal a_source As Strin
     VBA.Err.Raise a_error.Code, a_source, a_error.Description & a_suffix
 
 End Sub
+

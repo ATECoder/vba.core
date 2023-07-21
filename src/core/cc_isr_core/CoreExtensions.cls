@@ -34,13 +34,15 @@ Option Explicit
 ''' <code>
 ''' </code>
 ''' </para></remarks>
-Public Function UnboxParameterArray(ParamArray a_tokens() As Variant) As Variant
+''' <param name="a_values">   [Variant, ParamArray] The parameter values to be unboxed. </param>
+''' <returns>   [Variant, Array] The unboxed parameter values. </returns>
+Public Function UnboxParameterArray(ParamArray a_values() As Variant) As Variant
 
     Dim p_params() As Variant, p_workArray() As Variant
     
-    ' When a_tokens(0) is Array, it is assumed that the
+    ' When a_values(0) is Array, it is assumed that the
     ' parameter arrayt was passed from another function
-    p_params = a_tokens
+    p_params = a_values
     Do While VBA.VarType(p_params(0)) >= VBA.vbArray And UBound(p_params) < 1
         p_workArray = p_params(0)
         p_params = p_workArray
