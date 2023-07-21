@@ -18,22 +18,26 @@ Attribute VB_Exposed = True
 ' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
-Private m_cancelRequested As Boolean
+Private Type MyType
+    CancelRequested As Boolean
+End Type
+
+Private This As MyType
 
 ''' <summary>   Initializes the event arguments. </summary>
 Public Sub Initialize()
-    m_cancelRequested = False
+    This.CancelRequested = False
 End Sub
 
 ''' <summary>   Gets the cancel requested value. </summary>
 ''' <value>   [Boolean] True to request the cancellation of the event. </value>
 Public Property Get CancelRequested() As Boolean
-    CancelRequested = m_cancelRequested
+    CancelRequested = This.CancelRequested
 End Property
 
 ''' <summary>   Gets the cancel requested value. </summary>
 ''' <param name="a_value">   [Boolean] true to request the cancellation of the event. </param>
 Public Property Let CancelRequested(ByVal a_value As Boolean)
-    m_cancelRequested = a_value
+    This.CancelRequested = a_value
 End Property
 

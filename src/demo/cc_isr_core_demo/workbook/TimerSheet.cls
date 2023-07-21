@@ -9,9 +9,14 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+Private Type MyType
+    PauseRequested As Boolean
+End Type
+
+Private This As MyType
+
 Private WithEvents m_eventTimer As cc_isr_Core.EventTimer
 Attribute m_eventTimer.VB_VarHelpID = -1
-Private pauseRequested As Boolean
 
 ''' <summary>   Dispose of the worksheet objects. </summary>
 Public Sub Dispose()
@@ -52,7 +57,7 @@ Sub ResetClock()
 End Sub
 
 Sub StartTimer()
-  pauseRequested = False
+  This.PauseRequested = False
   If m_eventTimer Is Nothing Then
     Set m_eventTimer = cc_isr_Core.Constructor.CreateEventTimer(100)
     m_eventTimer.StartTimer
@@ -62,7 +67,7 @@ Sub StartTimer()
 End Sub
 
 Sub PauseTimer()
-  pauseRequested = True
+  This.PauseRequested = True
 End Sub
 
 Sub AbortTimer()
@@ -76,7 +81,7 @@ End Sub
 
 Private Sub m_eventTimer_Tick()
     On Error Resume Next
-    If Range("B4").value <= 0 Or pauseRequested Then
+    If Range("B4").value <= 0 Or This.PauseRequested Then
         If Not m_eventTimer Is Nothing Then m_eventTimer.PauseTimer
     Else
         Range("B4") = Range("B4") - TimeValue("00:00:01")

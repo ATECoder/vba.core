@@ -19,8 +19,13 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private m_fileName As String
-Private m_fileStream As TextStream
+Private Type MyType
+    FileName As String
+    FileStream As TextStream
+End Type
+
+Private This As MyType
+
 
 ''' <summary>   Creates a temporary test file. </summary>
 ''' <returns>   A <see cref="TestFileHandle"/>. <returns>
@@ -56,24 +61,24 @@ End Sub
 ''' <summary>   Gets the file name. </summary>
 ''' <value>   [String]. </value>
 Public Property Get FileName() As String
-    FileName = m_fileName
+    FileName = This.FileName
 End Property
 
 ''' <summary>   Sets the file name. </summary>
 ''' <param name="a_value">   [String] The name of the file. </param>
 Public Property Let FileName(ByVal a_value As String)
-    m_fileName = a_value
+    This.FileName = a_value
 End Property
 
 ''' <summary>   Gets the file <see cref="Scripting.TextStream"/>. </summary>
 ''' <value>   [TextStream]. </value>
 Public Property Get FileStream() As TextStream
-    Set FileStream = m_fileStream
+    Set FileStream = This.FileStream
 End Property
 
 ''' <summary>   Sets the file <see cref="Scripting.TextStream"/>. </summary>
 ''' <param name="a_value">   [TextStream]. </param>
 Public Property Set FileStream(ByVal a_value As TextStream)
-    Set m_fileStream = a_value
+    Set This.FileStream = a_value
 End Property
 

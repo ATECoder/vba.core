@@ -42,7 +42,7 @@ Attribute VB_Exposed = True
 '     * Adds Timer code to this workbook and schedules this code to run with `xlApp.OnTime Now(), "MainLoop"`
 '   Every time the timer loops
 '     * A change to the remote workbook's worksheet is made
-'     * In the original workbook we register to receive these events, and receive a `m_remoteWorkbook_SheetChange` event.
+'     * In the original workbook we register to receive these events, and receive a `This.remoteWorkbook_SheetChange` event.
 '     * Here we raise the event, and call the callback if supplied.
 '   When this class is terminated
 '     * It will also tell the remote workbook to close.
@@ -73,13 +73,15 @@ Public Event Tick()
 Private WithEvents m_remoteWorkbook As Workbook
 Attribute m_remoteWorkbook.VB_VarHelpID = -1
 
-Private m_callback As IRunnable
+Private Type MyType
+    Callback As IRunnable
+    ' true when the workbook begins closing
+    WorkbookClosing As Boolean
+    ' the timer interval in milliseconds.
+    Interval As Integer
+End Type
 
-' true when the workbook begins closing
-Private m_workbookClosing As Boolean
-
-' the timer interval in milliseconds.
-Private m_interval As Integer
+Private This As MyType
 
 'Create an instance of the timer
 '@param {Long} Number of milliseconds to raise Tick Event between
@@ -95,9 +97,9 @@ End Function
 '@param {IRunnable} Optional Listener
 Public Sub ProtInit(ByVal a_interval As Long, a_callback As IRunnable)
     
-    m_interval = a_interval
+    This.Interval = a_interval
     
-    Set m_callback = a_callback
+    Set This.Callback = a_callback
     If Not GetVBOM Then Call SetVBOM(True)
     Set m_remoteWorkbook = CreateRemoteWorkbook()
     If Not GetVBOM Then Call SetVBOM(False)
@@ -136,7 +138,7 @@ Public Sub InjectCode(ByVal a_workbook As Workbook, ByVal a_moduleName As String
   With a_workbook.VBProject.VBComponents.Add(a_moduleType).CodeModule
     If .CountOfLines > 0 Then .DeleteLines 1, .CountOfLines
     .AddFromString a_code
-    .Parent.name = a_moduleName
+    .Parent.Name = a_moduleName
   End With
 End Sub
 
@@ -160,7 +162,7 @@ Private Function SetVBOM(ByVal a_newValue As Boolean) As Boolean
   #Else
     Dim p_registeryKey As String
     p_registeryKey = "HKEY_CURRENT_USER\Software\Microsoft\Office\" & Application.Version _
-          & "\" & Replace(Application.name, "Microsoft ", vbNullString) _
+          & "\" & Replace(Application.Name, "Microsoft ", vbNullString) _
           & "\Security\AccessVBOM"
     On Error Resume Next
     CreateObject("WScript.Shell").RegWrite p_registeryKey, i, "REG_DWORD"
@@ -187,35 +189,45 @@ Private Function GetTimerCode(ByVal a_interval As Long) As String
   s = s & vbCrLf & "    Public Declare  Sub Sleep Lib ""kernel32"" Alias ""Sleep"" (ByVal a_milliSecs As Long)"
   s = s & vbCrLf & "  #End If"
   s = s & vbCrLf & "#End If"
-  s = s & vbCrLf & "Private m_running as boolean"
-  s = s & vbCrLf & "Private m_enabled as boolean"
+  s = s & vbCrLf & "Private Type MyType"
+  s = s & vbCrLf & "  Interval as Long"
+  s = s & vbCrLf & "  Running as Boolean"
+  s = s & vbCrLf & "  Enabled as Boolean"
+  s = s & vbCrLf & "End Type"
+  s = s & vbCrLf & "Private This As MyType"
   s = s & vbCrLf & "Sub MainLoop()"
-  s = s & vbCrLf & "  While m_running"
-  s = s & vbCrLf & "    If m_enabled Then"
+  s = s & vbCrLf & "  While This.Running"
+  s = s & vbCrLf & "    If This.Enabled Then"
   s = s & vbCrLf & "      Sheet1.Range(""A1"").Value = ""Tick"""
   s = s & vbCrLf & "    End If"
-  s = s & vbCrLf & "    sleep " & a_interval
+  s = s & vbCrLf & "    sleep This.Interval"
   s = s & vbCrLf & "    DoEvents"
   s = s & vbCrLf & "  Wend"
   s = s & vbCrLf & "  ThisWorkbook.Close false" 'cleanup
   s = s & vbCrLf & "End Sub"
   s = s & vbCrLf & "Sub StartTimer()"
-  s = s & vbCrLf & "  m_enabled = true"
-  s = s & vbCrLf & "  m_running = true"
+  s = s & vbCrLf & "  This.Interval = " & a_interval
+  s = s & vbCrLf & "  This.Enabled = true"
+  s = s & vbCrLf & "  This.Running = true"
   s = s & vbCrLf & "  Application.OnTime now(), ""MainLoop""" 'initialize main loop asynchronously
   s = s & vbCrLf & "End Sub"
   s = s & vbCrLf & "Sub PauseTimer()"
-  s = s & vbCrLf & "  m_enabled = false"
+  s = s & vbCrLf & "  This.Enabled = false"
   s = s & vbCrLf & "End Sub"
   s = s & vbCrLf & "Sub ResumeTimer()"
-  s = s & vbCrLf & "  m_enabled = true"
+  s = s & vbCrLf & "  This.Enabled = true"
   s = s & vbCrLf & "End Sub"
   s = s & vbCrLf & "Sub StopTimer()"
-  s = s & vbCrLf & "  m_running = false"
+  s = s & vbCrLf & "  This.Running = false"
   s = s & vbCrLf & "End Sub"
   GetTimerCode = s
 
 End Function
+
+''' <summary>   Handles the construction of this class. </summary>
+''' <remarks>   On initialize set reference to myself. </remarks>
+Private Sub Class_Initialize()
+End Sub
 
 ''' <summary>   Handles the termination of this class. </summary>
 ''' <remarks>   On terminate, stop timer. This will cause workbook to close. </remarks>
@@ -228,7 +240,7 @@ Private Sub Class_Terminate()
     
     ' 20230704: this worked well.
     
-    m_workbookClosing = False
+    This.WorkbookClosing = False
 
     If Not m_remoteWorkbook Is Nothing Then
         
@@ -241,11 +253,11 @@ Private Sub Class_Terminate()
         ' wait for one timer interval to complete to ensure the timer
         ' events no longer trigger.
         Dim stopper As New StopWatch
-        Do Until stopper.ElapsedMilliseconds > m_interval Or m_workbookClosing
+        Do Until stopper.ElapsedMilliseconds > This.Interval Or This.WorkbookClosing
             DoEvents
         Loop
         
-        If Not m_workbookClosing Then
+        If Not This.WorkbookClosing Then
           m_remoteWorkbook.Close False
         End If
         
@@ -260,14 +272,14 @@ Private Sub Class_Terminate()
 End Sub
 
 Private Sub m_remoteWorkbook_BeforeClose(Cancel As Boolean)
-    m_workbookClosing = True
+    This.WorkbookClosing = True
 End Sub
 
 ''' <summary>   Handles the workbook sheet change event, which raises the <see cref="Tick"/>
 ''' event. </summary>
 Private Sub m_remoteWorkbook_SheetChange(ByVal a_sender As Object, ByVal a_target As Range)
   RaiseEvent Tick
-  If Not m_callback Is Nothing Then m_callback.Run
+  If Not This.Callback Is Nothing Then This.Callback.Run
 End Sub
 
 ''' <summary>   Starts the timer. </summary>

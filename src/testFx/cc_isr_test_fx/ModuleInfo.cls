@@ -19,15 +19,19 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private m_projectName As String
-Private m_moduleName As String
+Private Type MyType
+    ProjectName As String
+    ModuleName As String
+End Type
+
+Private This As MyType
 
 ''' <summary>   Initializes this class. </summary>
 ''' <param name="a_projectName">      [String] The project name. </param>
 ''' <param name="a_codeModuleName">   [String] The component code module name. </param>
 Public Sub Initialize(ByVal a_projectName As String, ByVal a_codeModuleName As String)
-    m_projectName = a_projectName
-    m_moduleName = a_codeModuleName
+    This.ProjectName = a_projectName
+    This.ModuleName = a_codeModuleName
 End Sub
 
 ''' <summary>   Initializes this class from a module full name. </summary>
@@ -35,8 +39,8 @@ End Sub
 Public Sub FromModuleFullName(ByVal a_moduleFullName As String)
     
     Dim p_names() As String: p_names() = Split(a_moduleFullName, ".")
-    m_projectName = p_names(LBound(p_names))
-    m_moduleName = p_names(LBound(p_names) + 1)
+    This.ProjectName = p_names(LBound(p_names))
+    This.ModuleName = p_names(LBound(p_names) + 1)
 
 End Sub
 
@@ -45,8 +49,8 @@ End Sub
 Public Sub FromMacroFullName(ByVal a_macroFullName As String)
     
     Dim p_names() As String: p_names() = Split(a_macroFullName, ".")
-    m_projectName = p_names(LBound(p_names))
-    m_moduleName = p_names(LBound(p_names) + 1)
+    This.ProjectName = p_names(LBound(p_names))
+    This.ModuleName = p_names(LBound(p_names) + 1)
 
 End Sub
 
@@ -58,19 +62,19 @@ End Function
 
 ''' <summary>   Gets the project name. </summary>
 Public Property Get ProjectName() As String
-    ProjectName = m_projectName
+    ProjectName = This.ProjectName
 End Property
 
 ''' <summary>   Gets the module name. </summary>
 Public Property Get ModuleName() As String
-    ModuleName = m_moduleName
+    ModuleName = This.ModuleName
 End Property
 
 ''' <summary>   Gets the full name. </summary>
 Public Property Get FullName() As String
 Attribute FullName.VB_Description = "This is a description of a member variable"
 Attribute FullName.VB_UserMemId = 0
-    FullName = m_projectName & "." & m_moduleName
+    FullName = This.ProjectName & "." & This.ModuleName
 End Property
 
 ''' <summary>   Checks if the two modules are equal referring to the same

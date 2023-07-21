@@ -20,9 +20,14 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Private Const initialSize As Integer = 16
-Private m_buffer() As String
-Private m_currentIndex As Long
-Private m_maxIndex As Long
+
+Private Type MyType
+    Buffer() As String
+    CurrentIndex As Long
+    MaxIndex As Long
+End Type
+
+Private This As MyType
 
 ''' < summary>   Initializes this class. </summary>
 ''' <remarks>
@@ -30,9 +35,9 @@ Private m_maxIndex As Long
 ''' </remarks>
 Private Sub Class_Initialize()
 
-    m_currentIndex = 0
-    m_maxIndex = initialSize
-    ReDim m_buffer(1 To m_maxIndex)
+    This.CurrentIndex = 0
+    This.MaxIndex = initialSize
+    ReDim This.Buffer(1 To This.MaxIndex)
 
 End Sub
 
@@ -40,13 +45,13 @@ End Sub
 ''' <param name="a_text">   [String] the text to append. </param>
 Public Sub Append(ByVal a_text As String)
 
-    m_currentIndex = m_currentIndex + 1
+    This.CurrentIndex = This.CurrentIndex + 1
 
-    If m_currentIndex > m_maxIndex Then
-        m_maxIndex = 2 * m_maxIndex
-        ReDim Preserve m_buffer(1 To m_maxIndex)
+    If This.CurrentIndex > This.MaxIndex Then
+        This.MaxIndex = 2 * This.MaxIndex
+        ReDim Preserve This.Buffer(1 To This.MaxIndex)
     End If
-    m_buffer(m_currentIndex) = a_text
+    This.Buffer(This.CurrentIndex) = a_text
 
 End Sub
 
@@ -66,7 +71,7 @@ End Sub
 ''' <summary>   Returns the current length. </summary>
 ''' <value>   [Long]. </value>
 Public Property Get Length() As Long
-    Length = m_currentIndex
+    Length = This.CurrentIndex
 End Property
 
 ''' <summary>   Returns the text in this StringBuilder. </summary>
@@ -74,10 +79,10 @@ End Property
 '''                              joining components. </param>
 Public Function ToString(Optional ByVal a_separator As String = vbNullString) As String
 
-    If m_currentIndex > 0 Then
-        ReDim Preserve m_buffer(1 To m_currentIndex)
-        m_maxIndex = m_currentIndex
-        ToString = Join(m_buffer, a_separator)
+    If This.CurrentIndex > 0 Then
+        ReDim Preserve This.Buffer(1 To This.CurrentIndex)
+        This.MaxIndex = This.CurrentIndex
+        ToString = Join(This.Buffer, a_separator)
     End If
 
 End Function

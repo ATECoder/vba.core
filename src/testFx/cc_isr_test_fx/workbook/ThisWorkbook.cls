@@ -8,18 +8,24 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
-Private m_exportCodeAfterSave As Boolean
+
+Private Type MyType
+    ExportCodeAfterSave As Boolean
+End Type
+
+Private This As MyType
+
 
 ''' <summary>   Gets the option for exporting code files after save. </summary>
 ''' <value> </value>
 Public Property Get ExportCodeAfterSave() As Boolean
-    ExportCodeAfterSave = m_exportCodeAfterSave
+    ExportCodeAfterSave = This.ExportCodeAfterSave
 End Property
 
 ''' <summary>   Enables or disables exporting code files after save. </summary>
 ''' <para name="a_value">   [Boolean] True to enable exporting code files after save. </param>
 Public Property Let ExportCodeAfterSave(ByVal a_value As Boolean)
-    m_exportCodeAfterSave = a_value
+    This.ExportCodeAfterSave = a_value
 End Property
 
 ''' <summary>   Handles the Workbook activate event. </summary>

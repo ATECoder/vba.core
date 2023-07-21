@@ -22,9 +22,9 @@ Option Explicit
 ''' <summary>   Detects if a component is a workbook. <summary>
 ''' <param name="a_component">   [<see cref="VBComponent"/>] A VB Component. </param>
 ''' <returns> True if the component is a work book. </returns>
-Public Function IsWorkbook(ByVal a_component As VBComponent)
+Public Function IsWorkbook(ByVal a_component As VBIDE.VBComponent)
     On Error Resume Next
-    Dim p_property As Property: Set p_property = a_component.Properties("AutoSaveOn")
+    Dim p_property As VBIDE.Property: Set p_property = a_component.Properties("AutoSaveOn")
     On Error GoTo 0
     IsWorkbook = Not p_property Is Nothing
 End Function
@@ -32,9 +32,9 @@ End Function
 ''' <summary>   Detects if a component is a sheet. <summary>
 ''' <param name="component">   A reference to a VB Component. </param>
 ''' <returns> True if the component is a sheet. </returns>
-Public Function IsSheet(ByVal a_component As VBComponent)
+Public Function IsSheet(ByVal a_component As VBIDE.VBComponent)
     On Error Resume Next
-    Dim p_property As Property: Set p_property = a_component.Properties("Cells")
+    Dim p_property As VBIDE.Property: Set p_property = a_component.Properties("Cells")
     On Error GoTo 0
     IsSheet = Not p_property Is Nothing
 End Function
@@ -42,9 +42,9 @@ End Function
 ''' <summary>   Detects if a component is a chart. <summary>
 ''' <param name="a_component">   [<see cref="VBComponent"/>] A VB Component. </param>
 ''' <returns> True if the component is a chart. </returns>
-Public Function IsChart(ByVal a_component As VBComponent)
+Public Function IsChart(ByVal a_component As VBIDE.VBComponent)
     On Error Resume Next
-    Dim p_property As Property: Set p_property = a_component.Properties("AutoScaling")
+    Dim p_property As VBIDE.Property: Set p_property = a_component.Properties("AutoScaling")
     On Error GoTo 0
     IsChart = Not p_property Is Nothing
 End Function
@@ -54,14 +54,14 @@ End Function
 ''' <returns>   The file extension or an empty string if not a file. </returns>
 Public Function GetFileExtension(ByVal a_component As VBComponent)
     Select Case a_component.Type
-        Case vbext_ct_ClassModule, vbext_ct_Document
+        Case VBIDE.vbext_ct_ClassModule, VBIDE.vbext_ct_Document
             GetFileExtension = ".cls"
-        Case vbext_ct_MSForm
+        Case VBIDE.vbext_ct_MSForm
             GetFileExtension = ".frm"
-        Case vbext_ct_StdModule
+        Case VBIDE.vbext_ct_StdModule
             GetFileExtension = ".bas"
         Case Else
-            GetFileExtension = vbNullString
+            GetFileExtension = VBA.vbNullString
     End Select
 End Function
 

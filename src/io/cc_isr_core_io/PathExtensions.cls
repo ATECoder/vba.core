@@ -24,7 +24,7 @@ Option Explicit
 ''' <returns>   [String]. </returns>
 Public Function TrimPath(ByVal a_path As String) As String
 
-    a_path = Trim(a_path)
+    a_path = VBA.Trim$(a_path)
     a_path = Me.TrimRight(a_path, "/")
     a_path = Me.TrimRight(a_path, "\")
     TrimPath = a_path
@@ -32,27 +32,28 @@ Public Function TrimPath(ByVal a_path As String) As String
 End Function
 
 ''' <summary>   Trims the given character from the end of the given text. </summary>
-''' <param name="a_text">   [String] The text to trim. </param>
-''' <param name="a_char">   [String] The character to trim. </param>
+''' <param name="a_text">   [String] The text to Trim. </param>
+''' <param name="a_char">   [String] The character to Trim. </param>
 ''' <returns>   [String]. <returns>
 Public Function TrimRight(ByVal a_text As String, ByVal a_char As String) As String
     
-    Dim p_textLength As Long: p_textLength = Len(a_text)
+    Dim p_textLength As Long: p_textLength = VBA.Len(a_text)
     
     Dim p_lastCharacter As String
         
     Do While p_textLength > 0
-        p_lastCharacter = Right(a_text, 1)
+        p_lastCharacter = VBA.Right$(a_text, 1)
         
         If p_lastCharacter <> a_char Then
             Exit Do
         End If
         
         a_text = Left(a_text, p_textLength - 1)
-        p_textLength = Len(a_text)
+        p_textLength = VBA.Len(a_text)
     Loop
     
     TrimRight = a_text
+    
 End Function
 
 
@@ -120,8 +121,8 @@ End Function
 ''' <returns>   [String]. </returns>
 Public Function CreateFolder(ByVal a_path As String) As String
 
-    If vbNullString <> a_path Then
-        a_path = TrimPath(a_path)
+    If VBA.vbNullString <> a_path Then
+        a_path = Me.TrimPath(a_path)
         Dim p_fileInfo As FileSystemObject: Set p_fileInfo = New FileSystemObject
         If Not p_fileInfo.FolderExists(a_path) Then
             p_fileInfo.CreateFolder a_path
@@ -140,8 +141,8 @@ Public Function JoinFile(ByVal a_path As String, ByVal a_fileName As String, _
         Optional ByVal a_create As Boolean = False) As String
 
     a_path = TrimPath(a_path)
-    If a_create Then a_path = CreateFolder(a_path)
-    If vbNullString <> a_path Then a_path = a_path & "\"
+    If a_create Then a_path = Me.CreateFolder(a_path)
+    If VBA.vbNullString <> a_path Then a_path = a_path & "\"
     JoinFile = a_path & a_fileName
 
 End Function
@@ -167,12 +168,12 @@ End Function
 ''' <returns>   [String]. </returns>
 Public Function JoinAll(ByVal a_create As Boolean, ParamArray a_pathParts() As Variant) As String
     
-    Dim p_joinedPath As String: p_joinedPath = vbNullString
-    If Not IsEmpty(a_pathParts) Then
+    Dim p_joinedPath As String: p_joinedPath = VBA.vbNullString
+    If Not VBA.IsEmpty(a_pathParts) Then
         Dim p_pathPart As Variant
         For Each p_pathPart In a_pathParts
             DoEvents
-            p_joinedPath = Join(p_joinedPath, p_pathPart, a_create)
+            p_joinedPath = Me.Join(p_joinedPath, p_pathPart, a_create)
         Next
     End If
 
@@ -186,8 +187,8 @@ End Function
 Public Function GetParentFolderName(ByVal a_path As String) As String
         
     GetParentFolderName = a_path
-    If vbNullString <> a_path Then
-        a_path = TrimPath(a_path)
+    If VBA.vbNullString <> a_path Then
+        a_path = Me.TrimPath(a_path)
         Dim p_fileInfo As FileSystemObject: Set p_fileInfo = New FileSystemObject
         GetParentFolderName = p_fileInfo.GetParentFolderName(a_path)
     End If

@@ -8,18 +8,24 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
-Private m_exportCodeAfterSave As Boolean
+
+Private Type MyType
+    ExportCodeAfterSave As Boolean
+End Type
+
+Private This As MyType
+
 
 ''' <summary>   Gets the option for exporting code files after save. </summary>
 ''' <value> </value>
 Public Property Get ExportCodeAfterSave() As Boolean
-    ExportCodeAfterSave = m_exportCodeAfterSave
+    ExportCodeAfterSave = This.ExportCodeAfterSave
 End Property
 
 ''' <summary>   Enables or disables exporting code files after save. </summary>
 ''' <para name="a_value">   [Boolean] True to enable exporting code files after save. </param>
 Public Property Let ExportCodeAfterSave(ByVal a_value As Boolean)
-    m_exportCodeAfterSave = a_value
+    This.ExportCodeAfterSave = a_value
 End Property
 
 ''' <summary>   Handles the Workbook activate event. </summary>
@@ -41,7 +47,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -76,7 +82,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -112,7 +118,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -134,12 +140,12 @@ Private Sub Workbook_Open()
     
     ' hide and turn off code saving on the referenced workbooks
     cc_isr_Core_IO.ThisWorkbook.ExportCodeAfterSave = Not cc_isr_Core_IO.ThisWorkbook.ReadOnly
-    Application.Windows(Workbooks("cc.isr.core.io.xlsm").name).Visible = False
+    Application.Windows(Workbooks("cc.isr.core.io.xlsm").Name).Visible = False
     
     ' turn on code exporting for this work book
     ThisWorkbook.ExportCodeAfterSave = True
     
-    Application.Windows(ThisWorkbook.name).Visible = True
+    Application.Windows(ThisWorkbook.Name).Visible = True
     
     ' init the user defined errors.
     cc_isr_Core.UserDefinedErrors.Initialize
@@ -154,7 +160,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation

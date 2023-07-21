@@ -24,9 +24,10 @@ Option Explicit
 Public Function FormattedErr() As String
     
     Dim p_errNoDetails As String
-    p_errNoDetails = " (" & (Err.Number - VBA.vbObjectError) & " / 0x" & VBA.LCase$(VBA.Hex$(Err.Number)) & ")"
-    FormattedErr = "Error Number=" & Err.Number & p_errNoDetails & ", Source=" & _
-                   Err.Source & ", Description=" & Err.Description
+    p_errNoDetails = " (" & (VBA.Err.Number - VBA.vbObjectError) & " / 0x" & _
+                     VBA.LCase$(VBA.Hex$(VBA.Err.Number)) & ")"
+    FormattedErr = "Error Number=" & VBA.Err.Number & p_errNoDetails & ", Source=" & _
+                   VBA.Err.Source & ", Description=" & VBA.Err.Description
 
 End Function
 
@@ -36,7 +37,7 @@ End Function
 ''' <param name="a_errProjectName">     [Optional, String] Specifies the project name; otherwise the project
 '''                                     name of the active workbook is used. </param>
 Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleName As String, _
-        Optional ByVal a_errProjectName As String = vbNullString)
+        Optional ByVal a_errProjectName As String = VBA.vbNullString)
 
     ' this procedure must not trap errors because it must
     ' not alter the error object.
@@ -44,21 +45,21 @@ Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleNam
     ' thus we assume that this code is robust and will
     ' not cause errors.
     
-    If vbNullString = a_errProjectName Then
+    If VBA.vbNullString = a_errProjectName Then
         a_errProjectName = ActiveWorkbook.VBProject.Name
     End If
     
     ' get the current source string
     
-    Dim p_errorSource As String: p_errorSource = Err.Source
+    Dim p_errorSource As String: p_errorSource = VBA.Err.Source
     
     ' build the error source.
     
     p_errorSource = a_errProjectName & "." & a_errModuleName & "." & a_errProcedureName
   
-    ' Update the Err.Source
+    ' Update the VBA.Err.Source
     
-    Err.Source = p_errorSource
+    VBA.Err.Source = p_errorSource
  
 End Sub
 
@@ -79,25 +80,25 @@ Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boo
     Dim p_builder As String: p_builder = VBA.vbNullString
   
     ' check if we have an error
-    If Err.Number <> 0 Then
+    If VBA.Err.Number <> 0 Then
     
         p_builder = p_builder & IIf(a_displayWarning, "Warning ", "Error ")
-        p_builder = p_builder & Format$(Err.Number)
+        p_builder = p_builder & Format$(VBA.Err.Number)
         
-        Dim p_errNumber As Long: p_errNumber = Err.Number - vbObjectError
+        Dim p_errNumber As Long: p_errNumber = VBA.Err.Number - vbObjectError
         
         If Abs(p_errNumber) < &HFFFF& Then
             p_errNumber = p_errNumber - &H200
             p_builder = p_builder & " (+0x"
         Else
-            p_errNumber = Err.Number
+            p_errNumber = VBA.Err.Number
             p_builder = p_builder & " (0x"
         End If
-        p_builder = p_builder & Hex$(p_errNumber)
+        p_builder = p_builder & VBA.Hex$(p_errNumber)
         p_builder = p_builder & ") occurred in "
-        p_builder = p_builder & Err.Source
+        p_builder = p_builder & VBA.Err.Source
         p_builder = p_builder & a_descriptionDelimiter
-        p_builder = p_builder & Err.Description
+        p_builder = p_builder & VBA.Err.Description
         
     End If
 

@@ -24,7 +24,7 @@ Option Explicit
 ''' <para name="a_subFolder">   [Optional, 'code'] Specifies the sub-folder were the files are to be stored. </param>
 Public Sub ExportCodeFiles(Optional ByVal a_subFolder As String = "code")
 
-    Me.ExportProjectCodeFiles ActiveWorkbook.VBProject, a_subFolder
+    Me.ExportProjectCodeFiles Excel.ActiveWorkbook.VBProject, a_subFolder
     
 End Sub
 
@@ -35,7 +35,7 @@ End Sub
 '''                                are to be stored. </param>
 ''' <para name="mustExist">        [Optional, Boolean, True] true if the folder must exists in order to prevent
 '''                                unintended storage into the default folder. </param>
-Public Sub ExportProjectCodeFiles(ByVal a_project As VBProject, _
+Public Sub ExportProjectCodeFiles(ByVal a_project As VBIDE.VBProject, _
         Optional ByVal a_useProjectName As Boolean = True, _
         Optional ByVal a_subFolder As String = "code", _
         Optional ByVal a_mustExist As Boolean = True)
@@ -45,7 +45,7 @@ Public Sub ExportProjectCodeFiles(ByVal a_project As VBProject, _
     Dim p_fileCount As Integer
     
     ' set the subfolder tot he project name in lower case
-    If a_useProjectName Then a_subFolder = LCase$(a_project.Name)
+    If a_useProjectName Then a_subFolder = VBA.LCase$(a_project.Name)
     
     ' set and, optionally, create the folder.
     Dim p_path As String: p_path = PathExtensions.GetParentFolderName(a_project.FileName)
@@ -65,7 +65,7 @@ Public Sub ExportProjectCodeFiles(ByVal a_project As VBProject, _
         DoEvents
         Dim p_name As String: p_name = p_vbComponent.Name
         p_extension = VbComponentExtensions.GetFileExtension(p_vbComponent)
-        If p_extension <> vbNullString Then
+        If p_extension <> VBA.vbNullString Then
             p_destPath = Me.GetWorkbookPath(p_vbComponent, p_path, "workbook")
             p_filePath = PathExtensions.JoinFile(p_destPath, p_name & p_extension)
             p_fileCount = p_fileCount + 1
@@ -82,7 +82,7 @@ End Sub
 ''' <param name="a_component">      [<see cref="VBComponent"/>] A VB Component. </param>
 ''' <param name="a_path">           [String] The top path. </param>
 ''' <param name="a_workbookPath">   [String] The workbook and sheets sub path. </param>
-Public Function GetWorkbookPath(ByVal a_component As VBComponent, ByVal a_path As String, _
+Public Function GetWorkbookPath(ByVal a_component As VBIDE.VBComponent, ByVal a_path As String, _
         ByVal a_subPath As String)
     If VbComponentExtensions.IsSheet(a_component) Or _
         VbComponentExtensions.IsWorkbook(a_component) Or _

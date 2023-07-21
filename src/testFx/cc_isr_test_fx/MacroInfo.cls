@@ -19,27 +19,32 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private m_projectName As String
-Private m_moduleName As String
-Private m_macroName As String
+Private Type MyType
+    ProjectName As String
+    ModuleName As String
+    MacroName As String
+End Type
+
+Private This As MyType
+
 
 ''' <summary>   Initializes this class. </summary>
 ''' <param name="a_projectName">      [String] The project name. </param>
 ''' <param name="a_codeModuleName">   [String] The component code module name. </param>
 ''' <param name="a_macroName">        [String] The name of the macro. </param>
 Public Sub Initialize(ByVal a_projectName As String, ByVal a_codeModuleName As String, ByVal a_macroName As String)
-    m_projectName = a_projectName
-    m_moduleName = a_codeModuleName
-    m_macroName = a_macroName
+    This.ProjectName = a_projectName
+    This.ModuleName = a_codeModuleName
+    This.MacroName = a_macroName
 End Sub
 
 ''' <summary>   Initializes this class. </summary>
 ''' <param name="a_module">      [<see cref="ModuleInfo"/>] The module info. </param>
 ''' <param name="a_macroName">   [String] The name of the macro. </param>
 Public Sub InitializeModuelMacro(ByVal a_module As ModuleInfo, ByVal a_macroName As String)
-    m_projectName = a_module.ProjectName
-    m_moduleName = a_module.ModuleName
-    m_macroName = a_macroName
+    This.ProjectName = a_module.ProjectName
+    This.ModuleName = a_module.ModuleName
+    This.MacroName = a_macroName
 End Sub
 
 ''' <summary>   Initializes this class from a macro full name. </summary>
@@ -47,9 +52,9 @@ End Sub
 Public Sub FromMacroFullName(ByVal a_macroFullName As String)
     
     Dim p_names() As String: p_names() = Split(a_macroFullName, ".")
-    m_projectName = p_names(LBound(p_names))
-    m_moduleName = p_names(LBound(p_names) + 1)
-    m_macroName = p_names(LBound(p_names) + 2)
+    This.ProjectName = p_names(LBound(p_names))
+    This.ModuleName = p_names(LBound(p_names) + 1)
+    This.MacroName = p_names(LBound(p_names) + 2)
 
 End Sub
 
@@ -64,21 +69,21 @@ End Function
 ''' <summary>   Gets the macro name. </summary>
 Public Property Get MacroName() As String
     
-    MacroName = m_macroName
+    MacroName = This.MacroName
 
 End Property
 
 ''' <summary>   Gets the project name. </summary>
 Public Property Get ProjectName() As String
     
-    ProjectName = m_projectName
+    ProjectName = This.ProjectName
 
 End Property
 
 ''' <summary>   Gets the module name. </summary>
 Public Property Get ModuleName() As String
     
-    ModuleName = m_moduleName
+    ModuleName = This.ModuleName
 
 End Property
 
@@ -87,7 +92,7 @@ Public Property Get FullName() As String
 Attribute FullName.VB_Description = "Get the macro full name"
 Attribute FullName.VB_UserMemId = 0
     
-    FullName = m_projectName & "." & m_moduleName & "." & m_macroName
+    FullName = This.ProjectName & "." & This.ModuleName & "." & This.MacroName
 
 End Property
 
