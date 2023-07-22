@@ -15,3 +15,19 @@ Public Sub RunTests()
     TestExecutive.Execute Me
     
 End Sub
+
+Public Sub TestCallByName()
+
+    ' call by name does not work on modules.
+    
+    ' application run does not work on classes.
+    
+    ' this works
+    ' VBA.CallByName UtilitiesTests, "TestModuleList", VbMethod
+    
+    ' this works:
+    ' VBA.CallByName Testing, "RunTests", VbMethod
+    
+End Sub
+
+
