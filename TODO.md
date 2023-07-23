@@ -3,6 +3,8 @@
 ## Cleanup
 
 ## Tests
+string contains
+string contains any
 
 ## Fixes
 

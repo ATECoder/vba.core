@@ -9,3 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+Public Sub AssertStringFormat()
+    
+    Debug.Print StringExtensions.StringFormat("{0:c}", 4)
+
+End Sub

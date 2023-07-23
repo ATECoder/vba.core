@@ -37,4 +37,5 @@ Unit testing is run from the [Test Script Shortcut] which calls the [Test Script
 
 [Microsoft Scripting Runtime]: c:\windows\system32\scrrun.dll
 [Microsoft Visual Basic for Applications Extensibility 5.3]: <c:/program&#32;files/common&#32;files/microsoft&#32;shared/vba/vba7.1/vbeui.dll>
+[Microsoft VB Script Regular Expression 5.5]]: <c:/windows/system32/vbscript.dll/3>
 

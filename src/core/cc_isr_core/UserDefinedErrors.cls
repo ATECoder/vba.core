@@ -35,8 +35,10 @@ Private Type ThisType
     WinsockStartingError As UserDefinedError
     NullArgumentError As UserDefinedError
     InvalidArgumentError As UserDefinedError
+    InvalidFormatStringError As UserDefinedError
     InvalidOperationError As UserDefinedError
     TimeoutError As UserDefinedError
+    FormatError As UserDefinedError
 End Type
 
 Private This As ThisType
@@ -135,6 +137,12 @@ Private Sub Class_Initialize()
     AddUserDefinedError Me.InvalidArgumentError
 
     p_errorCode = p_errorCode + 1
+    Set This.InvalidFormatStringError = New UserDefinedError
+    This.InvalidFormatStringError.InitiateProperties p_errorCode, "InvalidFormatStringError", _
+        "Invalid format string."
+    AddUserDefinedError Me.InvalidFormatStringError
+
+    p_errorCode = p_errorCode + 1
     Set This.InvalidOperationError = New UserDefinedError
     This.InvalidOperationError.InitiateProperties p_errorCode, "InvalidOperationError", _
         "Invalid operation error."
@@ -145,6 +153,12 @@ Private Sub Class_Initialize()
     This.TimeoutError.InitiateProperties p_errorCode, "TimeoutError", _
         "Timeout error."
     AddUserDefinedError Me.TimeoutError
+
+    p_errorCode = p_errorCode + 1
+    Set This.FormatError = New UserDefinedError
+    This.FormatError.InitiateProperties p_errorCode, "FormatError", _
+        "The number indicating an argument to format is less than zero or greater than or equal to the length of the array of arguments."
+    AddUserDefinedError Me.FormatError
 
 End Sub
 
@@ -302,6 +316,14 @@ Public Property Get InvalidArgumentError() As UserDefinedError
 
 End Property
 
+''' <summary>   Get the error that occurred when the format string is invalid. </summary>
+''' <value>   <see cref="UserDefinedError"/>. </value>
+Public Property Get InvalidFormatStringError() As UserDefinedError
+    
+    Set InvalidFormatStringError = This.InvalidFormatStringError
+
+End Property
+
 ''' <summary>   Get the error that occurred when the method operation is invalid. </summary>
 ''' <value>   <see cref="UserDefinedError"/>. </value>
 Public Property Get InvalidOperationError() As UserDefinedError
@@ -315,6 +337,14 @@ End Property
 Public Property Get TimeoutError() As UserDefinedError
     
     Set TimeoutError = This.TimeoutError
+
+End Property
+
+''' <summary>   Get the error that occurred when a format error occurred. </summary>
+''' <value>   <see cref="UserDefinedError"/>. </value>
+Public Property Get FormatError() As UserDefinedError
+    
+    Set FormatError = This.FormatError
 
 End Property
 
