@@ -22,7 +22,7 @@ Public Function TestAppendingToEmptyBuilder() As cc_isr_Test_Fx.Assert
     p_expected = "a"
     p_builder.Append p_expected
     
-    Set TestAppendingToEmptyBuilder = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set TestAppendingToEmptyBuilder = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended value should equal expected value")
 
 End Function
@@ -37,7 +37,7 @@ Public Function TestAppendingEmptyString() As cc_isr_Test_Fx.Assert
     p_expected = vbNullString
     p_builder.Append p_expected
     
-    Set TestAppendingEmptyString = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set TestAppendingEmptyString = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended empty value should equal p_expected value")
 
 End Function
@@ -51,7 +51,7 @@ Public Function TestAppendingLongString() As cc_isr_Test_Fx.Assert
     Dim p_expected As String
     p_expected = StringExtensions.Repeat("a", 1000)
     p_builder.Append p_expected
-    Set TestAppendingLongString = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set TestAppendingLongString = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended a long value should equal p_expected value")
 
 End Function
@@ -66,7 +66,7 @@ Public Function TestAppendingLineFeed() As cc_isr_Test_Fx.Assert
     p_expected = "a" & vbLf
     p_builder.Append p_expected
     
-    Set TestAppendingLineFeed = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set TestAppendingLineFeed = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended value with line feed should equal expected value")
 
 End Function
@@ -82,7 +82,7 @@ Public Function TestAppendFormat() As cc_isr_Test_Fx.Assert
     Dim p_format As String: p_format = "{0}+{1}+{2}"
     p_builder.Appendformat p_format, "a", "b", "c"
     
-    Set TestAppendFormat = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set TestAppendFormat = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended value with line feed should equal expected value")
 
 End Function

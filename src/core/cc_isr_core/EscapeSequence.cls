@@ -20,10 +20,10 @@ Attribute VB_Exposed = True
 ' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
-''' <summary>   Defines an escape sequence of a value and a replacement value. </summary>
+''' <summary>   Defines an escape sequence of a value and a Literal value. </summary>
 Private Type ThisType
     Value As String
-    Replacement As String
+    Literal As String
 End Type
 
 Private This As ThisType
@@ -35,21 +35,21 @@ Public Property Get Value() As String
 End Property
 
 ''' <summary>   Sets the escape sequence value. </summary>
-''' <param name="a_value">   [String] The value., e.g., '/n'. </param>
+''' <param name="a_value">   [String] The value., e.g., '/r'. </param>
 Public Property Let Value(ByVal a_value As String)
     This.Value = a_value
 End Property
 
-''' <summary>   Gets the escape sequence replacement value. </summary>
+''' <summary>   Gets the escape sequence literal representation value. </summary>
 ''' <value>   [String]. </value>
-Public Property Get Replacement() As String
-    Replacement = This.Replacement
+Public Property Get Literal() As String
+    Literal = This.Literal
 End Property
 
-''' <summary>   Sets the escape sequence replacement value. </summary>
-''' <param name="a_value">   [String] The replacement value., e.g., <see cref="VBA.VbNewLine"/>. </param>
-Public Property Let Replacement(ByVal a_value As String)
-    This.Replacement = a_value
+''' <summary>   Sets the escape sequence literal representation value. </summary>
+''' <param name="a_value">   [String] The Literal value., e.g., <see cref="VBA.VbCr"/>. </param>
+Public Property Let Literal(ByVal a_value As String)
+    This.Literal = a_value
 End Property
 
 

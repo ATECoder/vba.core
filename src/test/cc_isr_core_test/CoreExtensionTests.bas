@@ -29,19 +29,19 @@ Public Function TestParameterArrayShoudPassWithoutErrors() As Assert
     Dim p_tokens As Variant
     p_tokens = Method1("a", "b", "c")
     
-    Set outcome = Assert.AreEqual(VBA.Err.Number, 0, _
+    Set outcome = Assert.areEqual(VBA.Err.Number, 0, _
         "The parameter array should pass without errors")
         
     If outcome.AssertSuccessful Then
     
-        Set outcome = Assert.AreEqual(TypeName(p_dummyArray), TypeName(p_tokens), _
+        Set outcome = Assert.areEqual(TypeName(p_dummyArray), TypeName(p_tokens), _
         "The nested parameter array type should match the expected type")
     
     End If
         
     If outcome.AssertSuccessful Then
     
-        Set outcome = Assert.AreEqual(TypeName(p_dummyArray), TypeName(p_tokens(0)), _
+        Set outcome = Assert.areEqual(TypeName(p_dummyArray), TypeName(p_tokens(0)), _
         "The first element of the nested parameter array type should match the expected type")
     
     End If
@@ -50,14 +50,14 @@ Public Function TestParameterArrayShoudPassWithoutErrors() As Assert
     
         p_unboxedTokens = CoreExtensions.UnboxParameterArray(p_tokens)
         
-        Set outcome = Assert.AreEqual(TypeName(p_dummyArray), TypeName(p_unboxedTokens), _
+        Set outcome = Assert.areEqual(TypeName(p_dummyArray), TypeName(p_unboxedTokens), _
         "The unboxed parameter array type should match the expected type")
         
     End If
     
     If outcome.AssertSuccessful Then
     
-        Set outcome = Assert.AreEqual(TypeName(p_dummyVariant), TypeName(p_unboxedTokens(0)), _
+        Set outcome = Assert.areEqual(TypeName(p_dummyVariant), TypeName(p_unboxedTokens(0)), _
         "The first element of the nested parameter array type should match the expected type")
     
     End If

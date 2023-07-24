@@ -28,6 +28,41 @@ Private This As ThisType
 
 Option Explicit
 
+''' <summary>   Report if the values are not equal. </summary>
+''' <param name="a_expected">   [String] the expected value. </param>
+''' <param name="a_actual">     [String] The actual value. </param>
+''' <returns>   [Boolean]. </returns>
+Public Function AreEqualDebug(ByVal a_expected As String, ByVal a_actual As String)
+
+    Dim areEqual As Boolean: areEqual = True
+    areEqual = 1 = VBA.InStr(1, a_expected, a_actual)
+    If Not areEqual Then
+    
+        Dim p_expectedLength As Integer: p_expectedLength = VBA.Len(a_expected)
+        Dim p_actualLength As Integer: p_actualLength = VBA.Len(a_actual)
+        If p_actualLength <> p_expectedLength Then
+        
+            Debug.Print "Unequal length. Expected = " & VBA.CStr$(p_expectedLength) & _
+                        " actual = " & VBA.CStr$(p_actualLength) & "."
+        
+        End If
+        
+        Dim i As Integer
+        For i = 1 To IIf(p_expectedLength < p_actualLength, p_expectedLength, p_actualLength)
+            If VBA.Mid$(a_expected, i, 1) <> VBA.Mid$(a_actual, i, 1) Then
+                areEqual = False
+                Debug.Print "@" & i & "; Expected=" & VBA.Asc(VBA.Mid$(a_expected, i, 1)) & _
+                            "; Actual=" & VBA.Asc(VBA.Mid$(a_actual, i, 1))
+                Exit For
+            End If
+        Next i
+
+    End If
+    
+    AreEqualDebug = areEqual
+
+End Function
+
 ''' <summary>   Gets the character at the given index from the given string. </summary>
 ''' <remarks>   </remarks>
 ''' <param name="a_text">    [String] The text to get the character from. </param>
@@ -53,13 +88,18 @@ Public Function EndsWith(ByVal a_text As String, ByVal a_endText As String, _
 End Function
 
 ''' <summary>   Creates a new escape sequence. </summary>
-''' <param name="a_value">         [String] The value., e.g., '/n'. </param>
-''' <param name="a_replacement">   [String] The replacement value, e.g., <see cref="VBA.VbNewLine"/>. </param>
+''' <remarks>   Escape sequences are haracter combinations consisting of a backslash (\) followed by a letter
+''' or by a combination of digits. Escape sequences are used to represent a newline character, single quotation mark,
+''' or certain other characters in a character constant. In C#, an escape sequence is regarded as a single character
+''' and is therefore valid as a character constant.
+''' </remarks>
+''' <param name="a_value">     [String] The value., e.g., '/r'. </param>
+''' <param name="a_literal">   [String] The Literal value, e.g., <see cref="VBA.VbCr"/>. </param>
 ''' <returns>   [<see cref=""EscapeSequence/>]. </returns>
-Public Function EscapeSequence(ByVal a_value As String, ByVal a_replacement As String) As EscapeSequence
+Public Function EscapeSequence(ByVal a_value As String, ByVal a_literal As String) As EscapeSequence
     Dim p_escapeSequence As New EscapeSequence
     p_escapeSequence.Value = a_value
-    p_escapeSequence.Replacement = a_replacement
+    p_escapeSequence.Literal = a_literal
     Set EscapeSequence = p_escapeSequence
 End Function
 
@@ -72,18 +112,63 @@ Public Function EscapeSequences() As Collection
     If p_escapes Is Nothing Then
         Dim p_value As String
         Set p_escapes = New Collection
-        p_value = "\n": p_escapes.Add Me.EscapeSequence(p_value, VBA.vbNewLine), p_value ' new line
-        p_value = "\q": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(34)), p_value ' quote
-        p_value = "\t": p_escapes.Add Me.EscapeSequence(p_value, VBA.vbTab), p_value    ' tab
         p_value = "\a": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(7)), p_value  ' alert, bell
         p_value = "\b": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(8)), p_value  ' backspace
+        p_value = "\t": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(9)), p_value  ' tab
+        p_value = "\n": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(10)), p_value ' new line
         p_value = "\v": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(11)), p_value ' vertical tab
         p_value = "\f": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(12)), p_value ' From Feed
         p_value = "\r": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(13)), p_value ' CR
+        p_value = "\q": p_escapes.Add Me.EscapeSequence(p_value, VBA.Chr$(34)), p_value ' quote
     End If
         
     Set EscapeSequences = p_escapes
     
+End Function
+
+''' <remarks>   Inserts escape sequences in place of their literal representation. </remarks>
+''' <param name="a_original">   [String] The original string. </param>
+''' <returns>   [String]. <returns>
+Function InsertEscapeSequences(ByVal a_original As String) As String
+
+    Dim p_escape As EscapeSequence
+    Dim p_escapes As Collection: Set p_escapes = Me.EscapeSequences
+    
+    For Each p_escape In p_escapes
+        
+        If Me.StringContains(a_original, p_escape.Literal) Then _
+            a_original = Replace(a_original, p_escape.Literal, p_escape.Value)
+
+    Next
+    
+    InsertEscapeSequences = a_original
+    
+End Function
+
+''' <remarks>   Replace escape sequences with their literal representation. </remarks>
+''' <param name="a_original">   [String] The original string. </param>
+''' <returns>   [String]. <returns>
+Function ReplaceEscapeSequences(ByVal a_original As String) As String
+
+    If Me.StringContains(a_original, "\") Then
+    
+        Dim p_escape As EscapeSequence
+        Dim p_escapes As Collection: Set p_escapes = Me.EscapeSequences
+        
+        For Each p_escape In p_escapes
+            
+            If Me.StringContains(a_original, p_escape.Value) Then _
+                a_original = Replace(a_original, p_escape.Value, p_escape.Literal)
+    
+            If Not Me.StringContains(a_original, "\") Then Exit For
+        
+        Next
+    
+    End If
+
+    ReplaceEscapeSequences = a_original
+   
+
 End Function
 
 ''' <remarks>   Inserts or adds a string to an existing string at the specified position. </remarks>
@@ -233,9 +318,9 @@ End Function
 ''' <summary>   Implements the .NET String.Format(). </summary>
 ''' <remarks>   <see href="https://stackoverflow.com/questions/14534360/implementing-string-format-in-vb6"/></remarks>
 ''' <param name="a_format">   [String] The format string. </param>
-''' <param name="a_p_values">   [Variant, ParamArray] The parameter p_values matching the
+''' <param name="a_values">   [Variant, ParamArray] The parameter p_values matching the
 '''                           <ParamRef name="a_format"/>. </param>
-Public Function StringFormat(a_format As String, ParamArray a_p_values()) As String
+Public Function StringFormat(a_format As String, ParamArray a_values()) As String
 
     Const p_procedureName As String = "StringFormat"
 
@@ -251,7 +336,7 @@ Public Function StringFormat(a_format As String, ParamArray a_p_values()) As Str
     ' function which argument too is a paramter array.
 
     Dim p_values As Variant
-    p_values = CoreExtensions.UnboxParameterArray(a_p_values)
+    p_values = CoreExtensions.UnboxParameterArray(a_values)
     
 
     ' use SPACE as default padding character
@@ -329,6 +414,7 @@ Public Function StringFormat(a_format As String, ParamArray a_p_values()) As Str
     Dim i As Integer, v As String, p As String 'i: iterator; v: value; p: placeholder
     Dim alignmentGroup As String, alignmentSpecifier As String
     Dim formattedValue As String, alignmentPadding As Integer
+    Dim p_value As Variant
 
     ' iterate regex matches (each match is a placeholder):
     
@@ -344,8 +430,10 @@ Public Function StringFormat(a_format As String, ParamArray a_p_values()) As Str
             cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                 TypeName(Me) & "." & p_procedureName, _
                 " Specified index " & CStr(p) & " exceeds " & CStr(uniqueCount - 1) & "."
-            
+        
+        p_value = p_values(p)
         v = p_values(p)
+        
 
         'get the alignment specifier if it is specified:
         alignmentGroup = thisMatch.SubMatches(2)
@@ -360,15 +448,16 @@ Public Function StringFormat(a_format As String, ParamArray a_p_values()) As Str
             Dim formatGroup As String, precisionSpecifier As Integer
             Dim formatSpecifier As String, precisionString As String
 
-            'get the string between ":" and "}":
+            ' get the string between ":" and "}":
             formatGroup = Mid$(thisString, InStr(1, thisString, ":") + 1, (LenB(thisString) / 2) - 2)
             formatGroup = Left$(formatGroup, LenB(formatGroup) / 2 - 1)
 
             precisionString = Right$(formatGroup, LenB(formatGroup) / 2 - 1)
             formatSpecifier = Mid$(thisString, InStr(1, thisString, ":") + 1, 1)
 
-            'applicable formatting depends on the type of the value (yes, GOTO!!):
+            ' applicable formatting depends on the type of the value (yes, GOTO!!):
             If TypeName(p_values(p)) = "Date" Then GoTo DateTimeFormatSpecifiers
+            
             If v = vbNullString Then GoTo ApplyStringFormat
 
 NumberFormatSpecifiers:
@@ -530,18 +619,20 @@ NumberFormatSpecifiers:
 
                 Case "X", "x" 'HEX format. Formats a string as a Hexadecimal value.
                     
-                    'Precision specifier determines number of total digits.
-                    'Returned string is prefixed with "&H" to specify Hex.
+                    ' Precision specifier determines number of total digits.
+                    ' Returned string is prefixed with "&x" to specify Hex.
 
-                    v = Hex(v)
+                    ' dh: original code: v = Hex(v)
+                    v = Hex$(p_value)
                     precisionSpecifier = CInt(precisionString)
 
                     If LenB(precisionString) > 0 Then 'precision here stands for left padding
-                        v = Right$(String$(precisionSpecifier, "0") & v, IIf(precisionSpecifier = 0, Len(v), precisionSpecifier))
+                        v = Right$(String$(precisionSpecifier, "0") & v, _
+                                   IIf(precisionSpecifier = 0, Len(v), precisionSpecifier))
                     End If
 
-                    'add C# hex specifier, apply specified casing:
-                    '(VB6 hex specifier would cause Format() to reverse the formatting):
+                    ' add C# hex specifier, apply specified casing:
+                    ' (VB6 hex specifier would cause Format() to reverse the formatting):
                     v = "0x" & IIf(formatSpecifier = "X", UCase$(v), LCase$(v))
 
                 Case Else
@@ -663,7 +754,7 @@ checkEscapes:
     For Each p_escape In p_escapes
         
         If Me.StringContains(p_returnValue, p_escape.Value) Then _
-            p_returnValue = Replace(p_returnValue, p_escape.Value, p_escape.Replacement)
+            p_returnValue = Replace(p_returnValue, p_escape.Value, p_escape.Literal)
 
         If Not Me.StringContains(p_returnValue, "\") Then GoTo normalExit
     
