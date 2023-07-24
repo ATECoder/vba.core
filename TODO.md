@@ -1,10 +1,68 @@
 # TODO
 
-## Cleanup
+    Dim p_escape As EscapeSequence
+    Dim p_escapes As Collection: Set p_escapes = Me.EscapeSequences
+    
+    For Each p_escape In p_escapes
+        
+        If Me.StringContains(p_returnValue, p_escape.Value) Then _
+            p_returnValue = Replace(p_returnValue, p_escape.Value, p_escape.Literal)
+
+        If Not Me.StringContains(p_returnValue, "\") Then GoTo normalExit
+    
+    Next
+
+    If Me.StringContains(a_original, "\") Then
+    
+        ' replace "ASCII (oct)" escape sequence
+    
+        Set p_regex = New VBScript_RegExp_55.RegExp
+        p_regex.Pattern = "\\(\d{3})"
+        p_regex.IgnoreCase = True
+        p_regex.Global = True
+        Set p_matches = p_regex.Execute(a_format)
+    
+        Dim char As Long
+        If p_matches.count <> 0 Then
+            For Each p_match In p_matches
+                p = p_match.SubMatches(0)
+                '"p" contains the octal number representing the ASCII code we're after:
+                p = "&O" & p 'prepend octal prefix
+                char = CLng(p)
+                p_returnValue = Replace(p_returnValue, p_match.Value, Chr$(char))
+            Next
+        End If
+    
+    End If
+
+    If Me.StringContains(a_original, "\") Then
+    
+        ' replace "ASCII (hex)" escape sequence
+        Set p_regex = New VBScript_RegExp_55.RegExp
+        p_regex.Pattern = "\\x(\w{2})"
+        p_regex.IgnoreCase = True
+        p_regex.Global = True
+        Set p_matches = p_regex.Execute(a_format)
+        
+        If p_matches.count <> 0 Then
+            For Each p_match In p_matches
+                p = p_match.SubMatches(0)
+                '"p" contains the hex value representing the ASCII code we're after:
+                p = "&H" & p 'prepend hex prefix
+                char = CLng(p)
+                p_returnValue = Replace(p_returnValue, p_match.Value, Chr$(char))
+            Next
+        End If
+    
+    End If
+
+
+
+## Code
 
 ## Tests
-string contains
-string contains any
+* string format
+* string contains any
 
 ## Fixes
 

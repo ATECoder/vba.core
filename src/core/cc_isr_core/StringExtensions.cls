@@ -165,6 +165,61 @@ Function ReplaceEscapeSequences(ByVal a_original As String) As String
         Next
     
     End If
+    
+    Dim char As Long
+    Dim p_regex As VBScript_RegExp_55.RegExp
+    Dim p_matches As VBScript_RegExp_55.MatchCollection
+    Dim p_match As VBScript_RegExp_55.Match
+    Dim p_submatch As String
+    
+    If Me.StringContains(a_original, "\") Then
+    
+        ' replace "ASCII (oct)" escape sequence
+    
+        Set p_regex = New VBScript_RegExp_55.RegExp
+        p_regex.Pattern = "\\(\d{3})"
+        p_regex.IgnoreCase = True
+        p_regex.Global = True
+        Set p_matches = p_regex.Execute(a_original)
+    
+        If p_matches.count <> 0 Then
+            For Each p_match In p_matches
+            
+                p_submatch = p_match.SubMatches(0)
+                
+                ' p_submatch contains the octal number representing the ASCII code we're after:
+                
+                p_submatch = "&O" & p_submatch ' prepend octal prefix
+                char = CLng(p_submatch)
+                a_original = Replace(a_original, p_match.Value, Chr$(char))
+            Next
+        End If
+    
+    End If
+
+    If Me.StringContains(a_original, "\") Then
+    
+        ' replace "ASCII (hex)" escape sequence
+        
+        Set p_regex = New VBScript_RegExp_55.RegExp
+        p_regex.Pattern = "\\x(\w{2})"
+        p_regex.IgnoreCase = True
+        p_regex.Global = True
+        Set p_matches = p_regex.Execute(a_original)
+        
+        If p_matches.count <> 0 Then
+            For Each p_match In p_matches
+                p_submatch = p_match.SubMatches(0)
+                
+                ' p_submatch contains the hex value representing the ASCII code we're after:
+                
+                p_submatch = "&H" & p_submatch ' prepend hex prefix
+                char = CLng(p_submatch)
+                a_original = Replace(a_original, p_match.Value, Chr$(char))
+            Next
+        End If
+    
+    End If
 
     ReplaceEscapeSequences = a_original
    
@@ -338,69 +393,75 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
     Dim p_values As Variant
     p_values = CoreExtensions.UnboxParameterArray(a_values)
     
-
     ' use SPACE as default padding character
+    
     If This.PaddingCharacter = VBA.vbNullString Then This.PaddingCharacter = Chr$(32)
 
-    'figure out number of passed p_values:
+    ' figure out number of passed p_values:
+    
     p_valuesCount = UBound(p_values) + 1
 
-    Dim regex As RegExp
-    Dim matches As MatchCollection
-    Dim thisMatch As Match
-    Dim thisString As String
-    Dim thisFormat As String
+    Dim p_regex As VBScript_RegExp_55.RegExp
+    Dim p_matches As VBScript_RegExp_55.MatchCollection
+    Dim p_match As VBScript_RegExp_55.Match
+    Dim p_matchValue As String
+    Dim p_valueFormat As String
 
     ' when a_format starts with "@", escapes are not replaced
     ' (string is treated as a literal string with placeholders)
     
-    Dim useLiteral As Boolean
-    Dim escapeHex As Boolean 'indicates whether HEX specifier "0x" is to be escaped or not
+    Dim p_useLiteral As Boolean
+    
+    ' indicates whether HEX specifier "0x" is to be escaped or not
+    ' dh: not used
+    Dim p_escapeHex As Boolean
     
     ' validate a_format:
     
-    Set regex = New RegExp
-    regex.Pattern = "{({{)*(\w+)(,-?\d+)?(:[^}]+)?}(}})*"
-    regex.IgnoreCase = True
-    regex.Global = True
-    Set matches = regex.Execute(a_format)
+    Set p_regex = New VBScript_RegExp_55.RegExp
+    p_regex.Pattern = "{({{)*(\w+)(,-?\d+)?(:[^}]+)?}(}})*"
+    p_regex.IgnoreCase = True
+    p_regex.Global = True
+    Set p_matches = p_regex.Execute(a_format)
 
-    ' determine if p_valuesCount matches number of unique regex matches:
+    ' determine if parameter array argument count matches number of unique regex matches:
+    
     Dim uniqueCount As Integer
     Dim tmpCSV As String
-    For Each thisMatch In matches
-        If Not Me.StringContains(tmpCSV, thisMatch.SubMatches(1)) Then
+    For Each p_match In p_matches
+        If Not Me.StringContains(tmpCSV, p_match.SubMatches(1)) Then
             uniqueCount = uniqueCount + 1
-            tmpCSV = tmpCSV & thisMatch.SubMatches(1) & ","
+            tmpCSV = tmpCSV & p_match.SubMatches(1) & ","
         End If
     Next
 
     ' unique indices count must match p_valuesCount:
     
-    If matches.count > 0 And uniqueCount <> p_valuesCount Then _
+    If p_matches.count > 0 And uniqueCount <> p_valuesCount Then _
         cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                 TypeName(Me) & "." & p_procedureName & _
                 " Unique count " & CStr(uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
                 
-    useLiteral = Me.StartsWith(a_format, "@")
+    p_useLiteral = Me.StartsWith(a_format, "@")
 
-    'remove the "@" literal specifier
-    If useLiteral Then a_format = Right$(a_format, Len(a_format) - 1)
+    ' remove the "@" literal specifier
+    
+    If p_useLiteral Then a_format = Right$(a_format, Len(a_format) - 1)
 
-    If Not useLiteral And Me.StringContains(a_format, "\\") Then _
+    If Not p_useLiteral And Me.StringContains(a_format, "\\") Then _
         a_format = Replace(a_format, "\\", Chr$(27))
 
     If Me.StringContains(a_format, "\\") Then _
         a_format = Replace(a_format, "\\", Chr$(27))
 
-    If matches.count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
+    If p_matches.count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
         
         ' only a_format was specified: skip to checking escape sequences:
         
         p_returnValue = a_format
         GoTo checkEscapes
         
-    ElseIf UBound(p_values) = -1 And matches.count > 0 Then
+    ElseIf UBound(p_values) = -1 And p_matches.count > 0 Then
        
         cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
             TypeName(Me) & "." & p_procedureName, " Argument name: 'p_values'."
@@ -411,18 +472,19 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
 
     'dissect a_format:
 
-    Dim i As Integer, v As String, p As String 'i: iterator; v: value; p: placeholder
-    Dim alignmentGroup As String, alignmentSpecifier As String
-    Dim formattedValue As String, alignmentPadding As Integer
+    Dim i As Integer, p_stringValue As String, p As String 'i: iterator; v: value; p: placeholder
+    Dim p_alignmentGroup As String, p_alignmentSpecifier As String
+    Dim p_formattedValue As String, p_alignmentPadding As Integer
     Dim p_value As Variant
 
     ' iterate regex matches (each match is a placeholder):
     
-    For i = 0 To matches.count - 1
+    For i = 0 To p_matches.count - 1
 
         ' get the placeholder specified index:
-        Set thisMatch = matches(i)
-        p = thisMatch.SubMatches(1)
+        
+        Set p_match = p_matches(i)
+        p = p_match.SubMatches(1)
 
         ' if specified index (0-based) > uniqueCount (1-based), something's wrong:
         
@@ -432,141 +494,179 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
                 " Specified index " & CStr(p) & " exceeds " & CStr(uniqueCount - 1) & "."
         
         p_value = p_values(p)
-        v = p_values(p)
+        p_stringValue = p_values(p)
         
+        ' get the alignment specifier if it is specified:
+        
+        p_alignmentGroup = p_match.SubMatches(2)
+        If p_alignmentGroup <> vbNullString Then _
+            p_alignmentSpecifier = Right$(p_alignmentGroup, LenB(p_alignmentGroup) / 2 - 1)
 
-        'get the alignment specifier if it is specified:
-        alignmentGroup = thisMatch.SubMatches(2)
-        If alignmentGroup <> vbNullString Then _
-            alignmentSpecifier = Right$(alignmentGroup, LenB(alignmentGroup) / 2 - 1)
+        ' get the format specifier if it is specified:
+        
+        p_matchValue = p_match.Value
+        If Me.StringContains(p_matchValue, ":") Then
 
-
-        'get the format specifier if it is specified:
-        thisString = thisMatch.Value
-        If Me.StringContains(thisString, ":") Then
-
-            Dim formatGroup As String, precisionSpecifier As Integer
-            Dim formatSpecifier As String, precisionString As String
+            Dim p_formatGroup As String, p_precisionSpecifier As Integer
+            Dim p_formatSpecifier As String, p_precisionString As String
 
             ' get the string between ":" and "}":
-            formatGroup = Mid$(thisString, InStr(1, thisString, ":") + 1, (LenB(thisString) / 2) - 2)
-            formatGroup = Left$(formatGroup, LenB(formatGroup) / 2 - 1)
+            
+            p_formatGroup = Mid$(p_matchValue, InStr(1, p_matchValue, ":") + 1, (LenB(p_matchValue) / 2) - 2)
+            p_formatGroup = Left$(p_formatGroup, LenB(p_formatGroup) / 2 - 1)
 
-            precisionString = Right$(formatGroup, LenB(formatGroup) / 2 - 1)
-            formatSpecifier = Mid$(thisString, InStr(1, thisString, ":") + 1, 1)
+            p_precisionString = Right$(p_formatGroup, LenB(p_formatGroup) / 2 - 1)
+            p_formatSpecifier = Mid$(p_matchValue, InStr(1, p_matchValue, ":") + 1, 1)
 
             ' applicable formatting depends on the type of the value (yes, GOTO!!):
+            
             If TypeName(p_values(p)) = "Date" Then GoTo DateTimeFormatSpecifiers
             
-            If v = vbNullString Then GoTo ApplyStringFormat
+            If p_stringValue = vbNullString Then GoTo ApplyStringFormat
 
 NumberFormatSpecifiers:
-            If precisionString <> vbNullString And Not IsNumeric(precisionString) Then _
+
+            If p_precisionString <> vbNullString And Not IsNumeric(p_precisionString) Then _
                 cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                     TypeName(Me) & "." & p_procedureName, _
-                    " Preceision string '" & precisionString & "' is not numeric."
+                    " Preceision string '" & p_precisionString & "' is not numeric."
 
-            If precisionString = vbNullString Then precisionString = "0"
+            If p_precisionString = vbNullString Then p_precisionString = "0"
 
-            Select Case formatSpecifier
+            Select Case p_formatSpecifier
 
-                Case "C", "c" 'CURRENCY format, formats string as currency.
-                    'Precision specifier determines number of decimal digits.
-                    'This implementation ignores regional settings
-                    '(hard-coded group separator, decimal separator and currency sign).
 
-                    If precisionString = "0" Then precisionString = "2"
+                ' CURRENCY format, formats string as currency.
+                
+                Case "C", "c"
+                
+                    ' Precision specifier determines number of decimal digits.
+                    ' This implementation ignores regional settings
+                    ' (hard-coded group separator, decimal separator and currency sign).
 
-                    precisionSpecifier = CInt(precisionString)
-                    thisFormat = "#,##0.$"
+                    If p_precisionString = "0" Then p_precisionString = "2"
 
-                    'if a non-zero precision is specified...
-                    thisFormat = Replace$(thisFormat, ".", "." & String$(precisionSpecifier, Chr$(48)))
+                    p_precisionSpecifier = CInt(p_precisionString)
+                    p_valueFormat = "#,##0.$"
 
-                Case "D", "d" 'DECIMAL format, formats string as integer number.
+                    ' if a non-zero precision is specified...
                     
-                    'Precision specifier determines number of digits in returned string.
-
-                    precisionSpecifier = CInt(precisionString)
-                    thisFormat = "0"
-                    thisFormat = Right$(String$(precisionSpecifier, "0") & thisFormat, _
-                        IIf(precisionSpecifier = 0, Len(thisFormat), precisionSpecifier))
+                    p_valueFormat = Replace$(p_valueFormat, ".", "." & String$(p_precisionSpecifier, Chr$(48)))
 
 
-                Case "E", "e" 'EXPONENTIAL NOTATION format (aka "Scientific Notation")
-                    'Precision specifier determines number of decimals in returned string.
-                    'This implementation ignores regional settings'
-                    '(hard-coded decimal separator).
+                ' DECIMAL format, formats string as integer number.
+                
+                Case "D", "d"
+                    
+                    ' Precision specifier determines number of digits in returned string.
+
+                    p_precisionSpecifier = CInt(p_precisionString)
+                    p_valueFormat = "0"
+                    p_valueFormat = Right$(String$(p_precisionSpecifier, "0") & p_valueFormat, _
+                        IIf(p_precisionSpecifier = 0, Len(p_valueFormat), p_precisionSpecifier))
 
 
-                    precisionSpecifier = CInt(precisionString)
-                    thisFormat = "0.00000#" & formatSpecifier & "-#" 'defaults to 6 decimals
+                ' EXPONENTIAL NOTATION format (aka "Scientific Notation")
 
-                    If LenB(formatGroup) > 2 And precisionSpecifier > 0 Then
-                        'if a non-zero precision is specified...
-                        thisFormat = "0." & String$(precisionSpecifier - 1, Chr$(48)) & "#" & formatSpecifier & "-#"
+                Case "E", "e"
+                
+                    ' Precision specifier determines number of decimals in returned string.
+                    ' This implementation ignores regional settings'
+                    ' (hard-coded decimal separator).
 
-                    ElseIf VBA.LenB(formatGroup) > 2 And precisionSpecifier = 0 Then
+                    p_precisionSpecifier = CInt(p_precisionString)
+                    p_valueFormat = "0.00000#" & p_formatSpecifier & "-#" 'defaults to 6 decimals
+
+                    If LenB(p_formatGroup) > 2 And p_precisionSpecifier > 0 Then
+                        
+                        ' if a non-zero precision is specified...
+                        
+                        p_valueFormat = "0." & String$(p_precisionSpecifier - 1, Chr$(48)) & "#" & p_formatSpecifier & "-#"
+
+                    ElseIf VBA.LenB(p_formatGroup) > 2 And p_precisionSpecifier = 0 Then
                         
                         cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
                             TypeName(Me) & "." & p_procedureName, _
-                            " Format group '" & formatGroup & "' length " & CStr(VBA.LenB(formatGroup)) & _
+                            " Format group '" & p_formatGroup & "' length " & CStr(VBA.LenB(p_formatGroup)) & _
                             " is greater than 2 and the precision specifier is 0."
                     
                     End If
 
+                ' FIXED-POINT format
 
-                Case "F", "f" 'FIXED-POINT format
+                Case "F", "f"
                     
-                    'Precision specifier determines number of decimals in returned string.
-                    'This implementation ignores regional settings'
-                    '(hard-coded decimal separator).
+                    ' Precision specifier determines number of decimals in returned string.
+                    ' This implementation ignores regional settings'
+                    ' (hard-coded decimal separator).
 
-                    precisionSpecifier = CInt(precisionString)
-                    thisFormat = "0"
-                    If LenB(formatGroup) > 2 And precisionSpecifier > 0 Then
-                        'if a non-zero precision is specified...
-                        thisFormat = (thisFormat & ".") & String$(precisionSpecifier, Chr$(48))
+                    p_precisionSpecifier = CInt(p_precisionString)
+                    p_valueFormat = "0"
+                    If LenB(p_formatGroup) > 2 And p_precisionSpecifier > 0 Then
+                        
+                        ' if a non-zero precision is specified...
+                        
+                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, Chr$(48))
+                    
                     Else
-                        'no precision specified - default to 2 decimals:
-                        thisFormat = "0.00"
+                        
+                        ' no precision specified - default to 2 decimals:
+                        
+                        p_valueFormat = "0.00"
+                        
                     End If
 
 
-                    Case "G", "g" 'GENERAL format (recursive)
-                    'returns the shortest of either FIXED-POINT or SCIENTIFIC formats in case of a Double.
-                    'returns DECIMAL format in case of a Integer or Long.
+                ' GENERAL format (recursive)
+                
+                Case "G", "g"
+                    
+                    ' returns the shortest of either FIXED-POINT or SCIENTIFIC formats in case of a Double.
+                    ' returns DECIMAL format in case of a Integer or Long.
 
-                    Dim eNotation As String, ePower As Integer, specifier As String
-                    precisionSpecifier = IIf(CInt(precisionString) > 0, CInt(precisionString), _
-                        IIf(Me.StringContains(v, "."), Len(v) - InStr(1, v, "."), 0))
+                    Dim p_eNotation As String, p_ePower As Integer, p_specifier As String
+                    
+                    p_precisionSpecifier = IIf(CInt(p_precisionString) > 0, CInt(p_precisionString), _
+                        IIf(Me.StringContains(p_stringValue, "."), Len(p_stringValue) - InStr(1, p_stringValue, "."), 0))
 
-                    'track character case of formatSpecifier:
-                    specifier = IIf(formatSpecifier = "G", "D", "d")
+                    ' track character case of formatSpecifier:
+                    
+                    p_specifier = IIf(p_formatSpecifier = "G", "D", "d")
 
                     If TypeName(p_values(p)) = "Integer" Or TypeName(p_values(p)) = "Long" Then
-                        'Integer types: use {0:D} (recursive call):
-                        formattedValue = StringFormat("{0:" & specifier & "}", p_values(p))
+                        
+                        ' Integer types: use {0:D} (recursive call):
+                        
+                        p_formattedValue = StringFormat("{0:" & p_specifier & "}", p_values(p))
 
                     ElseIf TypeName(p_values(p)) = "Double" Then
-                        'Non-integer types: use {0:E}
-                        specifier = IIf(formatSpecifier = "G", "E", "e")
+                        
+                        ' Non-integer types: use {0:E}
+                        
+                        p_specifier = IIf(p_formatSpecifier = "G", "E", "e")
 
-                        'evaluate the exponential notation value (recursive call):
-                        eNotation = StringFormat("{0:" & specifier & "}", v)
+                        ' evaluate the exponential notation value (recursive call):
+                        
+                        p_eNotation = StringFormat("{0:" & p_specifier & "}", p_stringValue)
 
-                        'get the power of eNotation:
-                        ePower = Mid$(eNotation, InStr(1, UCase$(eNotation), "E-") + 1, Len(eNotation) - InStr(1, UCase$(eNotation), "E-"))
+                        ' get the power of eNotation:
+                        
+                        p_ePower = Mid$(p_eNotation, InStr(1, UCase$(p_eNotation), "E-") + 1, Len(p_eNotation) - InStr(1, UCase$(p_eNotation), "E-"))
 
-                        If ePower > -5 And Abs(ePower) < precisionSpecifier Then
-                            'use {0:F} when ePower > -5 and abs(ePower) < precisionSpecifier:
-                            'evaluate the floating-point value (recursive call):
-                             specifier = IIf(formatSpecifier = "G", "F", "f")
-                             formattedValue = StringFormat("{0:" & formatSpecifier & _
-                                 IIf(precisionSpecifier <> 0, precisionString, vbNullString) & "}", p_values(p))
+                        If p_ePower > -5 And Abs(p_ePower) < p_precisionSpecifier Then
+                            
+                            ' use {0:F} when ePower > -5 and abs(ePower) < precisionSpecifier:
+                            ' evaluate the floating-point value (recursive call):
+                            
+                            p_specifier = IIf(p_formatSpecifier = "G", "F", "f")
+                            p_formattedValue = StringFormat("{0:" & p_formatSpecifier & _
+                                 IIf(p_precisionSpecifier <> 0, p_precisionString, vbNullString) & "}", p_values(p))
                         Else
-                            'fallback to {0:E} if previous rule didn't apply:
-                            formattedValue = eNotation
+                            
+                            ' fallback to {0:E} if previous rule didn't apply:
+                            
+                            p_formattedValue = p_eNotation
+                        
                         End If
 
                     End If
@@ -574,77 +674,101 @@ NumberFormatSpecifiers:
                     GoTo AlignFormattedValue 'Skip the "ApplyStringFormat" step, it's applied already.
 
 
-                Case "N", "n" 'NUMERIC format, formats string as an integer or decimal number.
+                ' NUMERIC format, formats string as an integer or decimal number.
+                
+                Case "N", "n"
                     
-                    'Precision specifier determines number of decimal digits.
-                    'This implementation ignores regional settings'
-                    '(hard-coded group and decimal separators).
+                    ' Precision specifier determines number of decimal digits.
+                    ' This implementation ignores regional settings'
+                    ' (hard-coded group and decimal separators).
 
-                    precisionSpecifier = CInt(precisionString)
-                    If LenB(formatGroup) > 2 And precisionSpecifier > 0 Then
-                        'if a non-zero precision is specified...
-                        thisFormat = "#,##0"
-                        thisFormat = (thisFormat & ".") & String$(precisionSpecifier, Chr$(48))
+                    p_precisionSpecifier = CInt(p_precisionString)
+                    If LenB(p_formatGroup) > 2 And p_precisionSpecifier > 0 Then
+                        
+                        ' if a non-zero precision is specified...
+                        
+                        p_valueFormat = "#,##0"
+                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, Chr$(48))
 
-                    Else 'only the "D" is specified
-                        thisFormat = "#,##0"
+                    Else
+                        ' only the "D" is specified
+                        
+                        p_valueFormat = "#,##0"
                     End If
 
-                Case "P", "p" 'PERCENT format. Formats string as a percentage.
+
+                ' PERCENT format. Formats string as a percentage.
+                
+                Case "P", "p"
                     
-                    'Value is multiplied by 100 and displayed with a percent symbol.
-                    'Precision specifier determines number of decimal digits.
+                    ' Value is multiplied by 100 and displayed with a percent symbol.
+                    ' Precision specifier determines number of decimal digits.
 
-                    thisFormat = "#,##0%"
-                    precisionSpecifier = CInt(precisionString)
-                    If LenB(formatGroup) > 2 And precisionSpecifier > 0 Then
+                    p_valueFormat = "#,##0%"
+                    p_precisionSpecifier = CInt(p_precisionString)
+                    If LenB(p_formatGroup) > 2 And p_precisionSpecifier > 0 Then
+                        
                         'if a non-zero precision is specified...
-                        thisFormat = "#,##0"
-                        thisFormat = (thisFormat & ".") & String$(precisionSpecifier, Chr$(48))
+                        
+                        p_valueFormat = "#,##0"
+                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, Chr$(48))
 
-                    Else 'only the "P" is specified
-                        thisFormat = "#,##0"
+                    Else
+                        
+                        ' only the "P" is specified
+                        p_valueFormat = "#,##0"
+                    
                     End If
 
-                    'Append the percentage sign to the format string:
-                    thisFormat = thisFormat & "%"
-
-                Case "R", "r" 'ROUND-TRIP format (a string that can round-trip to an identical number)
+                    ' Append the percentage sign to the format string:
                     
-                    'example: ?StringFormat("{0:R}", 0.0000000001141596325677345362656)
-                    '         ...returns "0.000000000114159632567735"
+                    p_valueFormat = p_valueFormat & "%"
 
-                    'convert value to a Double (chop off overflow digits):
-                    v = CDbl(v)
 
-                Case "X", "x" 'HEX format. Formats a string as a Hexadecimal value.
+                ' ROUND-TRIP format (a string that can round-trip to an identical number)
+                
+                Case "R", "r"
+                    
+                    ' example: ?StringFormat("{0:R}", 0.0000000001141596325677345362656)
+                    '          ...returns "0.000000000114159632567735"
+
+                    ' convert value to a Double (chop off overflow digits):
+                    
+                    p_stringValue = CDbl(p_stringValue)
+
+                
+                ' HEX format. Formats a string as a Hexadecimal value.
+                
+                Case "X", "x"
                     
                     ' Precision specifier determines number of total digits.
                     ' Returned string is prefixed with "&x" to specify Hex.
 
-                    ' dh: original code: v = Hex(v)
-                    v = Hex$(p_value)
-                    precisionSpecifier = CInt(precisionString)
+                    p_stringValue = Hex$(p_value)
+                    p_precisionSpecifier = CInt(p_precisionString)
 
-                    If LenB(precisionString) > 0 Then 'precision here stands for left padding
-                        v = Right$(String$(precisionSpecifier, "0") & v, _
-                                   IIf(precisionSpecifier = 0, Len(v), precisionSpecifier))
+                    If LenB(p_precisionString) > 0 Then 'precision here stands for left padding
+                        p_stringValue = Right$(String$(p_precisionSpecifier, "0") & p_stringValue, _
+                                   IIf(p_precisionSpecifier = 0, Len(p_stringValue), p_precisionSpecifier))
                     End If
 
                     ' add C# hex specifier, apply specified casing:
                     ' (VB6 hex specifier would cause Format() to reverse the formatting):
-                    v = "0x" & IIf(formatSpecifier = "X", UCase$(v), LCase$(v))
+                    
+                    p_stringValue = "0x" & IIf(p_formatSpecifier = "X", UCase$(p_stringValue), LCase$(p_stringValue))
 
                 Case Else
 
-                    If IsNumeric(formatSpecifier) And Val(formatGroup) = 0 Then
-                        formatSpecifier = formatGroup
-                        v = Format(v, formatGroup)
+                    If IsNumeric(p_formatSpecifier) And Val(p_formatGroup) = 0 Then
+                        
+                        p_formatSpecifier = p_formatGroup
+                        p_stringValue = Format(p_stringValue, p_formatGroup)
+                    
                     Else
                         cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
                             TypeName(Me) & "." & p_procedureName, _
-                            " Format specifier '" & formatSpecifier & "' is not numeric" & _
-                            " or value of format group '" & Val(formatGroup) & "' is not zero."
+                            " Format specifier '" & p_formatSpecifier & "' is not numeric" & _
+                            " or value of format group '" & Val(p_formatGroup) & "' is not zero."
                     End If
             End Select
 
@@ -653,45 +777,77 @@ NumberFormatSpecifiers:
 
 DateTimeFormatSpecifiers:
                 
-            Select Case formatSpecifier
+            Select Case p_formatSpecifier
 
-                Case "c", "C" 'CUSTOM date/time format
+
+                ' CUSTOM date/time format
+                
+                Case "c", "C"
                     
                     'let VB Format() parse precision specifier as is:
-                    thisFormat = precisionString
+                    
+                    p_valueFormat = p_precisionString
 
-                Case "d" 'SHORT DATE format
-                    thisFormat = "ddddd"
 
-                Case "D" 'LONG DATE format
-                    thisFormat = "dddddd"
+                ' SHORT DATE format
+                
+                Case "d"
+                    
+                    p_valueFormat = "ddddd"
 
-                Case "f" 'FULL DATE format (short)
-                    thisFormat = "dddddd h:mm AM/PM"
 
-                Case "F" 'FULL DATE format (long)
-                    thisFormat = "dddddd ttttt"
+                ' LONG DATE format
+                Case "D"
+                
+                    p_valueFormat = "dddddd"
+
+
+                ' FULL DATE format (short)
+                
+                Case "f"
+                    
+                    p_valueFormat = "dddddd h:mm AM/PM"
+
+                
+                ' FULL DATE format (long)
+                Case "F"
+                
+                    p_valueFormat = "dddddd ttttt"
 
                 Case "g"
-                    thisFormat = "ddddd hh:mm AM/PM"
+                
+                    p_valueFormat = "ddddd hh:mm AM/PM"
 
                 Case "G"
-                    thisFormat = "ddddd ttttt"
+                
+                    p_valueFormat = "ddddd ttttt"
 
-                Case "s" 'SORTABLE DATETIME format
-                    thisFormat = "yyyy-mm-ddThh:mm:ss"
 
-                Case "t" 'SHORT TIME format
-                    thisFormat = "hh:mm AM/PM"
+                ' SORTABLE DATETIME format
+                
+                Case "s"
+                    
+                    p_valueFormat = "yyyy-mm-ddThh:mm:ss"
 
-                Case "T" 'LONG TIME format
-                    thisFormat = "ttttt"
+
+                ' SHORT TIME format
+                
+                Case "t"
+                    
+                    p_valueFormat = "hh:mm AM/PM"
+
+
+                ' LONG TIME format
+                
+                Case "T"
+                    
+                    p_valueFormat = "ttttt"
 
                 Case Else
                     
                     cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                         TypeName(Me) & "." & p_procedureName, _
-                        " Unknown format specifier '" & formatSpecifier & "'."
+                        " Unknown format specifier '" & p_formatSpecifier & "'."
                 
             End Select
             GoTo ApplyStringFormat
@@ -702,43 +858,45 @@ ApplyStringFormat:
             
         'apply computed format string:
         
-        formattedValue = Format(v, thisFormat)
+        p_formattedValue = Format(p_stringValue, p_valueFormat)
 
 AlignFormattedValue:
         
         'apply specified alignment specifier:
         
-        If alignmentSpecifier <> vbNullString Then
+        If p_alignmentSpecifier <> vbNullString Then
 
-            alignmentPadding = Abs(CInt(alignmentSpecifier))
-            If CInt(alignmentSpecifier) < 0 Then
+            p_alignmentPadding = Abs(CInt(p_alignmentSpecifier))
+            
+            If CInt(p_alignmentSpecifier) < 0 Then
+                
                 'negative: left-justified alignment
                 
-                If alignmentPadding - Len(formattedValue) > 0 Then _
-                    formattedValue = formattedValue & _
-                        String$(alignmentPadding - Len(formattedValue), This.PaddingCharacter)
+                If p_alignmentPadding - Len(p_formattedValue) > 0 Then _
+                    p_formattedValue = p_formattedValue & _
+                        String$(p_alignmentPadding - Len(p_formattedValue), This.PaddingCharacter)
             Else
                 'positive: right-justified alignment
                 
-                If alignmentPadding - Len(formattedValue) > 0 Then _
-                    formattedValue = String$(alignmentPadding - Len(formattedValue), This.PaddingCharacter) & formattedValue
+                If p_alignmentPadding - Len(p_formattedValue) > 0 Then _
+                    p_formattedValue = String$(p_alignmentPadding - Len(p_formattedValue), This.PaddingCharacter) & p_formattedValue
             End If
         
         End If
 
-        'Replace C# hex specifier with VB6 hex specifier,
-        'only if hex specifier was introduced in this function:
+        ' Replace C# hex specifier with VB6 hex specifier,
+        ' only if hex specifier was introduced in this function:
         
-        If (Not useLiteral And escapeHex) And Me.StringContains(formattedValue, "0x") Then _
-            formattedValue = Replace$(formattedValue, "0x", "&H")
+        If (Not p_useLiteral And p_escapeHex) And Me.StringContains(p_formattedValue, "0x") Then _
+            p_formattedValue = Replace$(p_formattedValue, "0x", "&H")
 
-        'replace all occurrences of placeholder {i} with their formatted p_values:
+        ' replace all occurrences of placeholder {i} with their formatted p_values:
         
-        p_returnValue = Replace(p_returnValue, thisString, formattedValue, count:=1)
+        p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, count:=1)
 
-        'reset before reiterating:
+        ' reset before reiterating:
         
-        thisFormat = vbNullString
+        p_valueFormat = vbNullString
     
     Next
 
@@ -746,62 +904,16 @@ checkEscapes:
 
     ' if there's no more backslashes, don't bother checking for the rest:
     
-    If useLiteral Or Not Me.StringContains(p_returnValue, "\") Then GoTo normalExit
+    If p_useLiteral Or Not Me.StringContains(p_returnValue, "\") Then GoTo normalExit
 
-    Dim p_escape As EscapeSequence
-    Dim p_escapes As Collection: Set p_escapes = Me.EscapeSequences
+    p_returnValue = ReplaceEscapeSequences(p_returnValue)
     
-    For Each p_escape In p_escapes
-        
-        If Me.StringContains(p_returnValue, p_escape.Value) Then _
-            p_returnValue = Replace(p_returnValue, p_escape.Value, p_escape.Literal)
-
-        If Not Me.StringContains(p_returnValue, "\") Then GoTo normalExit
-    
-    Next
-
-    ' replace "ASCII (oct)" escape sequence
-    
-    Set regex = New RegExp
-    regex.Pattern = "\\(\d{3})"
-    regex.IgnoreCase = True
-    regex.Global = True
-    Set matches = regex.Execute(a_format)
-
-    Dim char As Long
-    If matches.count <> 0 Then
-        For Each thisMatch In matches
-            p = thisMatch.SubMatches(0)
-            '"p" contains the octal number representing the ASCII code we're after:
-            p = "&O" & p 'prepend octal prefix
-            char = CLng(p)
-            p_returnValue = Replace(p_returnValue, thisMatch.Value, Chr$(char))
-        Next
-    End If
-
-    ' if there's no more backslashes, don't bother checking for the rest:
-    If Not Me.StringContains(p_returnValue, "\") Then GoTo normalExit
-
-    'replace "ASCII (hex)" escape sequence
-    Set regex = New RegExp
-    regex.Pattern = "\\x(\w{2})"
-    regex.IgnoreCase = True
-    regex.Global = True
-    Set matches = regex.Execute(a_format)
-
-    If matches.count <> 0 Then
-        For Each thisMatch In matches
-            p = thisMatch.SubMatches(0)
-            '"p" contains the hex value representing the ASCII code we're after:
-            p = "&H" & p 'prepend hex prefix
-            char = CLng(p)
-            p_returnValue = Replace(p_returnValue, thisMatch.Value, Chr$(char))
-        Next
-    End If
 
 normalExit:
-    If Not useLiteral And Me.StringContains(p_returnValue, Chr$(27)) Then _
+
+    If Not p_useLiteral And Me.StringContains(p_returnValue, Chr$(27)) Then _
         p_returnValue = Replace(p_returnValue, Chr$(27), "\")
+    
     StringFormat = p_returnValue
         
 End Function
