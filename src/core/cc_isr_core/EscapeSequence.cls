@@ -21,12 +21,12 @@ Attribute VB_Exposed = True
 Option Explicit
 
 ''' <summary>   Defines an escape sequence of a value and a Literal value. </summary>
-Private Type ThisType
+Private Type ThisData
     Value As String
     Literal As String
 End Type
 
-Private This As ThisType
+Private This As ThisData
 
 ''' <summary>   Gets the escape sequence value. </summary>
 ''' <value>   [String]. </value>

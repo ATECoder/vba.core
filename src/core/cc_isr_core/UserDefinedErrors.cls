@@ -19,7 +19,7 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type ThisType
+Private Type ThisData
     ErrorsDix As Dictionary
     WinsockCleanupError As UserDefinedError
     SocketCreationError As UserDefinedError
@@ -41,7 +41,7 @@ Private Type ThisType
     FormatError As UserDefinedError
 End Type
 
-Private This As ThisType
+Private This As ThisData
 
 ''' <summary>   Initializes the user defined errors. </summary>
 Private Sub Class_Initialize()

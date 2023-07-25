@@ -48,7 +48,7 @@ Public Function TrimRight(ByVal a_text As String, ByVal a_char As String) As Str
             Exit Do
         End If
         
-        a_text = Left(a_text, p_textLength - 1)
+        a_text = VBA.Left$(a_text, p_textLength - 1)
         p_textLength = VBA.Len(a_text)
     Loop
     

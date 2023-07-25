@@ -19,12 +19,12 @@ Attribute VB_Exposed = True
 '
 ' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Private Type ThisType
+Private Type ThisData
     PaddingCharacter As String
     EscapeSequences As Collection
 End Type
 
-Private This As ThisType
+Private This As ThisData
 
 Option Explicit
 
@@ -70,7 +70,7 @@ End Function
 ''' <returns>   [String]. <returns>
 Public Function CharAt(ByVal a_text As String, ByVal a_index As Integer) As String
     
-    CharAt = Mid(a_text, a_index, 1)
+    CharAt = VBA.Mid$(a_text, a_index, 1)
 
 End Function
 
@@ -83,7 +83,7 @@ End Function
 Public Function EndsWith(ByVal a_text As String, ByVal a_endText As String, _
                            Optional ByVal a_compareMethod As VbCompareMethod = VbCompareMethod.vbBinaryCompare) As Boolean
     
-    EndsWith = 0 = StrComp(Right(a_text, Len(a_endText)), a_endText, a_compareMethod)
+    EndsWith = 0 = VBA.StrComp(VBA.Right$(a_text, VBA.Len(a_endText)), a_endText, a_compareMethod)
 
 End Function
 
@@ -191,7 +191,7 @@ Function ReplaceEscapeSequences(ByVal a_original As String) As String
                 
                 p_submatch = "&O" & p_submatch ' prepend octal prefix
                 char = CLng(p_submatch)
-                a_original = Replace(a_original, p_match.Value, Chr$(char))
+                a_original = Replace(a_original, p_match.Value, VBA.Chr$(char))
             Next
         End If
     
@@ -215,7 +215,7 @@ Function ReplaceEscapeSequences(ByVal a_original As String) As String
                 
                 p_submatch = "&H" & p_submatch ' prepend hex prefix
                 char = CLng(p_submatch)
-                a_original = Replace(a_original, p_match.Value, Chr$(char))
+                a_original = Replace(a_original, p_match.Value, VBA.Chr$(char))
             Next
         End If
     
@@ -234,11 +234,11 @@ End Function
 Function Insert(ByVal a_original As String, a_added As String, a_position As Long) As String
 
     If a_position < 1 Then a_position = 1
-    If Len(a_original) < a_position Then a_position = Len(a_original) + 1
+    If VBA.Len(a_original) < a_position Then a_position = VBA.Len(a_original) + 1
 
-    Insert = Mid(a_original, 1, a_position - 1) _
-                        & a_added _
-                        & Mid(a_original, a_position, Len(a_original) - a_position + 1)
+    Insert = VBA.Mid$(a_original, 1, a_position - 1) _
+                      & a_added _
+                      & VBA.Mid$(a_original, a_position, VBA.Len(a_original) - a_position + 1)
 
 End Function
 
@@ -261,17 +261,17 @@ Public Function Pop(ByRef a_delimitedString As String, ByVal a_delimiter As Stri
 
   ' find the delimiter in the string
   
-  Dim p_position As Long: p_position = InStr(1, a_delimitedString, a_delimiter, vbTextCompare)
+  Dim p_position As Long: p_position = InStr(1, a_delimitedString, a_delimiter, VbCompareMethod.vbTextCompare)
   
   ' check if we have a delimiter in the string
   If p_position > 0 Then
   
     ' if we have a delimiter, return the string all the
     ' way up to but not including the delimiter
-    Pop = Left$(a_delimitedString, p_position - 1)
+    Pop = VBA.Left$(a_delimitedString, p_position - 1)
     
     ' return the string past the delimiter
-    a_delimitedString = Mid$(a_delimitedString, p_position + Len(a_delimiter))
+    a_delimitedString = VBA.Mid$(a_delimitedString, p_position + VBA.Len(a_delimiter))
     
   Else
     ' if the string does not include the delimiter, we
@@ -322,17 +322,15 @@ Public Function StringContainsAny(ByVal string_source As String, ByVal a_caseSen
     ParamArray find_values() As Variant) As Boolean
 
     Dim i As Integer, p_found As Boolean
-    If a_caseSensitive Then
-        For i = LBound(find_values) To UBound(find_values)
-            p_found = 0 <> InStr(1, string_source, find_values(i), vbBinaryCompare)
-            If p_found Then Exit For
-        Next
-    Else
-        For i = LBound(find_values) To UBound(find_values)
-            StringContainsAny = 0 <> InStr(1, LCase$(string_source), LCase$(find_values(i)), vbBinaryCompare)
-            If p_found Then Exit For
-        Next
-    End If
+    
+    Dim p_compareMethod  As VbCompareMethod
+    p_compareMethod = IIf(a_caseSensitive, VbCompareMethod.vbBinaryCompare, VbCompareMethod.vbTextCompare)
+    
+    For i = LBound(find_values) To UBound(find_values)
+        p_found = 0 <> InStr(1, string_source, find_values(i), p_compareMethod)
+        If p_found Then Exit For
+    Next
+    
     StringContainsAny = p_found
     
 End Function
@@ -395,7 +393,7 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
     
     ' use SPACE as default padding character
     
-    If This.PaddingCharacter = VBA.vbNullString Then This.PaddingCharacter = Chr$(32)
+    If This.PaddingCharacter = VBA.vbNullString Then This.PaddingCharacter = VBA.Chr$(32)
 
     ' figure out number of passed p_values:
     
@@ -446,13 +444,13 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
 
     ' remove the "@" literal specifier
     
-    If p_useLiteral Then a_format = Right$(a_format, Len(a_format) - 1)
+    If p_useLiteral Then a_format = VBA.Right$(a_format, VBA.Len(a_format) - 1)
 
     If Not p_useLiteral And Me.StringContains(a_format, "\\") Then _
-        a_format = Replace(a_format, "\\", Chr$(27))
+        a_format = Replace(a_format, "\\", VBA.Chr$(27))
 
     If Me.StringContains(a_format, "\\") Then _
-        a_format = Replace(a_format, "\\", Chr$(27))
+        a_format = Replace(a_format, "\\", VBA.Chr$(27))
 
     If p_matches.count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
         
@@ -512,11 +510,11 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
 
             ' get the string between ":" and "}":
             
-            p_formatGroup = Mid$(p_matchValue, InStr(1, p_matchValue, ":") + 1, (LenB(p_matchValue) / 2) - 2)
-            p_formatGroup = Left$(p_formatGroup, LenB(p_formatGroup) / 2 - 1)
+            p_formatGroup = VBA.Mid$(p_matchValue, VBA.InStr(1, p_matchValue, ":") + 1, (VBA.LenB(p_matchValue) / 2) - 2)
+            p_formatGroup = VBA.Left$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
 
-            p_precisionString = Right$(p_formatGroup, LenB(p_formatGroup) / 2 - 1)
-            p_formatSpecifier = Mid$(p_matchValue, InStr(1, p_matchValue, ":") + 1, 1)
+            p_precisionString = VBA.Right$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
+            p_formatSpecifier = VBA.Mid$(p_matchValue, VBA.InStr(1, p_matchValue, ":") + 1, 1)
 
             ' applicable formatting depends on the type of the value (yes, GOTO!!):
             
@@ -551,7 +549,7 @@ NumberFormatSpecifiers:
 
                     ' if a non-zero precision is specified...
                     
-                    p_valueFormat = Replace$(p_valueFormat, ".", "." & String$(p_precisionSpecifier, Chr$(48)))
+                    p_valueFormat = Replace$(p_valueFormat, ".", "." & String$(p_precisionSpecifier, VBA.Chr$(48)))
 
 
                 ' DECIMAL format, formats string as integer number.
@@ -563,7 +561,7 @@ NumberFormatSpecifiers:
                     p_precisionSpecifier = CInt(p_precisionString)
                     p_valueFormat = "0"
                     p_valueFormat = Right$(String$(p_precisionSpecifier, "0") & p_valueFormat, _
-                        IIf(p_precisionSpecifier = 0, Len(p_valueFormat), p_precisionSpecifier))
+                        IIf(p_precisionSpecifier = 0, VBA.Len(p_valueFormat), p_precisionSpecifier))
 
 
                 ' EXPONENTIAL NOTATION format (aka "Scientific Notation")
@@ -581,7 +579,7 @@ NumberFormatSpecifiers:
                         
                         ' if a non-zero precision is specified...
                         
-                        p_valueFormat = "0." & String$(p_precisionSpecifier - 1, Chr$(48)) & "#" & p_formatSpecifier & "-#"
+                        p_valueFormat = "0." & String$(p_precisionSpecifier - 1, VBA.Chr$(48)) & "#" & p_formatSpecifier & "-#"
 
                     ElseIf VBA.LenB(p_formatGroup) > 2 And p_precisionSpecifier = 0 Then
                         
@@ -606,7 +604,7 @@ NumberFormatSpecifiers:
                         
                         ' if a non-zero precision is specified...
                         
-                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, Chr$(48))
+                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, VBA.Chr$(48))
                     
                     Else
                         
@@ -627,7 +625,7 @@ NumberFormatSpecifiers:
                     Dim p_eNotation As String, p_ePower As Integer, p_specifier As String
                     
                     p_precisionSpecifier = IIf(CInt(p_precisionString) > 0, CInt(p_precisionString), _
-                        IIf(Me.StringContains(p_stringValue, "."), Len(p_stringValue) - InStr(1, p_stringValue, "."), 0))
+                        IIf(Me.StringContains(p_stringValue, "."), VBA.Len(p_stringValue) - InStr(1, p_stringValue, "."), 0))
 
                     ' track character case of formatSpecifier:
                     
@@ -651,7 +649,8 @@ NumberFormatSpecifiers:
 
                         ' get the power of eNotation:
                         
-                        p_ePower = Mid$(p_eNotation, InStr(1, UCase$(p_eNotation), "E-") + 1, Len(p_eNotation) - InStr(1, UCase$(p_eNotation), "E-"))
+                        p_ePower = VBA.Mid$(p_eNotation, InStr(1, VBA.UCase$(p_eNotation), "E-") + 1, _
+                                        VBA.Len(p_eNotation) - VBA.InStr(1, VBA.UCase$(p_eNotation), "E-"))
 
                         If p_ePower > -5 And Abs(p_ePower) < p_precisionSpecifier Then
                             
@@ -688,7 +687,7 @@ NumberFormatSpecifiers:
                         ' if a non-zero precision is specified...
                         
                         p_valueFormat = "#,##0"
-                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, Chr$(48))
+                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, VBA.Chr$(48))
 
                     Else
                         ' only the "D" is specified
@@ -711,7 +710,7 @@ NumberFormatSpecifiers:
                         'if a non-zero precision is specified...
                         
                         p_valueFormat = "#,##0"
-                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, Chr$(48))
+                        p_valueFormat = (p_valueFormat & ".") & String$(p_precisionSpecifier, VBA.Chr$(48))
 
                     Else
                         
@@ -748,14 +747,14 @@ NumberFormatSpecifiers:
                     p_precisionSpecifier = CInt(p_precisionString)
 
                     If LenB(p_precisionString) > 0 Then 'precision here stands for left padding
-                        p_stringValue = Right$(String$(p_precisionSpecifier, "0") & p_stringValue, _
-                                   IIf(p_precisionSpecifier = 0, Len(p_stringValue), p_precisionSpecifier))
+                        p_stringValue = VBA.Right$(VBA.String$(p_precisionSpecifier, "0") & p_stringValue, _
+                                   IIf(p_precisionSpecifier = 0, VBA.Len(p_stringValue), p_precisionSpecifier))
                     End If
 
                     ' add C# hex specifier, apply specified casing:
                     ' (VB6 hex specifier would cause Format() to reverse the formatting):
                     
-                    p_stringValue = "0x" & IIf(p_formatSpecifier = "X", UCase$(p_stringValue), LCase$(p_stringValue))
+                    p_stringValue = "0x" & IIf(p_formatSpecifier = "X", VBA.UCase$(p_stringValue), VBA.LCase$(p_stringValue))
 
                 Case Else
 
@@ -872,14 +871,14 @@ AlignFormattedValue:
                 
                 'negative: left-justified alignment
                 
-                If p_alignmentPadding - Len(p_formattedValue) > 0 Then _
+                If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
                     p_formattedValue = p_formattedValue & _
-                        String$(p_alignmentPadding - Len(p_formattedValue), This.PaddingCharacter)
+                        String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter)
             Else
                 'positive: right-justified alignment
                 
-                If p_alignmentPadding - Len(p_formattedValue) > 0 Then _
-                    p_formattedValue = String$(p_alignmentPadding - Len(p_formattedValue), This.PaddingCharacter) & p_formattedValue
+                If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
+                    p_formattedValue = String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter) & p_formattedValue
             End If
         
         End If
@@ -911,8 +910,8 @@ checkEscapes:
 
 normalExit:
 
-    If Not p_useLiteral And Me.StringContains(p_returnValue, Chr$(27)) Then _
-        p_returnValue = Replace(p_returnValue, Chr$(27), "\")
+    If Not p_useLiteral And Me.StringContains(p_returnValue, VBA.Chr$(27)) Then _
+        p_returnValue = Replace(p_returnValue, VBA.Chr$(27), "\")
     
     StringFormat = p_returnValue
         
@@ -951,19 +950,19 @@ End Function
 Public Function Substring(ByVal a_text As String, ByVal a_startIndex As Integer, _
         Optional ByVal a_length As Variant) As String
     
-    If a_startIndex > Len(a_text) Then
-        a_startIndex = Len(a_text)
+    If a_startIndex > VBA.Len(a_text) Then
+        a_startIndex = VBA.Len(a_text)
     End If
 
     If IsMissing(a_length) Then
-        a_length = Len(a_text) - a_startIndex
+        a_length = VBA.Len(a_text) - a_startIndex
     End If
     
-    If a_length > Len(a_text) Then
-        a_length = Len(a_text) - a_startIndex
+    If a_length > VBA.Len(a_text) Then
+        a_length = VBA.Len(a_text) - a_startIndex
     End If
 
-    Substring = Left(Right(a_text, Len(a_text) - a_startIndex), a_length)
+    Substring = VBA.Left$(VBA.Right$(a_text, VBA.Len(a_text) - a_startIndex), a_length)
     
 End Function
 
@@ -974,19 +973,19 @@ End Function
 Public Function TrimLeft(ByVal a_text As String, ByVal a_char As String) As String
     
     Dim p_textLength As Long
-    p_textLength = Len(a_text)
+    p_textLength = VBA.Len(a_text)
     
     Dim p_firstCharacter As String
     
     Do While p_textLength > 0
-        p_firstCharacter = Left(a_text, 1)
+        p_firstCharacter = VBA.Left$(a_text, 1)
         
         If p_firstCharacter <> a_char Then
             Exit Do
         End If
         
-        a_text = Right(a_text, p_textLength - 1)
-        p_textLength = Len(a_text)
+        a_text = VBA.Right$(a_text, p_textLength - 1)
+        p_textLength = VBA.Len(a_text)
     Loop
     
     TrimLeft = a_text
@@ -998,19 +997,19 @@ End Function
 ''' <returns>   [String]. <returns>
 Public Function TrimRight(ByVal a_text As String, ByVal a_char As String) As String
     
-    Dim p_textLength As Long: p_textLength = Len(a_text)
+    Dim p_textLength As Long: p_textLength = VBA.Len(a_text)
     
     Dim p_lastCharacter As String
         
     Do While p_textLength > 0
-        p_lastCharacter = Right(a_text, 1)
+        p_lastCharacter = VBA.Right$(a_text, 1)
         
         If p_lastCharacter <> a_char Then
             Exit Do
         End If
         
-        a_text = Left(a_text, p_textLength - 1)
-        p_textLength = Len(a_text)
+        a_text = VBA.Left$(a_text, p_textLength - 1)
+        p_textLength = VBA.Len(a_text)
     Loop
     
     TrimRight = a_text

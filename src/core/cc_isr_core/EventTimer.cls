@@ -73,7 +73,7 @@ Public Event Tick()
 Private WithEvents m_remoteWorkbook As Workbook
 Attribute m_remoteWorkbook.VB_VarHelpID = -1
 
-Private Type ThisType
+Private Type ThisData
     Callback As IRunnable
     ' true when the workbook begins closing
     WorkbookClosing As Boolean
@@ -81,7 +81,7 @@ Private Type ThisType
     Interval As Integer
 End Type
 
-Private This As ThisType
+Private This As ThisData
 
 'Create an instance of the timer
 '@param {Long} Number of milliseconds to raise Tick Event between
@@ -189,12 +189,12 @@ Private Function GetTimerCode(ByVal a_interval As Long) As String
   s = s & vbCrLf & "    Public Declare  Sub Sleep Lib ""kernel32"" Alias ""Sleep"" (ByVal a_milliSecs As Long)"
   s = s & vbCrLf & "  #End If"
   s = s & vbCrLf & "#End If"
-  s = s & vbCrLf & "Private Type ThisType"
+  s = s & vbCrLf & "Private Type ThisData"
   s = s & vbCrLf & "  Interval as Long"
   s = s & vbCrLf & "  Running as Boolean"
   s = s & vbCrLf & "  Enabled as Boolean"
   s = s & vbCrLf & "End Type"
-  s = s & vbCrLf & "Private This As ThisType"
+  s = s & vbCrLf & "Private This As ThisData"
   s = s & vbCrLf & "Sub MainLoop()"
   s = s & vbCrLf & "  While This.Running"
   s = s & vbCrLf & "    If This.Enabled Then"

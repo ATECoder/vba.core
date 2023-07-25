@@ -21,13 +21,13 @@ Option Explicit
 
 Private Const initialSize As Integer = 16
 
-Private Type ThisType
+Private Type ThisData
     Buffer() As String
     CurrentIndex As Long
     MaxIndex As Long
 End Type
 
-Private This As ThisType
+Private This As ThisData
 
 ''' < summary>   Initializes this class. </summary>
 ''' <remarks>

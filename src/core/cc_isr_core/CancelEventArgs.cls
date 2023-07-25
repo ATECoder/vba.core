@@ -18,11 +18,11 @@ Attribute VB_Exposed = True
 ' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
-Private Type ThisType
+Private Type ThisData
     CancelRequested As Boolean
 End Type
 
-Private This As ThisType
+Private This As ThisData
 
 ''' <summary>   Initializes the event arguments. </summary>
 Public Sub Initialize()

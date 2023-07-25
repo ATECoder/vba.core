@@ -49,7 +49,7 @@ Private Declare PtrSafe Function QueryPerformanceFrequency Lib "kernel32" (ByRef
 ''' <param name="a_sleepTimeMs">   Sleep time in milliseconds. </param>
 Private Declare PtrSafe Sub SleepMilliseconds Lib "kernel32" Alias "Sleep" (ByVal a_sleepTimeMs As Long)
    
-Private Type ThisType
+Private Type ThisData
     OverheadCounts As Currency
     Counting As Boolean
     StartCounts As Currency
@@ -57,7 +57,7 @@ Private Type ThisType
     Frequency As Currency
 End Type
 
-Private This As ThisType
+Private This As ThisData
 
 ''' <summary>   Initializes the stop watch </summary>
 ''' <remarks>   Gets the stopwatch clock frequency. </remarks>
