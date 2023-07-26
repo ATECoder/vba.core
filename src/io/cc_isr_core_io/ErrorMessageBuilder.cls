@@ -7,16 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' ErrorMessageBuilder.cls
-'
-' Dependencies:
-'
-' StringBuilder.cls
-' WorkbookUtilitites.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Builds error messages. </summary>
+''' <remarks> Dependencies: StringBuilder.cls.
+''' </remarks>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 

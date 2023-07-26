@@ -22,7 +22,7 @@ Public Property Get ExportCodeAfterSave() As Boolean
 End Property
 
 ''' <summary>   Enables or disables exporting code files after save. </summary>
-''' <para name="a_value">   [Boolean] True to enable exporting code files after save. </param>
+''' <param name="a_value">   [Boolean] True to enable exporting code files after save. </param>
 Public Property Let ExportCodeAfterSave(ByVal a_value As Boolean)
     This.ExportCodeAfterSave = a_value
 End Property
@@ -115,7 +115,7 @@ End Sub
 
 ''' <summary>   Handles the workbook after save event. </summary>
 ''' <remarks>   Exports source code files. </remarks>
-''' <para name="a_success">   [Boolean] True if saved successfully. </param>
+''' <param name="a_success">   [Boolean] True if saved successfully. </param>
 Private Sub Workbook_AfterSave(ByVal a_success As Boolean)
     
     Const p_procedureName As String = "Workbook_AfterSave"
@@ -150,7 +150,7 @@ End Sub
 
 ''' <summary>   Handles the workbook before close event. </summary>
 ''' <remarks>   Disposes the disposable workseets. </remarks>
-''' <para name="a_cancel">   [Boolean] Set to true to cancel closing. </param>
+''' <param name="a_cancel">   [Boolean] Set to true to cancel closing. </param>
 Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
     
     Const p_procedureName As String = "Workbook_BeforeClose"

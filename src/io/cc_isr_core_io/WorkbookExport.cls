@@ -7,21 +7,16 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' WorkbookExport.cls
-'
-' Dependencies:
-'
-' PathExtensions.cls
-' VbComponentExtesions.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Exports code files. </summary>
+''' <remarks> Dependencies: PathExtensions.cls, VbComponentExtesions.cls
+''' </remarks>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
 ''' <summary>   Exports all code files to the active workbook path. </summary>
-''' <para name="a_subFolder">   [Optional, 'code'] Specifies the sub-folder were the files are to be stored. </param>
+''' <param name="a_subFolder">   [Optional, 'code'] Specifies the sub-folder were the files are to be stored. </param>
 Public Sub ExportCodeFiles(Optional ByVal a_subFolder As String = "code")
 
     Me.ExportProjectCodeFiles Excel.ActiveWorkbook.VBProject, a_subFolder
@@ -29,11 +24,11 @@ Public Sub ExportCodeFiles(Optional ByVal a_subFolder As String = "code")
 End Sub
 
 ''' <summary>   Exports code files of the specified project to the active workbook path. </summary>
-''' <para name="project">          [VBProject, The VB Project which code files to export. </param>
-''' <para name="useProjectName">   [Optional, Boolean, True] true to use the project name for the subfolder. </param>
-''' <para name="subFolder">        [Optional, String, 'code'] Specifies the sub-folder were the files
+''' <param name="project">          [VBProject, The VB Project which code files to export. </param>
+''' <param name="useProjectName">   [Optional, Boolean, True] true to use the project name for the subfolder. </param>
+''' <param name="subFolder">        [Optional, String, 'code'] Specifies the sub-folder were the files
 '''                                are to be stored. </param>
-''' <para name="mustExist">        [Optional, Boolean, True] true if the folder must exists in order to prevent
+''' <param name="mustExist">        [Optional, Boolean, True] true if the folder must exists in order to prevent
 '''                                unintended storage into the default folder. </param>
 Public Sub ExportProjectCodeFiles(ByVal a_project As VBIDE.VBProject, _
         Optional ByVal a_useProjectName As Boolean = True, _

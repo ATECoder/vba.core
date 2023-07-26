@@ -7,19 +7,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' PathExtensions.cls
-'
-' Dependencies:
-'
-' TBA
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Manages paths. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
-''' <summary> Trims the path from '\' and '/' suffixes. </summary>
+''' <summary>   Trims the path from '\' and '/' suffixes. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function TrimPath(ByVal a_path As String) As String
@@ -56,8 +50,18 @@ Public Function TrimRight(ByVal a_text As String, ByVal a_char As String) As Str
     
 End Function
 
+''' <summary>   Returns the parent folder path of the specified file path. </summary>
+''' <param name="a_filePath">   [String] The file path. </param>
+''' <returns>   [String]. </returns>
+Public Function FileParentFolderPath(ByVal a_filePath As String) As String
 
-''' <summary> Returns true if the folder was deleted and not longer exists. </summary>
+    Dim p_fileInfo As FileSystemObject: Set p_fileInfo = New FileSystemObject
+    FileParentFolderPath = p_fileInfo.GetFile(a_filePath).ParentFolder.Path
+    
+End Function
+
+
+''' <summary>   Returns true if the folder was deleted and not longer exists. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function DeleteFolder(ByVal a_path As String) As Boolean
@@ -70,7 +74,7 @@ Public Function DeleteFolder(ByVal a_path As String) As Boolean
     
 End Function
 
-''' <summary> Returns true if the folder was deleted and not longer exists. </summary>
+''' <summary>   Returns true if the folder was deleted and not longer exists. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function DeleteFile(ByVal a_path As String) As Boolean
@@ -83,7 +87,7 @@ Public Function DeleteFile(ByVal a_path As String) As Boolean
     
 End Function
 
-''' <summary> Returns true if the folder exists. </summary>
+''' <summary>   Returns true if the folder exists. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function FolderExists(ByVal a_path As String) As Boolean
@@ -93,7 +97,7 @@ Public Function FolderExists(ByVal a_path As String) As Boolean
     
 End Function
 
-''' <summary> Returns true if the file exists. </summary>
+''' <summary>   Returns true if the file exists. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function FileExists(ByVal a_path As String) As Boolean
@@ -103,7 +107,7 @@ Public Function FileExists(ByVal a_path As String) As Boolean
     
 End Function
 
-''' <summary> Returns true if the test file was created. </summary>
+''' <summary>   Returns true if the test file was created. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function CreateTextFile(ByVal a_path As String) As Boolean
@@ -116,7 +120,7 @@ Public Function CreateTextFile(ByVal a_path As String) As Boolean
     
 End Function
 
-''' <summary> Creates the directory if it does not exist. </summary>
+''' <summary>   Creates the directory if it does not exist. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function CreateFolder(ByVal a_path As String) As String
@@ -132,7 +136,7 @@ Public Function CreateFolder(ByVal a_path As String) As String
     
 End Function
 
-''' <summary> Joins the file to the path; creates the path if it does not exist. </summary>
+''' <summary>   Joins the file to the path; creates the path if it does not exist. </summary>
 ''' <param name="a_path">       [String] The path. </param>
 ''' <param name="a_fileName">   [String] The file name. </param>
 ''' <param name="a_create">     [optional, Boolean, False] If true, creates the folder for the path. </param>
@@ -147,7 +151,7 @@ Public Function JoinFile(ByVal a_path As String, ByVal a_fileName As String, _
 
 End Function
 
-''' <summary> Joins the sub folder to the path and creates the path if it does not exist. </summary>
+''' <summary>   Joins the sub folder to the path and creates the path if it does not exist. </summary>
 ''' <param name="a_path">        [String] The path. </param>
 ''' <param name="a_subFolder">   [String] The sub folder to join to the path. </param>
 ''' <param name="a_create">      [optional, Boolean, False] If true, creates the folder for the path. </param>
@@ -162,7 +166,7 @@ Public Function Join(ByVal a_path As String, ByVal a_subFolder As String, Option
 
 End Function
 
-''' <summary> Joins elements to a path creating the paths as needed. </summary>
+''' <summary>   Joins elements to a path creating the paths as needed. </summary>
 ''' <param name="create">      [Boolean] If true, creates the folder for the path. </param>
 ''' <param name="pathParts">   [Variant] The path parts to be joined. </param>
 ''' <returns>   [String]. </returns>
@@ -181,7 +185,7 @@ Public Function JoinAll(ByVal a_create As Boolean, ParamArray a_pathParts() As V
         
 End Function
 
-''' <summary> Gets the parent folder path from the specified path. </summary>
+''' <summary>   Gets the parent folder path from the specified path. </summary>
 ''' <param name="a_path">   [String] The path. </param>
 ''' <returns>   [String]. </returns>
 Public Function GetParentFolderName(ByVal a_path As String) As String
