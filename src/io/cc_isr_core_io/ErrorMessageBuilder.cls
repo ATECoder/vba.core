@@ -29,7 +29,7 @@ End Function
 ''' <summary>   Sets the Err object source string to project.module.procedure. </summary>
 ''' <param name="a_errProcedureName">   [String] Specifies the name of the procedure. </param>
 ''' <param name="a_errModuleName">      [String] Specifies the module name. </param>
-''' <param name="a_errProjectName">     [Optional, String] Specifies the project name; otherwise the project
+''' <param name="a_errProjectName">     [String] Specifies the project name; otherwise the project
 '''                                     name of the active workbook is used. </param>
 Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleName As String, _
         Optional ByVal a_errProjectName As String = VBA.vbNullString)
@@ -59,10 +59,10 @@ Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleNam
 End Sub
 
 ''' <summary>   Builds a standard error message. </summary>
-''' <param name="a_displayWarning">         [Optional, Boolean, false] True
+''' <param name="a_displayWarning">         [Boolean, false] True
 '''                                         to display a warning rather than
 '''                                         an error message. </param>
-''' <param name="a_descriptionDelimiter">   [Optional, String, ': '] Specify
+''' <param name="a_descriptionDelimiter">   [String, ': '] Specify
 '''                                         the delimiter preceding the description. </param>
 ''' <returns>   A Standard error message string in the form: <para>
 ''' Error # (0x#) occurred in <c>Source</c>: Description </para><para>

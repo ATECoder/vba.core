@@ -1,6 +1,7 @@
 # TODO
 
-Core:
+IO: Save components only if not saved.
+
 
 ## Code
 

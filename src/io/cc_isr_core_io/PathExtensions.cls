@@ -139,7 +139,7 @@ End Function
 ''' <summary>   Joins the file to the path; creates the path if it does not exist. </summary>
 ''' <param name="a_path">       [String] The path. </param>
 ''' <param name="a_fileName">   [String] The file name. </param>
-''' <param name="a_create">     [optional, Boolean, False] If true, creates the folder for the path. </param>
+''' <param name="a_create">     [Boolean, False] If true, creates the folder for the path. </param>
 ''' <returns>   [String]. </returns>
 Public Function JoinFile(ByVal a_path As String, ByVal a_fileName As String, _
         Optional ByVal a_create As Boolean = False) As String
@@ -154,7 +154,7 @@ End Function
 ''' <summary>   Joins the sub folder to the path and creates the path if it does not exist. </summary>
 ''' <param name="a_path">        [String] The path. </param>
 ''' <param name="a_subFolder">   [String] The sub folder to join to the path. </param>
-''' <param name="a_create">      [optional, Boolean, False] If true, creates the folder for the path. </param>
+''' <param name="a_create">      [Boolean, False] If true, creates the folder for the path. </param>
 ''' <returns>   [String]. </returns>
 Public Function Join(ByVal a_path As String, ByVal a_subFolder As String, Optional ByVal a_create As Boolean = False) As String
 
