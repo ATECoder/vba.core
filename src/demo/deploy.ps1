@@ -14,8 +14,16 @@
 # VARIABLES
 
 $CWD = (Resolve-Path .\).Path
-$BUILD_DIRECTORY = [IO.Path]::Combine($CWD, "..\..\bin\testFx")
+
+# create the bin directory if new 
+$BUILD_DIRECTORY = [IO.Path]::Combine($CWD, "..\..\bin")
 $BUILD_DIRECTORY = (Resolve-Path $BUILD_DIRECTORY).Path
+MkDir -Force $BUILD_DIRECTORY > $null
+
+# create the build directory if new 
+$BUILD_DIRECTORY = [IO.Path]::Combine($BUILD_DIRECTORY, "demo")
+MkDir -Force $BUILD_DIRECTORY > $null
+
 $XL_FILE_FORMAT_MACRO_ENABLED = 52
 
 # END VARIABLES
@@ -84,23 +92,36 @@ function CopyToBuildDirectory( $sourcePath )
 # ----------------------------------------------------------------------
 # SCRIPT ENTRY POINT
 
-# create the build directory if new 
-
-MkDir -Force $BUILD_DIRECTORY > $null
 
 # Copy all workbooks to the build directory
 
-$src = [IO.Path]::Combine($CWD, "cc.isr.test.fx.xlsm")
+$src = [IO.Path]::Combine($CWD, "..\io\cc.isr.core.io.xlsm")
 if ( -Not( CopyToBuildDirectory ( $src  ) ) ) { exit 1 }
 
-$src = [IO.Path]::Combine($CWD, "readme.md") 
-$dest = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.test.fx.readme.md") 
+$src = [IO.Path]::Combine($CWD, "..\io\readme.md")
+$dest = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.core.io.readme.md") 
 LogInfo( "coping " + $src + " to " + $dest )
 copy-item $src -Destination $dest
 
-# if ( -Not( CopySourcetoDestination ( $src, $dest  ) ) ) { exit 1 }
+$src = [IO.Path]::Combine($CWD, "..\core\cc.isr.core.xlsm")
+if ( -Not( CopyToBuildDirectory ( $src  ) ) ) { exit 1 }
+
+$src = [IO.Path]::Combine($CWD, "..\core\readme.md")
+$dest = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.core.readme.md") 
+LogInfo( "coping " + $src + " to " + $dest )
+copy-item $src -Destination $dest
+
+$src = [IO.Path]::Combine($CWD, "cc.isr.core.demo.xlsm")
+if ( -Not( CopyToBuildDirectory ( $src  ) ) ) { exit 1 }
+
+$src = [IO.Path]::Combine($CWD, "cc.isr.core.demo.testing.md")
+if ( -Not( CopyToBuildDirectory ( $src  ) ) ) { exit 1 }
+
+$src = [IO.Path]::Combine($CWD, "readme.md")
+$dest = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.core.demo.readme.md") 
+LogInfo( "coping " + $src + " to " + $dest )
+copy-item $src -Destination $dest
 
 LogInfo( "project deployed" )
 $z = Read-Host "Press enter to exit"
 exit 0
-
