@@ -360,6 +360,73 @@ Public Function StringFormatReplace(ByVal a_format As String, ParamArray a_value
 
 End Function
 
+''' <summary>   Parses a format specification into elements. </summary>
+''' <param name="a_format">            [String] A format specification such as '{0:F11}' or '{1:MMMM, dd yy}'. </param>
+''' <param name="a_itemIndex">         [Integer] The item index, e.g., 0 or 1 for the above formats, respectively. </param>
+''' <param name="a_formatGroup">       [String] The format part of the format string,
+'''                                    e.g., 'F11' or 'MMMM, dd yy' for the above formats, respectively. </param>
+''' <param name="a_precisionString">   [String] The numeric precision string, e.g., 11 or Empty
+'''                                    for the above formats, respectively. </param>
+''' <param name="a_formatSpecifier">   [String] The format specifier part of the format group,
+'''                                    e.g., 'F' or 'MMMM, dd yy' for the above formats, respectively. </param>
+''' <param name="a_message">           [String] A success or failure message. </param>
+''' <returns>   [Boolean] true if parsing succeeded. </returns>
+Public Function ParseFormatSpecification(ByVal a_format As String, _
+        ByRef a_itemIndex As Integer, ByRef a_formatGroup As String, _
+        ByRef a_precisionString As String, ByRef a_formatSpecifier As String, _
+        ByRef a_message As String) As Boolean
+
+    Dim p_index As String
+    Dim p_format As String: p_format = a_format
+
+    If VBA.vbNullString = p_format Then
+        ParseFormatSpecification = False
+        a_message = "Format string is null."
+    Else
+        ' strip the braces.
+        p_format = Me.TrimLeft(p_format, "{")
+        p_format = Me.TrimRight(p_format, "}")
+    End If
+
+    If VBA.vbNullString = p_format Then
+    
+        ParseFormatSpecification = False
+        a_message = "Format string is null after removal of its braces."
+    
+    ElseIf Not Me.StringContains(p_format, ":") Then
+        p_index = p_format
+        If VBA.IsNumeric(p_index) Then
+            a_itemIndex = CInt(p_index)
+            ParseFormatSpecification = True
+        Else
+            a_message = "Item index in format string '" & p_format & "' must be numeric."
+            ParseFormatSpecification = False
+        End If
+    
+    Else
+        p_index = VBA.Left$(p_format, VBA.InStr(1, p_format, ":") - 1)
+        If VBA.IsNumeric(p_index) Then
+            a_itemIndex = CInt(p_index)
+            ParseFormatSpecification = True
+        Else
+            a_message = "Item index in format string '" & p_format & "' must be numeric."
+            ParseFormatSpecification = False
+        End If
+        
+        a_formatGroup = VBA.Mid$(p_format, VBA.InStr(1, p_format, ":") + 1, (VBA.LenB(p_format) / 2) - 2)
+        
+        a_formatSpecifier = a_formatGroup
+        a_precisionString = VBA.vbNullString
+        Do While VBA.IsNumeric(VBA.Right$(a_formatSpecifier, 1))
+            a_precisionString = a_precisionString & VBA.Right$(a_formatSpecifier, 1)
+            a_formatSpecifier = VBA.Left$(a_formatSpecifier, VBA.Len(a_formatSpecifier) - 1)
+        Loop
+    
+    End If
+    
+    
+End Function
+
 ''' <summary>   Implements the .NET String.Format(). </summary>
 ''' <remarks>   <see href="https://stackoverflow.com/questions/14534360/implementing-string-format-in-vb6"/></remarks>
 ''' <param name="a_format">   [String] The format string. </param>
@@ -499,6 +566,13 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
 
             Dim p_formatGroup As String, p_precisionSpecifier As Integer
             Dim p_formatSpecifier As String, p_precisionString As String
+            Dim p_itemIndex As Integer, p_success As Boolean, p_message As String
+
+            ' DH: using a parser to get the format elements
+            
+            p_success = Me.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
+                                         p_precisionString, p_formatSpecifier, _
+                                         p_message)
 
             ' get the string between ":" and "}":
             
@@ -506,9 +580,17 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
             p_formatGroup = VBA.Left$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
 
             p_precisionString = VBA.Right$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
+            
+
             p_formatSpecifier = VBA.Mid$(p_matchValue, VBA.InStr(1, p_matchValue, ":") + 1, 1)
 
             ' applicable formatting depends on the type of the value (yes, GOTO!!):
+            
+            ' DH: Fixed a bug handling routing of formatting.
+            ' allow a format specifier such as {0:F11} or {0:MMM-dd-yy}
+            
+            If VbVarType.vbDate = VarType(p_values(p)) Then _
+                GoTo DateTimeFormatSpecifiers
             
             If TypeName(p_values(p)) = "Date" Then GoTo DateTimeFormatSpecifiers
             

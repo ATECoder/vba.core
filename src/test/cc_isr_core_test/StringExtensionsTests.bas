@@ -197,8 +197,79 @@ Public Function TestStartsWith() As cc_isr_Test_Fx.Assert
             
 End Function
 
-''' <summary>   Unit test. Asserts creating a formatted string. </summary>
+''' <summary>   Unit test. Asserts parsing format string. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestFormatStringParser() As cc_isr_Test_Fx.Assert
+
+    Dim outcome As cc_isr_Test_Fx.Assert
+    Dim p_format As String
+    Dim p_expected As String
+    Dim p_actual As String
+    Dim p_dateTime As Date
+    Dim p_stringValue As String
+    
+    Dim p_formatGroup As String, p_precisionSpecifier As Integer
+    Dim p_formatSpecifier As String, p_precisionString As String
+    Dim p_itemIndex As Integer, p_success As Boolean, p_message As String
+
+    p_format = "{0:F11}"
+    
+    p_success = ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
+                                         p_precisionString, p_formatSpecifier, _
+                                         p_message)
+        
+    Set outcome = cc_isr_Test_Fx.Assert.IsTrue(p_success, "'" & p_format & "' should parse: " & p_message)
+    
+    If outcome.AssertSuccessful Then
+    
+    End If
+    
+    If outcome.AssertSuccessful Then
+        Debug.Print "TestDateStringFormat passed"
+    Else
+        Debug.Print "TestDateStringFormat failed: " & outcome.AssertMessage
+    End If
+    
+    Set TestDateStringFormat = outcome
+
+
+End Function
+
+
+''' <summary>   Unit test. Asserts creating formatted date strings. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance where
+'''             <see cref="Assert.AssertSuccessful"/> is True if the test passed. </returns>
+Public Function TestDateStringFormat() As cc_isr_Test_Fx.Assert
+
+    Dim outcome As cc_isr_Test_Fx.Assert
+    Dim p_format As String
+    Dim p_expected As String
+    Dim p_actual As String
+    Dim p_dateTime As Date
+    Dim p_stringValue As String
+    
+    p_stringValue = "12:00:00 AM"
+    p_dateTime = CDate(p_stringValue)
+    p_format = "{0:MMMM dd, yyyy}"
+    p_expected = "December 30, 1899"
+    p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
+    Set TestStringFormat = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+            p_actual, "'" & p_format & "' should format CDate('" & p_stringValue & "' as expected.")
+    
+    If outcome.AssertSuccessful Then
+        Debug.Print "TestDateStringFormat passed"
+    Else
+        Debug.Print "TestDateStringFormat failed: " & outcome.AssertMessage
+    End If
+    
+    Set TestDateStringFormat = outcome
+    
+
+End Function
+
+''' <summary>   Unit test. Asserts creating a formatted string. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance where
+'''             <see cref="Assert.AssertSuccessful"/> is True if the test passed. </returns>
 Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
 
     Dim p_format As String
