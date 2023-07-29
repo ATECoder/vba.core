@@ -7,15 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' UserDefinedErrors.cls
-'
-' Dependencies:
-'
-' UserDefinedError.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   User-defined errors. </summary>
+''' <remarks>   Dependencies: UserDefinedError.cls. </remarks>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 

@@ -7,45 +7,41 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   An event tyimer. </summary>
+''' <remarks>   Dependencies: IRunnable.cls.
+'''
+''' This timer comes from <see href="https://github.com/sancarn/stdVBA/blob/master/src/stdTimer.cls"/>
+''' Module greatly inspired by Cristian Buse's SafeTimers:
+''' <see href="https://github.com/cristianbuse/Excel-VBA-SafeTimers"/>
+'''
+''' Inspirations used:
+''' * Use of remote workbook
+''' * Use of VBOM and simplified registry setting
+'''
+''' Comparison of SaveTimers-Native and EventTimer:
+''' * EventTimer will not raise the Tick event while displaying MsgBox or InputBox, however SafeTimers will
+''' * EventTimer will raise events while Edit mode is "Edit" or "Point", SafeTimers-Native do not.
+''' * EventTimer uses COM events (specifically WorksheetChange), SafeTimers-Native uses direct COM calls as a communication mechanism
+''' * EventTimer can be bound to <see cref="IRunnable"/> callback OR via event interop. SafeTimers-Native can only be hooked into with Module macro names
 '
-' EventTimer.cls
-'
-' Dependencies:
-'
-' IRunnable.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-' This timer comes from <see href="https://github.com/sancarn/stdVBA/blob/master/src/stdTimer.cls"/>
-' Module greatly inspired by Cristian Buse's SafeTimers:
-'   https://github.com/cristianbuse/Excel-VBA-SafeTimers
-'
-' Inspirations used:
-'   * Use of remote workbook
-'   * Use of VBOM and simplified registry setting
-'
-' Comparison of SaveTimers-Native and EventTimer:
-'   * EventTimer will not raise the Tick event while displaying MsgBox or InputBox, however SafeTimers will
-'   * EventTimer will raise events while Edit mode is "Edit" or "Point", SafeTimers-Native do not.
-'   * EventTimer uses COM events (specifically WorksheetChange), SafeTimers-Native uses direct COM calls as a communication mechanism
-'   * EventTimer can be bound to <see cref="IRunnable"/> callback OR via event interop. SafeTimers-Native can only be hooked into with Module macro names
-'
-' Limitations:
-'   * Neither set of timers raise events while debugging code.
-'   * Neither set of timers will be called exactly when it needs to. There will be a little bit of error which may have to be corrected.
-'
-' Architecture:
-'   When a timer is initialized it:
-'     * Ensures VBOM is enabled
-'     * Creates a `new Application` object and adds a workbook to this new application.
-'     * Adds Timer code to this workbook and schedules this code to run with `xlApp.OnTime Now(), "MainLoop"`
-'   Every time the timer loops
-'     * A change to the remote workbook's worksheet is made
-'     * In the original workbook we register to receive these events, and receive a `This.remoteWorkbook_SheetChange` event.
-'     * Here we raise the event, and call the callback if supplied.
-'   When this class is terminated
-'     * It will also tell the remote workbook to close.
+''' Limitations:
+''' * Neither set of timers raise events while debugging code.
+''' * Neither set of timers will be called exactly when it needs to. There will be a little bit of error which may have to be corrected.
+'''
+''' Architecture:
+''' When a timer is initialized it:
+'''   * Ensures VBOM is enabled
+'''   * Creates a `new Application` object and adds a workbook to this new application.
+'''   * Adds Timer code to this workbook and schedules this code to run with `xlApp.OnTime Now(), "MainLoop"`
+''' Every time the timer loops
+'''   * A change to the remote workbook's worksheet is made
+'''   * In the original workbook we register to receive these events, and receive a `This.remoteWorkbook_SheetChange` event.
+'''   * Here we raise the event, and call the callback if supplied.
+''' When this class is terminated
+'''   * It will also tell the remote workbook to close.
+''' </remarks>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 

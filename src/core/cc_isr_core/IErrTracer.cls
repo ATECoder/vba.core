@@ -7,15 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' IErrTracer.cls
-'
-' Dependencies:
-'
-' None
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Represents an object that can trace an error. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 

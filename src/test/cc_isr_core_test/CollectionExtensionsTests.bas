@@ -1,14 +1,7 @@
 Attribute VB_Name = "CollectionExtensionsTests"
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' CollectionExtensionsTests.bas
-'
-' Dependencies:
-'
-' Assert.cls
-' CollectionExtensions.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Unit tests. Collection extension methods. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 

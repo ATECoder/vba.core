@@ -7,15 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' TestFileHandle.cls
-'
-' Dependencies:
-'
-' TBA
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   A test file handle. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
@@ -32,12 +26,14 @@ Private This As ThisData
 Public Function CreateTestFile() As TestFileHandle
     
     Dim p_fileInfo As FileSystemObject: Set p_fileInfo = New FileSystemObject
+    
     ' Creates a specified file name and returns a TextStream object that can be used to read from
     ' or write to the file.
     Dim p_handle As TestFileHandle: Set p_handle = New TestFileHandle
     p_handle.FileName = p_fileInfo.BuildPath(ActiveWorkbook.path, p_fileInfo.GetTempName())
     Set p_handle.FileStream = p_fileInfo.CreateTextFile(p_handle.FileName, True)
     Set CreateTestFile = p_handle
+
 End Function
 
 ''' <summary>   Deletes the given test file. </summary>

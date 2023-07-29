@@ -7,17 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' TestExecutive.cls
-'
-' Dependencies:
-'
-' MacroInfo.cls
-' ModuleInfo.cls
-' WorkbookUtilities.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   An exectutive for executing test methods. </summary>
+''' <remarks>   Dependencies: MacroInfo.cls, ModuleInfo.cls, WorkbookUtilities.cls. </remarks>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 Private Const ModuleFullNameRow As String = "1"
@@ -43,7 +36,7 @@ Private Const TestDurationUnits As String = " ms"
 
 ''' <summary>   Executes all test macros in the module specified in the test sheet. </summary>
 ''' <para name="a_testSheet">             [Worksheet] Specifies the work sheet were test data are set and logged. </param>
-''' <para name="a_usingRemoteWorkbook">   [Optional, Boolean, True] True if using a remote workbook
+''' <para name="a_usingRemoteWorkbook">   [Boolean, True] True if using a remote workbook
 '''                                       where workbook file needs to be added
 ''' to the application run call. </param>
 Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkbook As Boolean = False)
@@ -70,7 +63,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     
     ' get the module info
     Dim p_moduleInfo As ModuleInfo
-    Set p_moduleInfo = cc_isr_Test_Fx.Constructor.CreateModuleInfo
+    Set p_moduleInfo = cc_isr_Test_Fx.Factory.NewModuleInfo
     p_moduleInfo.FromModuleFullName p_moduleFullName
     
     p_rowNo = p_rowNo + 1
@@ -101,11 +94,11 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     Dim p_macros As Collection: Set p_macros = WorkbookUtilities.EnumerateTestMacros(p_moduleInfo, p_moduleTestMethods)
     Dim p_macroInfo As MacroInfo
     
-    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Test_Fx.Constructor.CreateStopWatch
+    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Test_Fx.Factory.NewStopWatch
     
     Dim p_macroFullName As String
     
-    Dim p_moduleMacroInfo As MacroInfo: Set p_moduleMacroInfo = Constructor.CreateMacroInfo()
+    Dim p_moduleMacroInfo As MacroInfo: Set p_moduleMacroInfo = cc_isr_Test_Fx.Factory.NewMacroInfo()
     
     If ModuleTestMethods.BeforeAll = (p_moduleTestMethods And ModuleTestMethods.BeforeAll) Then
         p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.BeforeAllMethodName

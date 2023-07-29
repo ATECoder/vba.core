@@ -7,15 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' StopWatch.cls
-'
-' Dependencies:
-'
-' None
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   A stop watch with microseconds resolution. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 

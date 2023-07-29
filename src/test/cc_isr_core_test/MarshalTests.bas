@@ -1,14 +1,7 @@
 Attribute VB_Name = "MarshalTests"
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' MarshalTests.bas
-'
-' Dependencies:
-'
-' Assert.cls
-' Marshal.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Unit tests. Marshal methods. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
@@ -18,7 +11,7 @@ Public Function TestShouldMarshalInt8() As cc_isr_Test_Fx.Assert
     
     Dim p_value As Byte: p_value = 10
    
-    Set TestShouldMarshalInt8 = cc_isr_Test_Fx.Assert.areEqual(p_value, _
+    Set TestShouldMarshalInt8 = cc_isr_Test_Fx.Assert.AreEqual(p_value, _
                                     Marshal.BytesToInt8(Marshal.Int8ToBytes(p_value)), _
                                     "marshals int8")
 
@@ -30,7 +23,7 @@ Public Function TestShouldMarshalInt16() As cc_isr_Test_Fx.Assert
     
     Dim p_value As Long: p_value = 10
     
-    Set TestShouldMarshalInt16 = cc_isr_Test_Fx.Assert.areEqual(p_value, _
+    Set TestShouldMarshalInt16 = cc_isr_Test_Fx.Assert.AreEqual(p_value, _
                                     Marshal.BytesToInt16(Marshal.Int16ToBytes(p_value)), _
                                     "marshals int16")
 
@@ -42,7 +35,7 @@ Public Function TestShouldMarshalInt32() As cc_isr_Test_Fx.Assert
     
     Dim p_value As Long: p_value = 10
     
-    Set TestShouldMarshalInt32 = cc_isr_Test_Fx.Assert.areEqual(p_value, _
+    Set TestShouldMarshalInt32 = cc_isr_Test_Fx.Assert.AreEqual(p_value, _
                                  Marshal.BytesToInt32(Marshal.Int32ToBytes(p_value)), _
                                  "marshals int32")
 

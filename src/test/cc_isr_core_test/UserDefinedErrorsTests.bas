@@ -1,15 +1,7 @@
 Attribute VB_Name = "UserDefinedErrorsTests"
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' UserDefinedErrorsTests.bas
-'
-' Dependencies:
-'
-' Assert.cls
-' UserDefinedError.cls
-' UserDefinedErrors.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Unit tests. User defined errors methods. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
@@ -62,7 +54,7 @@ err_Handler:
         Dim p_expectedErrorSource As String
         p_expectedErrorSource = ThisWorkbook.VBProject.name & "." & m_moduleName & "." & thisProcedureName
         
-        Set TestErrorMessageShouldBuild = cc_isr_Test_Fx.Assert.areEqual(p_expectedErrorSource, _
+        Set TestErrorMessageShouldBuild = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
                 VBA.Err.Source, "VBA.Err.Source should equal the expected value")
     
     End If

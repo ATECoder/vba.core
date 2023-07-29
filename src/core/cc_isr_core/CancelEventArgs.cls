@@ -7,15 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' CancelEventArgs.cls
-'
-' Dependencies:
-'
-' None
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Cancel event arguments. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
 Private Type ThisData

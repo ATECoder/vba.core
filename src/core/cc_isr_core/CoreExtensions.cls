@@ -7,16 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' CoreExtensions.cls
-'
-' Dependencies:
-'
-' None
-'
-' 11
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Core extensions. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
@@ -48,5 +41,42 @@ Public Function UnboxParameterArray(ParamArray a_values() As Variant) As Variant
         p_params = p_workArray
     Loop
     UnboxParameterArray = p_params
+    
 End Function
+
+''' <param name="a_variableType">   [VBA.VbVarType] subtype of a variable, or the type
+'''                                 of an object's default property. </param>
+''' <returns>   [Variant]. </returns>
+Public Function GetDefaultValue(ByVal a_variableType As VBA.VbVarType) As Variant
+
+    Select Case a_variableType
+        
+        Case VBA.VbVarType.vbString
+            GetDefaultValue = VBA.vbNullString
+        
+        Case VBA.VbVarType.vbBoolean
+            GetDefaultValue = False
+        
+        Case VBA.VbVarType.vbByte, VBA.VbVarType.vbCurrency, VBA.VbVarType.vbDate, _
+             VBA.VbVarType.vbDecimal, VBA.VbVarType.vbDouble, VBA.VbVarType.vbInteger, _
+             VBA.VbVarType.vbLong, VBA.VbVarType.vbSingle
+            GetDefaultValue = 0
+        
+        Case VBA.VbVarType.vbArray, VBA.VbVarType.vbEmpty, VBA.VbVarType.vbVariant
+            GetDefaultValue = Empty
+        
+        Case VBA.VbVarType.vbNull
+            GetDefaultValue = Null
+        
+        Case VBA.VbVarType.vbObject
+            Set GetDefaultValue = Nothing
+#If VBA7 Then
+#If Win64 Then
+        Case VBA.VbVarType.vbLongLong ' VF: include longptr(?) if using GuardClauses with WinAPIs
+            GetDefaultValue = 0
+#End If
+#End If
+    End Select
+End Function
+
 

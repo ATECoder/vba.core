@@ -8,17 +8,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Attribute VB_Description = "Represents an object that can be (or must be) explicitly terminated."
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' IDisposable.cls
-'
-' Description: Represents an object that can be (or must be) explicitly terminated.
-'
-' Dependencies:
-'
-' IRunnable.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Represents an object that can or must be explicitly terminated. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 

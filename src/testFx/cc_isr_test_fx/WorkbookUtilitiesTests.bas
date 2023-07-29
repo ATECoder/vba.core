@@ -1,16 +1,9 @@
 Attribute VB_Name = "WorkbookUtilitiesTests"
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' WorkbookUtilitiesTests.bas
-'
-' Dependencies:
-'
-' Assert.cls
-' MactroInfo.cls
-' ModuleInfo.cls
-' WorkbookUtilites.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Workbook utility tests.  </summary>
+''' <remarks>   Dependencies: Assert.cls, MactroInfo.cls, ModuleInfo.cls, WorkbookUtilites.cls.
+''' </remarks>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
@@ -77,7 +70,7 @@ End Function
 Private Sub AddModule(ByVal a_col As VBA.Collection, ByVal a_moduleFullName As String)
     
     Dim p_module As cc_isr_Test_Fx.ModuleInfo
-    Set p_module = Constructor.CreateModuleInfo
+    Set p_module = cc_isr_Test_Fx.Factory.NewModuleInfo
     p_module.FromModuleFullName a_moduleFullName
     a_col.Add p_module
 

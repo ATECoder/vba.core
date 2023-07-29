@@ -7,16 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' WorkbookUtilities.cls
-'
-' Dependencies:
-'
-' MacroInfo.cls
-' ModuleInfo.cls
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Enumerates modules and macros for testing. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
@@ -41,7 +34,7 @@ End Function
 ''' <remarks>   </remarks>
 ''' <param name="a_text">            [String] The text to check for the sequence. </param>
 ''' <param name="a_startText">       [String] The text to be located at the start. </param>
-''' <param name="a_compareMethod">   [Optional, VbCompareMethod, vbBinaryCompare] The compare method. </param>
+''' <param name="a_compareMethod">   [VbCompareMethod, vbBinaryCompare] The compare method. </param>
 ''' <returns>   A Boolean <returns>
 Public Function StartsWith(ByVal a_text As String, ByVal a_startText As String, _
                            Optional ByVal a_compareMethod As VbCompareMethod = VbCompareMethod.vbBinaryCompare) As Boolean
@@ -54,20 +47,20 @@ End Function
 ''' <remarks>   </remarks>
 ''' <param name="a_text">            [String] The text to check for the sequence. </param>
 ''' <param name="a_endText">         [String] The text to be located at the end. </param>
-''' <param name="a_compareMethod">   [Optional, VbCompareMethod, vbBinaryCompare] The compare method. </param>
+''' <param name="a_compareMethod">   [VbCompareMethod, vbBinaryCompare] The compare method. </param>
 ''' <returns>   A Boolean. <returns>
 Public Function EndsWith(ByVal a_text As String, ByVal a_endText As String, _
                            Optional ByVal a_compareMethod As VbCompareMethod = VbCompareMethod.vbBinaryCompare) As Boolean
     
-    EndsWith = 0 = StrComp(Right(a_text, Len(a_endText)), a_endText, a_compareMethod)
+    EndsWith = 0 = StrComp(Right$(a_text, Len(a_endText)), a_endText, a_compareMethod)
 
 End Function
 
 
 ''' <summary>   List all modules that end with the specified suffix and
 ''' contain methods that start with the specified prefix. <summary>
-''' <param name="macroNamePrefix">    [Optional, 'Test'] The macro name prefix. </param>
-''' <param name="moduleNameSuffix">   [Optional, 'Tests'] The module name suffix </param>
+''' <param name="macroNamePrefix">    ['Test'] The macro name prefix. </param>
+''' <param name="moduleNameSuffix">   ['Tests'] The module name suffix </param>
 Public Function EnumerateModules(Optional ByVal a_macroNamePrefix As String = "Test", _
                                  Optional ByVal a_moduleNameSuffix As String = "Tests") As VBA.Collection
 
@@ -86,8 +79,8 @@ End Function
 ''' <summary>   List all project modules that end with the specified suffix and
 ''' contain methods that start with the specified prefix. <summary>
 ''' <param name="a_project">            [<see cref="VBProject"/> The project which modules are to be added. </param>
-''' <param name="a_macroNamePrefix">    [Optional, String, 'Test'] The macro name prefix. </param>
-''' <param name="a_moduleNameSuffix">   [Optional, String, 'Tests'] The module name suffix </param>
+''' <param name="a_macroNamePrefix">    [String, 'Test'] The macro name prefix. </param>
+''' <param name="a_moduleNameSuffix">   [String, 'Tests'] The module name suffix </param>
 Public Function EnumerateProjectModules(ByVal a_project As VBProject, _
                                         Optional ByVal a_macroNamePrefix As String = "Test", _
                                         Optional ByVal a_moduleSuffix As String = "Tests") As VBA.Collection
@@ -117,7 +110,7 @@ End Function
 
 ''' <summary>   Checks if the <see cref="VbComponent"/> has macros. <summary>
 ''' <param name="a_component">   [<see cref="VBComponent"/>] The component to check for macro methods. </param>
-''' <param name="a_prefix">      [Optional, 'Test'] The prefix of the macro method name. </param>
+''' <param name="a_prefix">      ['Test'] The prefix of the macro method name. </param>
 Function HasMacros(ByVal a_component As VBComponent, Optional ByVal a_prefix As String = "Test") As Boolean
 
     Dim p_currentName As String, p_newName As String
@@ -182,7 +175,7 @@ End Function
 ''' <see href="https://stackoverflow.com/questions/28132276/get-a-list-of-the-macros-of-a-module-in-excel-and-then-call-all-those-macros"/>
 ''' <remarks>
 ''' <param name="a_module">   [<see cref="ModuleInfo"/>] ]The module info of the module containing the macros. </param>
-''' <param name="a_prefix">   [Optional, 'Test'] The prefix of the macro name. </param>
+''' <param name="a_prefix">   ['Test'] The prefix of the macro name. </param>
 ''' <returns>   A Collection of macro names. </returns>
 Public Function EnumerateMacros(ByVal a_module As ModuleInfo, Optional ByVal a_prefix As String = "Test") As VBA.Collection
 
@@ -214,7 +207,7 @@ End Function
 ''' <see href="https://stackoverflow.com/questions/28132276/get-a-list-of-the-macros-of-a-module-in-excel-and-then-call-all-those-macros"/>
 ''' <remarks>
 ''' <param name="a_module">      [<see cref="ModuleInfo"/> The module info of the module containing the macros. </param>
-''' <param name="a_prefix">      [Optional, String, 'Test'] The prefix of the macro name. </param>
+''' <param name="a_prefix">      [String, 'Test'] The prefix of the macro name. </param>
 ''' <param name="a_component">   [<see cref="VBComponent"/>] The component to check for macro methods. </param>
 ''' <returns>   A Collection of macro names. </returns>
 Public Function EnumerateComponentMacros(ByVal a_module As ModuleInfo, _
@@ -230,7 +223,7 @@ Public Function EnumerateComponentMacros(ByVal a_module As ModuleInfo, _
         If p_currentName <> p_newName Then
             p_currentName = p_newName
             If Me.StartsWith(p_currentName, a_prefix) Then
-                Dim p_macroInfo As MacroInfo: Set p_macroInfo = Constructor.CreateMacroInfo()
+                Dim p_macroInfo As MacroInfo: Set p_macroInfo = cc_isr_Test_Fx.Factory.NewMacroInfo()
                 p_macroInfo.InitializeModuelMacro a_module, p_currentName
                 p_macros.Add p_macroInfo
             End If
@@ -295,7 +288,7 @@ Public Function EnumerateComponentTestMacros(ByVal a_module As ModuleInfo, _
         If p_currentName <> p_newName Then
             p_currentName = p_newName
             If Me.StartsWith(p_currentName, TestMethodPrefix) Then
-                Dim p_macroInfo As MacroInfo: Set p_macroInfo = Constructor.CreateMacroInfo()
+                Dim p_macroInfo As MacroInfo: Set p_macroInfo = cc_isr_Test_Fx.Factory.NewMacroInfo()
                 p_macroInfo.InitializeModuelMacro a_module, p_currentName
                 p_macros.Add p_macroInfo
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.BeforeAllMethodName, vbTextCompare) Then

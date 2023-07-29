@@ -59,7 +59,7 @@ End Sub
 Sub StartTimer()
   This.PauseRequested = False
   If m_eventTimer Is Nothing Then
-    Set m_eventTimer = cc_isr_Core.Constructor.CreateEventTimer(100)
+    Set m_eventTimer = cc_isr_Core.Factory.CreateEventTimer(100)
     m_eventTimer.StartTimer
   Else
     m_eventTimer.ResumeTimer

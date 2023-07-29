@@ -7,17 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' EscapeSequence.cls
-'
-' Description: Defines an escape sequence.
-
-' Dependencies:
-'
-' None
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   An escape sequence. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
 ''' <summary>   Defines an escape sequence of a value and a Literal value. </summary>

@@ -1,4 +1,8 @@
 Attribute VB_Name = "ConstantsEnums"
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Constants and Enums.  </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 Option Explicit
 
 Public Const TestMethodPrefix As String = "Test"

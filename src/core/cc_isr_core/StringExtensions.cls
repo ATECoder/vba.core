@@ -7,17 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-'
-' StringExtensions.cls
-'
-' Description: Implements string extension methods.
-'
-' Dependencies:
-'
-' None
-'
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   String extensions. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Private Type ThisData
     PaddingCharacter As String
@@ -919,7 +911,7 @@ End Function
 
 
 ''' <summary>   Converts a regular string to a Unicode string,
-''' e.g., "foo" to a L"foo" string.. </summary>
+''' e.g., "foo" to a L"foo" string. </summary>
 ''' <param name="a_text">   [String] The string to convert. </param>
 ''' <returns>   [String]. <returns>
 Public Function StringToWideString(ByVal a_text As String) As String

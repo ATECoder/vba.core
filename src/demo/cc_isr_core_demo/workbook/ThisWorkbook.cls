@@ -257,6 +257,10 @@ Private Sub Workbook_Open()
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
+    ' toggle the deployed state
+    
+    Me.Deployed = False
+    
     ' turn on code exporting if not deploy or read only
     Me.DisableSavingCode cc_isr_Core_IO.ThisWorkbook, Me.Deployed
     Me.DisableSavingCode cc_isr_Core.ThisWorkbook, Me.Deployed
