@@ -407,24 +407,471 @@ Public Function ParseFormatSpecification(ByVal a_format As String, _
         p_index = VBA.Left$(p_format, VBA.InStr(1, p_format, ":") - 1)
         If VBA.IsNumeric(p_index) Then
             a_itemIndex = CInt(p_index)
-            ParseFormatSpecification = True
+            
+            a_formatGroup = VBA.Mid$(p_format, VBA.InStr(1, p_format, ":") + 1, (VBA.LenB(p_format) / 2) - 2)
+            
+            ParseFormatSpecification = Me.ParseFormatGroup(a_formatGroup, a_precisionString, a_formatSpecifier, a_message)
+        
         Else
+            
             a_message = "Item index in format string '" & p_format & "' must be numeric."
             ParseFormatSpecification = False
+        
         End If
-        
-        a_formatGroup = VBA.Mid$(p_format, VBA.InStr(1, p_format, ":") + 1, (VBA.LenB(p_format) / 2) - 2)
-        
+    
+    End If
+    
+End Function
+
+''' <summary>   Parses a format group into elements. </summary>
+''' <param name="a_formatGroup">       [String] The format part of the format string,
+'''                                    e.g., 'F11' or 'MMMM, dd yy' for the above formats, respectively. </param>
+''' <param name="a_precisionString">   [String] The numeric precision string, e.g., 11 or Empty
+'''                                    for the above formats, respectively. </param>
+''' <param name="a_formatSpecifier">   [String] The format specifier part of the format group,
+'''                                    e.g., 'F' or 'MMMM, dd yy' for the above formats, respectively. </param>
+''' <param name="a_message">           [String] A success or failure message. </param>
+''' <returns>   [Boolean] true if parsing succeeded. </returns>
+Public Function ParseFormatGroup(ByVal a_formatGroup As String, _
+        ByRef a_precisionString As String, ByRef a_formatSpecifier As String, _
+        ByRef a_message As String) As Boolean
+
+    If VBA.vbNullString = a_formatGroup Then
+        ParseFormatGroup = False
+        a_message = "Format group is null."
+    Else
         a_formatSpecifier = a_formatGroup
         a_precisionString = VBA.vbNullString
         Do While VBA.IsNumeric(VBA.Right$(a_formatSpecifier, 1))
             a_precisionString = a_precisionString & VBA.Right$(a_formatSpecifier, 1)
             a_formatSpecifier = VBA.Left$(a_formatSpecifier, VBA.Len(a_formatSpecifier) - 1)
         Loop
+        ParseFormatGroup = True
+    End If
+    
+End Function
+
+
+''' <summary>   Implements the .NET String.Format() on a value. </summary>
+''' <param name="a_format">   [String] The format string, e.g., 'F11' or 'MMMM, dd yy'. </param>
+''' <param name="a_value">    [Variant] The value to format. </param>
+Public Function StringFormatValue(ByVal a_format As String, ByVal a_value As Variant) As String
+
+    Const p_procedureName As String = "StringFormatDate"
+
+    If VbVarType.vbDate = VarType(a_value) Then
+    
+        StringFormatValue = Me.StringFormatDate(a_format, a_value)
+        
+    ElseIf VBA.IsNumeric(a_value) Then
+    
+        StringFormatValue = Me.StringFormatNumber(a_format, a_value)
+    
+    Else
+    
+        Dim p_precisionSpecifier As Integer
+        Dim p_formatSpecifier As String, p_precisionString As String
+        Dim p_success As Boolean, p_message As String
+    
+        p_success = Me.ParseFormatGroup(a_format, p_precisionString, p_formatSpecifier, p_message)
+        
+        If p_success Then
+        
+            ' handle the case introduced by the Stack Overflow artical of a custom date format that starts with a c.
+            If VBA.Len(p_formatSpecifier) > 1 Then
+                If Me.StartsWith(p_formatSpecifier, "c", vbTextCompare) Then
+                    p_formatSpecifier = VBA.Right$(p_formatSpecifier, VBA.LenB(p_formatSpecifier) / 2 - 1)
+                End If
+            End If
+            StringFormatValue = VBA.Format$(a_value, p_formatSpecifier)
+        Else
+        
+            UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, TypeName(Me) & "." & p_procedureName, " " & p_message
+    
+        End If
+    
+    End If
+
+End Function
+
+''' <summary>   Implements the .NET String.Format() on a numeric value. </summary>
+''' <param name="a_format">   [String] The format string, e.g., 'F11'. </param>
+''' <param name="a_value">    [Variant] The value to format. </param>
+Public Function StringFormatNumber(ByVal a_format As String, ByVal a_value As Variant) As String
+
+    Const p_procedureName As String = "StringFormatDate"
+
+    Dim p_precisionSpecifier As Integer, a_valueFormat As String, p_stringValue As String
+    Dim p_formatSpecifier As String, p_precisionString As String
+    Dim p_success As Boolean, p_message As String
+
+    p_success = Me.ParseFormatGroup(a_format, p_precisionString, p_formatSpecifier, p_message)
+    
+    If Not p_success Then
+    
+        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, TypeName(Me) & "." & p_procedureName, " " & p_message
+    
+    End If
+
+    If p_precisionString <> vbNullString And Not IsNumeric(p_precisionString) Then _
+        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
+            TypeName(Me) & "." & p_procedureName, _
+            " Preceision string '" & p_precisionString & "' is not numeric."
+
+    If p_precisionString = vbNullString Then p_precisionString = "0"
+
+    p_stringValue = VBA.CStr(a_value)
+
+    Select Case p_formatSpecifier
+
+
+        ' CURRENCY format, formats string as currency.
+        
+        Case "C", "c"
+        
+            ' Precision specifier determines number of decimal digits.
+            ' This implementation ignores regional settings
+            ' (hard-coded group separator, decimal separator and currency sign).
+
+            If p_precisionString = "0" Then p_precisionString = "2"
+
+            p_precisionSpecifier = CInt(p_precisionString)
+            a_valueFormat = "#,##0.$"
+
+            ' if a non-zero precision is specified...
+            
+            a_valueFormat = Replace$(a_valueFormat, ".", "." & String$(p_precisionSpecifier, VBA.Chr$(48)))
+
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+
+        ' DECIMAL format, formats string as integer number.
+        
+        Case "D", "d"
+            
+            ' Precision specifier determines number of digits in returned string.
+
+            p_precisionSpecifier = CInt(p_precisionString)
+            a_valueFormat = "0"
+            a_valueFormat = Right$(String$(p_precisionSpecifier, "0") & a_valueFormat, _
+                IIf(p_precisionSpecifier = 0, VBA.Len(a_valueFormat), p_precisionSpecifier))
+
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+
+        ' EXPONENTIAL NOTATION format (aka "Scientific Notation")
+
+        Case "E", "e"
+        
+            ' Precision specifier determines number of decimals in returned string.
+            ' This implementation ignores regional settings'
+            ' (hard-coded decimal separator).
+
+            p_precisionSpecifier = CInt(p_precisionString)
+            a_valueFormat = "0.00000#" & p_formatSpecifier & "-#" 'defaults to 6 decimals
+
+            If LenB(a_format) > 2 And p_precisionSpecifier > 0 Then
+                
+                ' if a non-zero precision is specified...
+                
+                a_valueFormat = "0." & String$(p_precisionSpecifier - 1, VBA.Chr$(48)) & "#" & p_formatSpecifier & "-#"
+
+            ElseIf VBA.LenB(a_format) > 2 And p_precisionSpecifier = 0 Then
+                
+                cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
+                    TypeName(Me) & "." & p_procedureName, _
+                    " Format group '" & a_format & "' length " & CStr(VBA.LenB(a_format)) & _
+                    " is greater than 2 and the precision specifier is 0."
+            
+            End If
+            
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+
+        ' FIXED-POINT format
+
+        Case "F", "f"
+            
+            ' Precision specifier determines number of decimals in returned string.
+            ' This implementation ignores regional settings'
+            ' (hard-coded decimal separator).
+
+            p_precisionSpecifier = CInt(p_precisionString)
+            a_valueFormat = "0"
+            If LenB(a_format) > 2 And p_precisionSpecifier > 0 Then
+                
+                ' if a non-zero precision is specified...
+                
+                a_valueFormat = (a_valueFormat & ".") & String$(p_precisionSpecifier, VBA.Chr$(48))
+            
+            Else
+                
+                ' no precision specified - default to 2 decimals:
+                
+                a_valueFormat = "0.00"
+                
+            End If
+
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+
+        ' GENERAL format (recursive)
+        
+        Case "G", "g"
+            
+            ' returns the shortest of either FIXED-POINT or SCIENTIFIC formats in case of a Double.
+            ' returns DECIMAL format in case of a Integer or Long.
+
+            Dim p_eNotation As String, p_ePower As Integer, p_specifier As String
+            
+            p_precisionSpecifier = IIf(CInt(p_precisionString) > 0, CInt(p_precisionString), _
+                IIf(Me.StringContains(p_stringValue, "."), VBA.Len(p_stringValue) - InStr(1, p_stringValue, "."), 0))
+
+            ' track character case of formatSpecifier:
+            
+            p_specifier = IIf(p_formatSpecifier = "G", "D", "d")
+
+            If TypeName(a_value) = "Integer" Or TypeName(a_value) = "Long" Then
+                
+                ' Integer types: use {0:D} (recursive call):
+                
+                StringFormatNumber = StringFormat("{0:" & p_specifier & "}", a_value)
+
+            ElseIf TypeName(a_value) = "Double" Then
+                
+                ' Non-integer types: use {0:E}
+                
+                p_specifier = IIf(p_formatSpecifier = "G", "E", "e")
+
+                ' evaluate the exponential notation value (recursive call):
+                
+                p_eNotation = StringFormat("{0:" & p_specifier & "}", p_stringValue)
+
+                ' get the power of eNotation:
+                
+                p_ePower = VBA.Mid$(p_eNotation, InStr(1, VBA.UCase$(p_eNotation), "E-") + 1, _
+                                VBA.Len(p_eNotation) - VBA.InStr(1, VBA.UCase$(p_eNotation), "E-"))
+
+                If p_ePower > -5 And Abs(p_ePower) < p_precisionSpecifier Then
+                    
+                    ' use {0:F} when ePower > -5 and abs(ePower) < precisionSpecifier:
+                    ' evaluate the floating-point value (recursive call):
+                    
+                    p_specifier = IIf(p_formatSpecifier = "G", "F", "f")
+                    StringFormatNumber = StringFormat("{0:" & p_formatSpecifier & _
+                         IIf(p_precisionSpecifier <> 0, p_precisionString, vbNullString) & "}", a_value)
+                Else
+                    
+                    ' fallback to {0:E} if previous rule didn't apply:
+                    
+                    StringFormatNumber = p_eNotation
+                
+                End If
+
+            End If
+
+        ' NUMERIC format, formats string as an integer or decimal number.
+        
+        Case "N", "n"
+            
+            ' Precision specifier determines number of decimal digits.
+            ' This implementation ignores regional settings'
+            ' (hard-coded group and decimal separators).
+
+            p_precisionSpecifier = CInt(p_precisionString)
+            If LenB(a_format) > 2 And p_precisionSpecifier > 0 Then
+                
+                ' if a non-zero precision is specified...
+                
+                a_valueFormat = "#,##0"
+                a_valueFormat = (a_valueFormat & ".") & String$(p_precisionSpecifier, VBA.Chr$(48))
+
+            Else
+                ' only the "D" is specified
+                
+                a_valueFormat = "#,##0"
+            End If
+
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+
+        ' PERCENT format. Formats string as a percentage.
+        
+        Case "P", "p"
+            
+            ' Value is multiplied by 100 and displayed with a percent symbol.
+            ' Precision specifier determines number of decimal digits.
+
+            a_valueFormat = "#,##0%"
+            p_precisionSpecifier = CInt(p_precisionString)
+            If LenB(a_format) > 2 And p_precisionSpecifier > 0 Then
+                
+                'if a non-zero precision is specified...
+                
+                a_valueFormat = "#,##0"
+                a_valueFormat = (a_valueFormat & ".") & String$(p_precisionSpecifier, VBA.Chr$(48))
+
+            Else
+                
+                ' only the "P" is specified
+                a_valueFormat = "#,##0"
+            
+            End If
+
+            ' Append the percentage sign to the format string:
+            
+            a_valueFormat = a_valueFormat & "%"
+
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+
+        ' ROUND-TRIP format (a string that can round-trip to an identical number)
+        
+        Case "R", "r"
+            
+            ' example: ?StringFormat("{0:R}", 0.0000000001141596325677345362656)
+            '          ...returns "0.000000000114159632567735"
+
+            ' convert value to a Double (chop off overflow digits):
+            
+            p_stringValue = CDbl(p_stringValue)
+
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+        
+        ' HEX format. Formats a string as a Hexadecimal value.
+        
+        Case "X", "x"
+            
+            ' Precision specifier determines number of total digits.
+            ' Returned string is prefixed with "&x" to specify Hex.
+
+            p_stringValue = Hex$(a_value)
+            p_precisionSpecifier = CInt(p_precisionString)
+
+            If LenB(p_precisionString) > 0 Then 'precision here stands for left padding
+                p_stringValue = VBA.Right$(VBA.String$(p_precisionSpecifier, "0") & p_stringValue, _
+                           IIf(p_precisionSpecifier = 0, VBA.Len(p_stringValue), p_precisionSpecifier))
+            End If
+
+            ' add C# hex specifier, apply specified casing:
+            ' (VB6 hex specifier would cause Format() to reverse the formatting):
+            
+            p_stringValue = "0x" & IIf(p_formatSpecifier = "X", VBA.UCase$(p_stringValue), VBA.LCase$(p_stringValue))
+
+            StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+
+        Case Else
+
+            If IsNumeric(p_formatSpecifier) And Val(a_format) = 0 Then
+                
+                p_formatSpecifier = a_format
+                p_stringValue = VBA.Format$(p_stringValue, a_format)
+                StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
+            
+            Else
+                cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
+                    TypeName(Me) & "." & p_procedureName, _
+                    " Format specifier '" & p_formatSpecifier & "' is not numeric" & _
+                    " or value of format group '" & Val(a_format) & "' is not zero."
+            End If
+    End Select
+    
+End Function
+
+''' <summary>   Implements the .NET String.Format() on a date value. </summary>
+''' <param name="a_format">   [String] The format string, e.g., 'MMMM, dd yy' or 'D'. </param>
+''' <param name="a_value">    [Variant] The Date value to format. </param>
+Public Function StringFormatDate(ByVal a_format As String, ByVal a_value As Date) As String
+
+    Const p_procedureName As String = "StringFormatDate"
+
+    Dim p_precisionSpecifier As Integer, p_valueFormat As String
+    Dim p_formatSpecifier As String, p_precisionString As String
+    Dim p_success As Boolean, p_message As String
+
+    p_success = Me.ParseFormatGroup(a_format, p_precisionString, p_formatSpecifier, p_message)
+
+    If Not p_success Then
+    
+        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, TypeName(Me) & ".StringFormatDate", " " & p_message
     
     End If
     
+    ' handle the case introduced by the Stack Overflow artical of a custom date format that starts with a c.
+    If VBA.Len(p_formatSpecifier) > 1 Then
+        If Not Me.StartsWith(p_formatSpecifier, "c", vbTextCompare) Then
+            p_formatSpecifier = "c" & p_formatSpecifier
+        End If
+        p_valueFormat = VBA.Right$(p_formatSpecifier, VBA.LenB(p_formatSpecifier) / 2 - 1)
+        p_formatSpecifier = "c"
+    End If
     
+    Select Case p_formatSpecifier
+
+        ' CUSTOM date/time format
+        
+        Case "c", "C"
+            
+            ' format already set.
+
+        ' SHORT DATE format
+        
+        Case "d"
+            
+            p_valueFormat = "ddddd"
+
+
+        ' LONG DATE format
+        Case "D"
+        
+            p_valueFormat = "dddddd"
+
+
+        ' FULL DATE format (short)
+        
+        Case "f"
+            
+            p_valueFormat = "dddddd h:mm AM/PM"
+
+        
+        ' FULL DATE format (long)
+        Case "F"
+        
+            p_valueFormat = "dddddd ttttt"
+
+        Case "g"
+        
+            p_valueFormat = "ddddd hh:mm AM/PM"
+
+        Case "G"
+        
+            p_valueFormat = "ddddd ttttt"
+
+
+        ' SORTABLE DATETIME format
+        
+        Case "s"
+            
+            p_valueFormat = "yyyy-mm-ddThh:mm:ss"
+
+
+        ' SHORT TIME format
+        
+        Case "t"
+            
+            p_valueFormat = "hh:mm AM/PM"
+
+
+        ' LONG TIME format
+        
+        Case "T"
+            
+            p_valueFormat = "ttttt"
+
+        Case Else
+            
+            cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
+                TypeName(Me) & "." & p_procedureName, _
+                " Unknown format specifier '" & p_formatSpecifier & "'."
+        
+    End Select
+    
+    StringFormatDate = VBA.Format$(a_value, p_valueFormat)
+
 End Function
 
 ''' <summary>   Implements the .NET String.Format(). </summary>
@@ -432,7 +879,212 @@ End Function
 ''' <param name="a_format">   [String] The format string. </param>
 ''' <param name="a_values">   [Variant, ParamArray] The parameter p_values matching the
 '''                           <ParamRef name="a_format"/>. </param>
-Public Function StringFormat(a_format As String, ParamArray a_values()) As String
+Public Function StringFormatNew(ByVal a_format As String, ParamArray a_values() As Variant) As String
+
+    Const p_procedureName As String = "StringFormat"
+
+    Dim p_returnValue As String
+    Dim p_valuesCount As Integer
+
+    If VBA.vbNullString = a_format Then _
+        UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
+                    "cc_isr_Core.StringExtensions.StringFormat", _
+                    "Argument name: 'a_format'."
+    
+    ' unbox the paramter array in case it came from another
+    ' function which argument too is a paramter array.
+
+    Dim p_values As Variant
+    p_values = CoreExtensions.UnboxParameterArray(a_values)
+    
+    ' use SPACE as default padding character
+    
+    If This.PaddingCharacter = VBA.vbNullString Then This.PaddingCharacter = VBA.Chr$(32)
+
+    ' figure out number of passed p_values:
+    
+    p_valuesCount = UBound(p_values) + 1
+
+    Dim p_regex As VBScript_RegExp_55.RegExp
+    Dim p_matches As VBScript_RegExp_55.MatchCollection
+    Dim p_match As VBScript_RegExp_55.Match
+    Dim p_matchValue As String
+    Dim p_valueFormat As String
+
+    ' when a_format starts with "@", escapes are not replaced
+    ' (string is treated as a literal string with placeholders)
+    
+    Dim p_useLiteral As Boolean
+    
+    ' indicates whether HEX specifier "0x" is to be replaced with VB '&H' specified
+    Dim p_useVbHexSpecifier As Boolean: p_useVbHexSpecifier = False
+    
+    ' validate a_format:
+    
+    Set p_regex = New VBScript_RegExp_55.RegExp
+    p_regex.Pattern = "{({{)*(\w+)(,-?\d+)?(:[^}]+)?}(}})*"
+    p_regex.IgnoreCase = True
+    p_regex.Global = True
+    Set p_matches = p_regex.Execute(a_format)
+
+    ' determine if parameter array argument count matches number of unique regex matches:
+    
+    Dim uniqueCount As Integer
+    Dim tmpCSV As String
+    For Each p_match In p_matches
+        If Not Me.StringContains(tmpCSV, p_match.SubMatches(1)) Then
+            uniqueCount = uniqueCount + 1
+            tmpCSV = tmpCSV & p_match.SubMatches(1) & ","
+        End If
+    Next
+
+    ' unique indices count must match p_valuesCount:
+    
+    If p_matches.count > 0 And uniqueCount <> p_valuesCount Then _
+        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
+                TypeName(Me) & "." & p_procedureName & _
+                " Unique count " & CStr(uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
+                
+    p_useLiteral = Me.StartsWith(a_format, "@")
+
+    ' remove the "@" literal specifier
+    
+    If p_useLiteral Then a_format = VBA.Right$(a_format, VBA.Len(a_format) - 1)
+
+    If Not p_useLiteral And Me.StringContains(a_format, "\\") Then _
+        a_format = Replace(a_format, "\\", VBA.Chr$(27))
+
+    If Me.StringContains(a_format, "\\") Then _
+        a_format = Replace(a_format, "\\", VBA.Chr$(27))
+
+    If p_matches.count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
+        
+        ' only a_format was specified: skip to checking escape sequences:
+        
+        p_returnValue = a_format
+        
+    ElseIf UBound(p_values) = -1 And p_matches.count > 0 Then
+       
+        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
+            TypeName(Me) & "." & p_procedureName, " Argument name: 'p_values'."
+    
+    Else
+    
+        p_returnValue = a_format
+    
+        ' dissect a_format:
+    
+        Dim i As Integer, p_stringValue As String, p_valueIndex As Integer ' i: iterator; v: value; p: placeholder
+        Dim p_alignmentGroup As String, p_alignmentSpecifier As String
+        Dim p_formattedValue As String, p_alignmentPadding As Integer
+        Dim p_value As Variant
+    
+        ' iterate regex matches (each match is a placeholder):
+        
+        For i = 0 To p_matches.count - 1
+    
+            ' get the placeholder specified index:
+            
+            Set p_match = p_matches(i)
+            p_valueIndex = CInt(p_match.SubMatches(1))
+    
+            ' if specified index (0-based) > uniqueCount (1-based), something's wrong:
+            
+            If p_valueIndex > uniqueCount - 1 Then _
+                cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
+                    TypeName(Me) & "." & p_procedureName, _
+                    " Specified index " & VBA.CStr(p_valueIndex) & " exceeds " & VBA.CStr(uniqueCount - 1) & "."
+            
+            p_value = p_values(p_valueIndex)
+            p_stringValue = VBA.CStr(p_value)
+            
+            ' get the alignment specifier if it is specified:
+            
+            p_alignmentGroup = p_match.SubMatches(2)
+            If p_alignmentGroup <> vbNullString Then _
+                p_alignmentSpecifier = Right$(p_alignmentGroup, LenB(p_alignmentGroup) / 2 - 1)
+    
+            ' get the format specifier if it is specified:
+            
+            p_matchValue = p_match.Value
+            If Me.StringContains(p_matchValue, ":") Then
+    
+                Dim p_formatGroup As String, p_precisionSpecifier As Integer
+                Dim p_formatSpecifier As String, p_precisionString As String
+                Dim p_itemIndex As Integer, p_success As Boolean, p_message As String
+    
+                ' DH: using a parser to get the format elements
+                
+                p_success = Me.ParseFormatSpecification(p_matchValue, p_itemIndex, p_formatGroup, _
+                                             p_precisionString, p_formatSpecifier, _
+                                             p_message)
+    
+                p_formattedValue = Me.StringFormatValue(p_formatGroup, p_value)
+                
+                
+                'apply specified alignment specifier:
+                
+                If p_alignmentSpecifier <> vbNullString Then
+        
+                    p_alignmentPadding = Abs(CInt(p_alignmentSpecifier))
+                    
+                    If CInt(p_alignmentSpecifier) < 0 Then
+                        
+                        'negative: left-justified alignment
+                        
+                        If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
+                            p_formattedValue = p_formattedValue & _
+                                String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter)
+                    Else
+                        'positive: right-justified alignment
+                        
+                        If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
+                            p_formattedValue = String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter) & p_formattedValue
+                    End If
+                
+                End If
+        
+                ' Replace C# hex specifier with VB6 hex specifier,
+                ' only if hex specifier was introduced in this function:
+                
+                If Not p_useLiteral And p_useVbHexSpecifier And Me.StringContains(p_formattedValue, "0x") Then _
+                    p_formattedValue = Replace$(p_formattedValue, "0x", "&H")
+        
+                ' replace all occurrences of placeholder {i} with their formatted p_values:
+                
+                p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, count:=1)
+        
+            End If
+    
+            ' reset before reiterating:
+            
+            p_valueFormat = vbNullString
+            
+        Next
+    
+    End If
+
+    ' if there's no more backslashes, don't bother checking for the rest:
+    
+    If Not (p_useLiteral Or Not Me.StringContains(p_returnValue, "\")) Then _
+        p_returnValue = Me.ReplaceEscapeSequences(p_returnValue)
+    
+    If Not p_useLiteral And Me.StringContains(p_returnValue, VBA.Chr$(27)) Then _
+        p_returnValue = VBA.Replace(p_returnValue, VBA.Chr$(27), "\")
+    
+    StringFormatNew = p_returnValue
+        
+End Function
+
+
+
+
+''' <summary>   Implements the .NET String.Format(). </summary>
+''' <remarks>   <see href="https://stackoverflow.com/questions/14534360/implementing-string-format-in-vb6"/></remarks>
+''' <param name="a_format">   [String] The format string. </param>
+''' <param name="a_values">   [Variant, ParamArray] The parameter p_values matching the
+'''                           <ParamRef name="a_format"/>. </param>
+Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As Variant) As String
 
     Const p_procedureName As String = "StringFormat"
 
@@ -471,7 +1123,7 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
     
     ' indicates whether HEX specifier "0x" is to be escaped or not
     ' dh: not used
-    Dim p_escapeHex As Boolean
+    Dim p_useVbHexSpecifier As Boolean
     
     ' validate a_format:
     
@@ -529,7 +1181,7 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
 
     'dissect a_format:
 
-    Dim i As Integer, p_stringValue As String, p As String 'i: iterator; v: value; p: placeholder
+    Dim i As Integer, p_stringValue As String, p As Integer 'i: iterator; v: value; p: placeholder
     Dim p_alignmentGroup As String, p_alignmentSpecifier As String
     Dim p_formattedValue As String, p_alignmentPadding As Integer
     Dim p_value As Variant
@@ -541,7 +1193,7 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
         ' get the placeholder specified index:
         
         Set p_match = p_matches(i)
-        p = p_match.SubMatches(1)
+        p = CInt(p_match.SubMatches(1))
 
         ' if specified index (0-based) > uniqueCount (1-based), something's wrong:
         
@@ -551,7 +1203,7 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
                 " Specified index " & CStr(p) & " exceeds " & CStr(uniqueCount - 1) & "."
         
         p_value = p_values(p)
-        p_stringValue = p_values(p)
+        p_stringValue = CStr(p_value)
         
         ' get the alignment specifier if it is specified:
         
@@ -570,29 +1222,44 @@ Public Function StringFormat(a_format As String, ParamArray a_values()) As Strin
 
             ' DH: using a parser to get the format elements
             
-            p_success = Me.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
+            p_success = Me.ParseFormatSpecification(p_matchValue, p_itemIndex, p_formatGroup, _
                                          p_precisionString, p_formatSpecifier, _
                                          p_message)
 
             ' get the string between ":" and "}":
-            
-            p_formatGroup = VBA.Mid$(p_matchValue, VBA.InStr(1, p_matchValue, ":") + 1, (VBA.LenB(p_matchValue) / 2) - 2)
-            p_formatGroup = VBA.Left$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
-
-            p_precisionString = VBA.Right$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
-            
-
-            p_formatSpecifier = VBA.Mid$(p_matchValue, VBA.InStr(1, p_matchValue, ":") + 1, 1)
+            ' p_formatGroup = VBA.Mid$(p_matchValue, VBA.InStr(1, p_matchValue, ":") + 1, (VBA.LenB(p_matchValue) / 2) - 2)
+            ' p_formatGroup = VBA.Left$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
+            ' p_precisionString = VBA.Right$(p_formatGroup, VBA.LenB(p_formatGroup) / 2 - 1)
+            ' p_formatSpecifier = VBA.Mid$(p_matchValue, VBA.InStr(1, p_matchValue, ":") + 1, 1)
 
             ' applicable formatting depends on the type of the value (yes, GOTO!!):
             
             ' DH: Fixed a bug handling routing of formatting.
             ' allow a format specifier such as {0:F11} or {0:MMM-dd-yy}
             
-            If VbVarType.vbDate = VarType(p_values(p)) Then _
-                GoTo DateTimeFormatSpecifiers
+            If VbVarType.vbDate = VarType(p_values(p)) Then
             
-            If TypeName(p_values(p)) = "Date" Then GoTo DateTimeFormatSpecifiers
+                ' handle the original case of the custom
+                ' date format that starts with a c.
+                If VBA.Len(p_formatSpecifier) > 1 Then
+                    If Not Me.StartsWith(p_formatSpecifier, "c", vbTextCompare) Then
+                        p_formatSpecifier = "c" & p_formatSpecifier
+                    End If
+                    p_precisionString = VBA.Right$(p_formatSpecifier, VBA.LenB(p_formatSpecifier) / 2 - 1)
+                    p_formatSpecifier = "c"
+                End If
+                GoTo DateTimeFormatSpecifiers
+                
+            ElseIf VbVarType.vbString = VarType(p_values(p)) And VBA.Len(p_formatSpecifier) > 1 Then
+            
+                ' if we have a string value and a long format string,
+                ' just format it using VBA.
+                p_valueFormat = p_formatSpecifier
+                GoTo ApplyStringFormat
+            
+            End If
+            
+            ' If TypeName(p_values(p)) = "Date" Then GoTo DateTimeFormatSpecifiers
             
             If p_stringValue = vbNullString Then GoTo ApplyStringFormat
 
@@ -960,7 +1627,7 @@ AlignFormattedValue:
         ' Replace C# hex specifier with VB6 hex specifier,
         ' only if hex specifier was introduced in this function:
         
-        If (Not p_useLiteral And p_escapeHex) And Me.StringContains(p_formattedValue, "0x") Then _
+        If Not p_useLiteral And p_useVbHexSpecifier And Me.StringContains(p_formattedValue, "0x") Then _
             p_formattedValue = Replace$(p_formattedValue, "0x", "&H")
 
         ' replace all occurrences of placeholder {i} with their formatted p_values:
