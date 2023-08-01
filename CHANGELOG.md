@@ -14,6 +14,6 @@ Forked from [TCP].
 
 &copy;  2023 Integrated Scientific Resources, Inc. All rights reserved.
 
-[1.0.8597]: https://github.com/ATECoder/vba.core
+[1.0.8613]: https://github.com/ATECoder/vba.core
 [Keep a Change log]: https://keepachangelog.com/en/1.0.0/
 [TCP]: hhttps://github.com/ATECoder/vba.iot.tcp
