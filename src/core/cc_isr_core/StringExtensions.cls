@@ -443,7 +443,7 @@ Public Function ParseFormatGroup(ByVal a_formatGroup As String, _
         a_formatSpecifier = a_formatGroup
         a_precisionString = VBA.vbNullString
         Do While VBA.IsNumeric(VBA.Right$(a_formatSpecifier, 1))
-            a_precisionString = a_precisionString & VBA.Right$(a_formatSpecifier, 1)
+            a_precisionString = VBA.Right$(a_formatSpecifier, 1) & a_precisionString
             a_formatSpecifier = VBA.Left$(a_formatSpecifier, VBA.Len(a_formatSpecifier) - 1)
         Loop
         ParseFormatGroup = True
@@ -495,9 +495,12 @@ Public Function StringFormatValue(ByVal a_format As String, ByVal a_value As Var
 End Function
 
 ''' <summary>   Implements the .NET String.Format() on a numeric value. </summary>
-''' <param name="a_format">   [String] The format string, e.g., 'F11'. </param>
-''' <param name="a_value">    [Variant] The value to format. </param>
-Public Function StringFormatNumber(ByVal a_format As String, ByVal a_value As Variant) As String
+''' <param name="a_format">          [String] The format string, e.g., 'F11'. </param>
+''' <param name="a_value">           [Variant] The value to format. </param>
+''' <param name="a_denoteLiteral">   [Boolean] True to prefix 0b for binary literal or
+'''                                  0x for hex literal. </param>
+Public Function StringFormatNumber(ByVal a_format As String, _
+        ByVal a_value As Variant, Optional ByVal a_denoteLiteral As Boolean = False) As String
 
     Const p_procedureName As String = "StringFormatDate"
 
@@ -524,6 +527,17 @@ Public Function StringFormatNumber(ByVal a_format As String, ByVal a_value As Va
 
     Select Case p_formatSpecifier
 
+
+        ' Binary format
+        
+        Case "B", "b"
+            
+            ' Precision specifier determines number of digits in returned string.
+
+            p_precisionSpecifier = CInt(p_precisionString)
+
+            StringFormatNumber = IIf(a_denoteLiteral, "0b", VBA.vbNullString) & _
+                                  Me.ToBinary(a_value, p_precisionSpecifier)
 
         ' CURRENCY format, formats string as currency.
         
@@ -627,13 +641,13 @@ Public Function StringFormatNumber(ByVal a_format As String, ByVal a_value As Va
             
             p_specifier = IIf(p_formatSpecifier = "G", "D", "d")
 
-            If TypeName(a_value) = "Integer" Or TypeName(a_value) = "Long" Then
+            If VbVarType.vbInteger = VBA.VarType(a_value) Or VbVarType.vbLong = VBA.VarType(a_value) Then
                 
                 ' Integer types: use {0:D} (recursive call):
                 
-                StringFormatNumber = StringFormat("{0:" & p_specifier & "}", a_value)
+                StringFormatNumber = StringFormatNumber(p_specifier, a_value)
 
-            ElseIf TypeName(a_value) = "Double" Then
+            ElseIf VbVarType.vbDouble = VBA.VarType(a_value) Then
                 
                 ' Non-integer types: use {0:E}
                 
@@ -641,12 +655,12 @@ Public Function StringFormatNumber(ByVal a_format As String, ByVal a_value As Va
 
                 ' evaluate the exponential notation value (recursive call):
                 
-                p_eNotation = StringFormat("{0:" & p_specifier & "}", p_stringValue)
+                p_eNotation = StringFormatNumber(p_specifier, p_stringValue)
 
                 ' get the power of eNotation:
                 
-                p_ePower = VBA.Mid$(p_eNotation, InStr(1, VBA.UCase$(p_eNotation), "E-") + 1, _
-                                VBA.Len(p_eNotation) - VBA.InStr(1, VBA.UCase$(p_eNotation), "E-"))
+                p_ePower = VBA.Mid$(p_eNotation, InStr(1, VBA.UCase$(p_eNotation), "E") + 1, _
+                                VBA.Len(p_eNotation) - VBA.InStr(1, VBA.UCase$(p_eNotation), "E"))
 
                 If p_ePower > -5 And Abs(p_ePower) < p_precisionSpecifier Then
                     
@@ -654,8 +668,15 @@ Public Function StringFormatNumber(ByVal a_format As String, ByVal a_value As Va
                     ' evaluate the floating-point value (recursive call):
                     
                     p_specifier = IIf(p_formatSpecifier = "G", "F", "f")
-                    StringFormatNumber = StringFormat("{0:" & p_formatSpecifier & _
-                         IIf(p_precisionSpecifier <> 0, p_precisionString, vbNullString) & "}", a_value)
+                    
+                    ' dh: set precision specifier per .NET format
+                    
+                    Dim p_power As Double: p_power = VBA.Log(VBA.Abs(a_value)) / VBA.Log(10#)
+                    
+                    Dim p_prevision As Integer: p_prevision = p_precisionSpecifier - CInt(p_power + 0.5)
+                    
+                    StringFormatNumber = StringFormatNumber(p_specifier & _
+                         IIf(p_prevision > 0, CStr(p_prevision), vbNullString), a_value)
                 Else
                     
                     ' fallback to {0:E} if previous rule didn't apply:
@@ -750,7 +771,8 @@ Public Function StringFormatNumber(ByVal a_format As String, ByVal a_value As Va
             ' add C# hex specifier, apply specified casing:
             ' (VB6 hex specifier would cause Format() to reverse the formatting):
             
-            p_stringValue = "0x" & IIf(p_formatSpecifier = "X", VBA.UCase$(p_stringValue), VBA.LCase$(p_stringValue))
+            p_stringValue = IIf(a_denoteLiteral, "0x", VBA.vbNullString) & _
+                             IIf(p_formatSpecifier = "X", VBA.UCase$(p_stringValue), VBA.LCase$(p_stringValue))
 
             StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
 
@@ -879,7 +901,7 @@ End Function
 ''' <param name="a_format">   [String] The format string. </param>
 ''' <param name="a_values">   [Variant, ParamArray] The parameter p_values matching the
 '''                           <ParamRef name="a_format"/>. </param>
-Public Function StringFormatNew(ByVal a_format As String, ParamArray a_values() As Variant) As String
+Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As Variant) As String
 
     Const p_procedureName As String = "StringFormat"
 
@@ -909,7 +931,6 @@ Public Function StringFormatNew(ByVal a_format As String, ParamArray a_values() 
     Dim p_matches As VBScript_RegExp_55.MatchCollection
     Dim p_match As VBScript_RegExp_55.Match
     Dim p_matchValue As String
-    Dim p_valueFormat As String
 
     ' when a_format starts with "@", escapes are not replaced
     ' (string is treated as a literal string with placeholders)
@@ -977,7 +998,9 @@ Public Function StringFormatNew(ByVal a_format As String, ParamArray a_values() 
         Dim i As Integer, p_stringValue As String, p_valueIndex As Integer ' i: iterator; v: value; p: placeholder
         Dim p_alignmentGroup As String, p_alignmentSpecifier As String
         Dim p_formattedValue As String, p_alignmentPadding As Integer
-        Dim p_value As Variant
+        Dim p_value As Variant, p_valueFormat As String
+        
+        p_valueFormat = vbNullString
     
         ' iterate regex matches (each match is a placeholder):
         
@@ -1013,48 +1036,50 @@ Public Function StringFormatNew(ByVal a_format As String, ParamArray a_values() 
                 Dim p_formatSpecifier As String, p_precisionString As String
                 Dim p_itemIndex As Integer, p_success As Boolean, p_message As String
     
-                ' DH: using a parser to get the format elements
-                
                 p_success = Me.ParseFormatSpecification(p_matchValue, p_itemIndex, p_formatGroup, _
                                              p_precisionString, p_formatSpecifier, _
                                              p_message)
     
                 p_formattedValue = Me.StringFormatValue(p_formatGroup, p_value)
                 
-                
-                'apply specified alignment specifier:
-                
-                If p_alignmentSpecifier <> vbNullString Then
-        
-                    p_alignmentPadding = Abs(CInt(p_alignmentSpecifier))
-                    
-                    If CInt(p_alignmentSpecifier) < 0 Then
-                        
-                        'negative: left-justified alignment
-                        
-                        If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
-                            p_formattedValue = p_formattedValue & _
-                                String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter)
-                    Else
-                        'positive: right-justified alignment
-                        
-                        If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
-                            p_formattedValue = String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter) & p_formattedValue
-                    End If
-                
-                End If
-        
-                ' Replace C# hex specifier with VB6 hex specifier,
-                ' only if hex specifier was introduced in this function:
-                
-                If Not p_useLiteral And p_useVbHexSpecifier And Me.StringContains(p_formattedValue, "0x") Then _
-                    p_formattedValue = Replace$(p_formattedValue, "0x", "&H")
-        
-                ' replace all occurrences of placeholder {i} with their formatted p_values:
-                
-                p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, count:=1)
-        
+            Else
+            
+                p_formattedValue = VBA.Format$(p_stringValue, p_valueFormat)
+            
             End If
+    
+            ' apply specified alignment specifier:
+            
+            If p_alignmentSpecifier <> vbNullString Then
+    
+                p_alignmentPadding = Abs(CInt(p_alignmentSpecifier))
+                
+                If CInt(p_alignmentSpecifier) < 0 Then
+                    
+                    'negative: left-justified alignment
+                    
+                    If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
+                        p_formattedValue = p_formattedValue & _
+                            String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter)
+                Else
+                    'positive: right-justified alignment
+                    
+                    If p_alignmentPadding - VBA.Len(p_formattedValue) > 0 Then _
+                        p_formattedValue = String$(p_alignmentPadding - VBA.Len(p_formattedValue), This.PaddingCharacter) & p_formattedValue
+                End If
+            
+            End If
+    
+            ' Replace C# hex specifier with VB6 hex specifier,
+            ' only if hex specifier was introduced in this function:
+            
+            If Not p_useLiteral And p_useVbHexSpecifier And Me.StringContains(p_formattedValue, "0x") Then _
+                p_formattedValue = Replace$(p_formattedValue, "0x", "&H")
+    
+            ' replace all occurrences of placeholder {i} with their formatted p_values:
+            
+            p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, count:=1)
+    
     
             ' reset before reiterating:
             
@@ -1072,7 +1097,7 @@ Public Function StringFormatNew(ByVal a_format As String, ParamArray a_values() 
     If Not p_useLiteral And Me.StringContains(p_returnValue, VBA.Chr$(27)) Then _
         p_returnValue = VBA.Replace(p_returnValue, VBA.Chr$(27), "\")
     
-    StringFormatNew = p_returnValue
+    StringFormat = p_returnValue
         
 End Function
 
@@ -1084,7 +1109,7 @@ End Function
 ''' <param name="a_format">   [String] The format string. </param>
 ''' <param name="a_values">   [Variant, ParamArray] The parameter p_values matching the
 '''                           <ParamRef name="a_format"/>. </param>
-Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As Variant) As String
+Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values() As Variant) As String
 
     Const p_procedureName As String = "StringFormat"
 
@@ -1654,7 +1679,7 @@ normalExit:
     If Not p_useLiteral And Me.StringContains(p_returnValue, VBA.Chr$(27)) Then _
         p_returnValue = Replace(p_returnValue, VBA.Chr$(27), "\")
     
-    StringFormat = p_returnValue
+    StringFormatGoTo = p_returnValue
         
 End Function
 
@@ -1707,7 +1732,43 @@ Public Function Substring(ByVal a_text As String, ByVal a_startIndex As Integer,
     
 End Function
 
-''' <remarks>   Trims the given character from the start of the text. </remarks>
+
+''' <summary>   Convert a decimal value to a binary string. </summary>
+''' <remarks>
+''' <see href="https://www.developerfusion.com/code/5430/convert-decimal-integer-values-to-binary-string-in-vb6/"/>
+''' </remarks>
+''' <param name="a_value">          [Long] The value to convert. </param>
+''' <param name="a_numberOfBits">   [Integer] the number of bits. 1 if fitting bit count. </param>
+''' <returns>   [String]. <returns>
+Public Function ToBinary(ByVal a_value As Long, Optional a_numberOfBits As Integer = 1) As String
+  
+    Dim p_increment As Integer: p_increment = a_numberOfBits
+    p_increment = IIf(p_increment < 1, 1, p_increment)
+    
+    ' make sure there are enough bits to contain the number
+    If a_value >= 0 Then
+        Do While a_value > ((2 ^ a_numberOfBits) - 1)
+            a_numberOfBits = a_numberOfBits + p_increment
+        Loop
+    Else
+        Do While -a_value > (2 ^ (a_numberOfBits - 1))
+            a_numberOfBits = a_numberOfBits + p_increment
+        Loop
+    End If
+    
+    ToBinary = vbNullString
+    
+    ' build the string
+    Dim p_bit As Long: p_bit = 1
+    Dim i As Integer
+    For i = 0 To (a_numberOfBits - 1)
+        ToBinary = CStr((a_value And p_bit) / p_bit) & ToBinary
+        p_bit = p_bit * 2
+    Next i
+  
+End Function
+
+''' <summary>   Trims the given character from the start of the text. </summary>
 ''' <param name="a_text">   [String] The text to trim. </param>
 ''' <param name="a_char">   [String] The character to trim. </param>
 ''' <returns>   [String]. <returns>

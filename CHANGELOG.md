@@ -1,6 +1,9 @@
 # Change log
 All notable changes to these libraries will be documented in this file in a format based on [Keep a Change log]
 
+## [1.0.8613] - 2023-07-31
+* Implement .NET style string format.
+
 ## [1.0.8609] - 2023-07-27
 * Add workbook Deployed property to prevent code saving when deployed.
 * Add error processing to the workbook to prevent circular error when references are not found.

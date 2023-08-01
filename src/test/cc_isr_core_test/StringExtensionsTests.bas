@@ -380,6 +380,22 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
             p_actual, "'" & p_format & "' should format the expected value.")
             
     If outcome.AssertSuccessful Then
+        p_format = "(B) Binary: {0:B}"
+        p_expected = "(B) Binary: 10000101"
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
+        Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+                p_actual, "'" & p_format & "' should format the expected value.")
+    End If
+
+    If outcome.AssertSuccessful Then
+        p_format = "(B) Binary: {0:B16}"
+        p_expected = "(B) Binary: 1111111110000101"
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
+        Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+                p_actual, "'" & p_format & "' should format the expected value.")
+    End If
+            
+    If outcome.AssertSuccessful Then
         p_format = "(C) Currency: {0:C}\n"
         p_expected = "(C) Currency: -123.45$" & VBA.vbLf
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
@@ -412,7 +428,6 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
     
-
     If outcome.AssertSuccessful Then
         p_format = "(F) Fixed point:. . . . . . . {0:F}"
         p_expected = "(F) Fixed point:. . . . . . . -123.45"
@@ -420,10 +435,26 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
-
+    
     If outcome.AssertSuccessful Then
         p_format = "(F) Fixed point:. . . . . . . {0:F1}"
         p_expected = "(F) Fixed point:. . . . . . . -123.5"
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
+        Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+                p_actual, "'" & p_format & "' should format the expected value.")
+    End If
+
+    If outcome.AssertSuccessful Then
+        p_format = "(G) General:. . . . . . . {0:G}"
+        p_expected = "(G) General:. . . . . . . -1.23450E2"
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
+        Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+                p_actual, "'" & p_format & "' should format the expected value.")
+    End If
+
+    If outcome.AssertSuccessful Then
+        p_format = "(G) General:. . . . . . . {0:G4}"
+        p_expected = "(G) General:. . . . . . . -123.5"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
@@ -455,7 +486,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
 
     If outcome.AssertSuccessful Then
         p_format = "(X) Hexadecimal:. . . . . . . {0:X}"
-        p_expected = "(X) Hexadecimal:. . . . . . . 0xFF85"
+        p_expected = "(X) Hexadecimal:. . . . . . . FF85"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, CInt(-123))
         Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
@@ -463,7 +494,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
 
     If outcome.AssertSuccessful Then
         p_format = "(X) Hexadecimal:. . . . . . . {0:x}"
-        p_expected = "(X) Hexadecimal:. . . . . . . 0xff85"
+        p_expected = "(X) Hexadecimal:. . . . . . . ff85"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, CInt(-123))
         Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
@@ -614,8 +645,6 @@ Public Function TestStringContainsAny() As cc_isr_Test_Fx.Assert
 
 End Function
 
-
-
 ''' <summary>   Unit test. Asserts sub-string. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestSubstring() As cc_isr_Test_Fx.Assert
@@ -624,6 +653,50 @@ Public Function TestSubstring() As cc_isr_Test_Fx.Assert
             "Should get the expected part of the string")
 
 End Function
+
+''' <summary>   Unit test. Asserts convertinh values to binary. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance where
+'''             <see cref="Assert.AssertSuccessful"/> is True if the test passed. </returns>
+Public Function TestToBinary() As cc_isr_Test_Fx.Assert
+
+    Dim outcome As cc_isr_Test_Fx.Assert
+    Dim p_value As Long
+    Dim p_expected As String
+    Dim p_actual As String
+    
+    p_value = 5
+    p_expected = "101"
+    p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value)
+    Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+            p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
+    
+    If outcome.AssertSuccessful Then
+        p_value = 16
+        p_expected = "10000"
+        p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value)
+        Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+                p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
+    End If
+    
+    If outcome.AssertSuccessful Then
+        p_value = 5
+        p_expected = "00000101"
+        p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value, 8)
+        Set outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+                p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
+    End If
+    
+    If outcome.AssertSuccessful Then
+        Debug.Print "TestToBinary passed"
+    Else
+        Debug.Print "TestToBinary failed: " & outcome.AssertMessage
+    End If
+    
+    Set TestToBinary = outcome
+    
+
+End Function
+
 
 ''' <summary>   Unit test. Asserts trim left. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
