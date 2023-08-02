@@ -22,35 +22,35 @@ Option Explicit
 Private Sub Class_Initialize()
 End Sub
 
-''' <summary>   Instantiates a new <see cref="Assert"/> object. </summary>
-''' <returns>   A new instance of the <see cref="Assert"/> object. </returns>
+''' <summary>   Instantiates a new <see cref="Assert"/>] object. </summary>
+''' <returns>   {<see cref="Assert"/>]. </returns>
 Public Function NewAssert() As Assert
   Set NewAssert = New Assert
 End Function
 
-''' <summary>   Instantiates a new <see cref="MacroInfo"/> object. </summary>
+''' <summary>   Instantiates a new <see cref="MacroInfo"/>] object. </summary>
 ''' <remarks>
 ''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
 ''' </remarks>
-''' <returns>   A new instance of the <see cref="MacroInfo"/> object. </returns>
+''' <returns>   {<see cref="MacroInfo"/>]. </returns>
 Public Function NewMacroInfo() As MacroInfo
     Set NewMacroInfo = New MacroInfo
 End Function
 
-''' <summary>   Instantiates a new <see cref="ModuleInfo"/> object. </summary>
+''' <summary>   Instantiates a new <see cref="ModuleInfo"/>] object. </summary>
 ''' <remarks>
 ''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
 ''' </remarks>
-''' <returns>   A new instance of the <see cref="ModuleInfo"/> object. </returns>
+''' <returns>   {<see cref="ModuleInfo"/>]. </returns>
 Public Function NewModuleInfo() As ModuleInfo
     Set NewModuleInfo = New ModuleInfo
 End Function
 
-''' <summary>   Instantiates a new <see cref="StopWatch"/> object. </summary>
+''' <summary>   Instantiates a new <see cref="StopWatch"/>] object. </summary>
 ''' <remarks>
 ''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
 ''' </remarks>
-''' <returns>   A new instance of the <see cref="StopWatch"/> object. </returns>
+''' <returns>   {<see cref="StopWatch"/>]. </returns>
 Public Function NewStopWatch() As StopWatch
     Set NewStopWatch = New StopWatch
 End Function

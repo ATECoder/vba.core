@@ -22,21 +22,17 @@ Option Explicit
 Private Sub Class_Initialize()
 End Sub
 
-''' <summary>   Instantiates and initializes a <see cref="EventTimer"/> object. </summary>
-''' <param name="a_intervalMs">   [Long] Number of milliseconds to raise Tick Event between </param>
-''' <param name="a_callback">     [IRunnable=Nothing] Callback object. Must contain a Run() method. </param>
-''' <returns> [see cref=""EventTimer"/>. The frequency isn't guaranteed but it will be as close as humanly possible. </returns>
-''' <returns>   A new instance of the <see cref="EventTimer"/> object. </returns>
-Public Function CreateEventTimer(ByVal a_intervalMs As Long, Optional ByVal a_callback As IRunnable = Nothing) As EventTimer
-  Set CreateEventTimer = New EventTimer
-  Call CreateEventTimer.ProtInit(a_intervalMs, a_callback)
+''' <summary>   Instantiates an instance of an <see cref="EventTimer"/> object. </summary>
+''' <returns>   [<see cref="EventTimer"/>]. </returns>
+Public Function NewEventTimer() As EventTimer
+  Set NewEventTimer = New EventTimer
 End Function
 
 ''' <summary>   Instantiates a new <see cref="StopWatch"/> object. </summary>
 ''' <remarks>
 ''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
 ''' </remarks>
-''' <returns>   A new instance of the <see cref="StopWatch"/> object. </returns>
+''' <returns>   [<see cref="StopWatch"/>]. </returns>
 Public Function NewStopWatch() As StopWatch
     Set NewStopWatch = New StopWatch
 End Function
@@ -45,13 +41,13 @@ End Function
 ''' <remarks>
 ''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
 ''' </remarks>
-''' <returns>   A new instance of the <see cref="StringBuilder"/> object. </returns>
+''' <returns>   [<see cref="StringBuilder"/>]. </returns>
 Public Function NewStringBuilder() As StringBuilder
     Set NewStringBuilder = New StringBuilder
 End Function
 
 ''' <summary>   Instantiates a new <see cref="CancelEventArgs"/> object. </summary>
-''' <returns>   A new instance of the <see cref="CancelEventArgs"/> object. </returns>
+''' <returns>   [<see cref="CancelEventArgs"/>]. </returns>
 Public Function NewCancelEventArgs() As CancelEventArgs
     Set NewCancelEventArgs = New CancelEventArgs
 End Function

@@ -33,11 +33,11 @@ Public Function ContainsKey(ByVal a_col As VBA.Collection, ByVal a_key As Varian
 
 #If False Then
     ' this causes error 5 event if doing this:
-    Print a_col.item(1)
+    Print a_col.Item(1)
     StringExtensionsTests
-    Print a_col.item("StringExtensionsTests")
+    Print a_col.Item("StringExtensionsTests")
     ' or even this!
-    Print a_col.item(a_col.item(1))
+    Print a_col.Item(a_col.Item(1))
     On Error Resume Next
     a_col a_key ' Just try it. If it fails, Err.Number will be nonzero.
     ContainsKey = (Err.Number = 0)

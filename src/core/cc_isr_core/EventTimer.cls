@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "EventTimer"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
+Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   An event tyimer. </summary>
@@ -70,45 +70,48 @@ Private WithEvents m_remoteWorkbook As Workbook
 Attribute m_remoteWorkbook.VB_VarHelpID = -1
 
 Private Type ThisData
+    
     Callback As IRunnable
+    
     ' true when the workbook begins closing
     WorkbookClosing As Boolean
+    
     ' the timer interval in milliseconds.
-    Interval As Integer
+    Interval As Long
+
 End Type
 
 Private This As ThisData
 
-'Create an instance of the timer
-'@param {Long} Number of milliseconds to raise Tick Event between
-'@param {ICallable=Nothing} <see cref="IRunnable"/> Callback object. Must contain a Run() method.
-'@returns {EventTimer} The frequency isn't guaranteed but it will be as close as humanly possible.
-Public Function Create(ByVal a_interval As Long, Optional ByVal a_callback As IRunnable = Nothing) As EventTimer
-  Set Create = New EventTimer
-  Call Create.ProtInit(a_interval, a_callback)
-End Function
+''' <summary>   Instantiates and initializes a <see cref="EventTimer"/> object. </summary>
+''' <remarks>   The frequency isn't guaranteed but it will be as close as humanly possible. </remarks>
+''' <param name="a_interval">   [Long] Number of milliseconds between tick events. </param>
+''' <param name="a_callback">   [IRunnable, Nothing] Callback object. Must contain a Run() method. </param>
+''' <returns>   [<see cref="EventTimer"/>]. </returns>
+Public Function Initialize(ByVal a_interval As Long, Optional ByVal a_callback As IRunnable = Nothing) As EventTimer
 
-'Initialize module
-'@param {Long} Number of milliseconds to raise Tick Event between
-'@param {IRunnable} Optional Listener
-Public Sub ProtInit(ByVal a_interval As Long, a_callback As IRunnable)
-    
     This.Interval = a_interval
     
     Set This.Callback = a_callback
+    
     If Not GetVBOM Then Call SetVBOM(True)
+    
     Set m_remoteWorkbook = CreateRemoteWorkbook()
+    
     If Not GetVBOM Then Call SetVBOM(False)
     
     ' inject the timer code into the timer module.
     
     Call InjectCode(m_remoteWorkbook, TIMER_MODULE, GetTimerCode(a_interval))
+    
+    Set Initialize = Me
+    
+End Function
 
-End Sub
-
-'Create and return a remote workbook, close equivalent of generating a new thread, however these threads will be in sync (due to usage of COM events)
-'@param {Boolean, True} to see the workbook if in debug mode
-'@returns {Workbook} Remote Workbook object.
+''' <summary>   Creates and returns a remote workbook. This is a close equivalent of generating a new thread,
+'''             however these threads will be in sync (due to usage of COM events). </summary>
+''' <param name="a_visibleWorkbook">    [Boolean, True] to see the workbook if in debug mode. </param>
+''' <returns>   [<see cref="Workbook"/>]. </returns>
 Private Function CreateRemoteWorkbook(Optional ByVal a_visibleWorkbook As Boolean = True) As Workbook
     
     Dim p_application As Application: Set p_application = New Application
@@ -124,13 +127,14 @@ Private Function CreateRemoteWorkbook(Optional ByVal a_visibleWorkbook As Boolea
 
 End Function
 
-'Inject VBA code into a workbook
-'@param {Workbook} The workbook to inject code into
-'@param {string} The module name to create
-'@param {ByRef string} The code to insert into the module
-'@param {Long} The type of code module to create (Module=1, Class=2)
+''' <summary>   Inject VBA code into a workbook. </summary>
+''' <param name="a_workbook">      [Workbook] The workbook to inject code into. </param>
+''' <param name="a_moduleName">    [String] The module name to create. </param>
+''' <param name="a_code">          [String] a reference to the code to insert into the module. </param>
+''' <param name="a_moduleType">    [Long, 1] The type of code module to create (Module=1, Class=2). </param>
 Public Sub InjectCode(ByVal a_workbook As Workbook, ByVal a_moduleName As String, _
         ByRef a_code As String, Optional ByVal a_moduleType As Long = 1)
+        
   With a_workbook.VBProject.VBComponents.Add(a_moduleType).CodeModule
     If .CountOfLines > 0 Then .DeleteLines 1, .CountOfLines
     .AddFromString a_code
@@ -138,17 +142,18 @@ Public Sub InjectCode(ByVal a_workbook As Workbook, ByVal a_moduleName As String
   End With
 End Sub
 
-'Check if VB Object model is extensible
-'@returns {Boolean} True if VBE Is Extensible (i.e. checked within the IDE, rather than the registry)
+''' <summary>   Check if VB Object model is extensible. </summary>
+''' <returns>   [Boolean] True if VBE Is Extensible (i.e. checked within the IDE,
+'''             rather than the registry). </returns>
 Private Function GetVBOM() As Boolean
   On Error Resume Next
   GetVBOM = Not Application.VBE.ActiveVBProject Is Nothing
 End Function
 
-'Check whether a registry key exists
-'@param {Boolean} True to enable VBOM, False otherwise
-'@returns {Boolean} True if key exists, False otherwise
-'@author [Cristian Buse](https://github.com/cristianbuse)
+''' <summary>   Check whether a registry key exists.  </summary>
+''' <remarks>   Author <see href="https://github.com/cristianbuse">Cristian Buse</see>. </remarks>
+''' <param name="a_visibleWorkbook">    [Boolean} True to enable VBOM, False otherwise. </param>
+''' <returns>   [Boolean] True if key exists, False otherwise. </returns>
 Private Function SetVBOM(ByVal a_newValue As Boolean) As Boolean
   
   Dim i As Long: i = IIf(a_newValue, 1, 0)
@@ -168,7 +173,9 @@ Private Function SetVBOM(ByVal a_newValue As Boolean) As Boolean
 
 End Function
 
-'Obtain code for a simple timer
+''' <summary>   Obtains the code for a simple timer. </summary>
+''' <param name="a_interval">   [Long] Number of milliseconds between tick events. </param>
+''' <returns>   [String]. </returns>
 Private Function GetTimerCode(ByVal a_interval As Long) As String
   
   Dim s As String: s = "' Auto-generated by EventTimer"
@@ -267,6 +274,7 @@ Private Sub Class_Terminate()
     
 End Sub
 
+''' <summary>   Handles the workbook before close event. </summary>
 Private Sub m_remoteWorkbook_BeforeClose(Cancel As Boolean)
     This.WorkbookClosing = True
 End Sub

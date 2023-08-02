@@ -191,7 +191,7 @@ End Function
 Public Function GetUserDefinedError(ByVal a_key As Long) As UserDefinedError
     
     If This.ErrorsDix.Exists(a_key) Then
-        Set GetUserDefinedError = This.ErrorsDix.item(a_key)
+        Set GetUserDefinedError = This.ErrorsDix.Item(a_key)
     Else
         Set GetUserDefinedError = New UserDefinedError
         GetUserDefinedError.InitiateProperties a_key, "UnknwonUserDefinedError", "Unknown error."
