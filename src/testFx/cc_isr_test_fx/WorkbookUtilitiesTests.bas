@@ -136,6 +136,9 @@ End Sub
 ''' <returns>   An <see cref="Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestModuleList() As Assert
 
+    Dim p_outcome As Assert
+    Dim p_isDone As Boolean: p_isDone = False
+
     Dim p_modules As VBA.Collection
     Set p_modules = WorkbookUtilities.EnumerateProjectModules(Application.ActiveWorkbook.VBProject)
     
@@ -144,32 +147,62 @@ Public Function TestModuleList() As Assert
     Set p_knownTestModules = New VBA.Collection
     AddTestModules p_knownTestModules
     
-    Set TestModuleList = Assert.AreEqual(p_knownTestModules.count, p_modules.count, _
+    Set p_outcome = Assert.AreEqual(p_knownTestModules.count, p_modules.count, _
         "Expecting " & CStr(p_knownTestModules.count) & " but found  " & _
         CStr(p_modules.count) & " test modules")
     
-    If Not TestModuleList.AssertSuccessful Then
-        Exit Function
+    Dim p_missingItem As Variant
+
+    If Not p_isDone And p_outcome.AssertSuccessful Then
+    
+        Set p_missingItem = Nothing
+        Set p_missingItem = FindMissingItem(p_modules, p_knownTestModules)
+    
+        If Not p_missingItem Is Nothing Then
+            Set outcome = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
+                "item " & CStr(p_missingItem) & " from the expected test module is not found in the actual collection of test modules")
+            p_isDone = True
+        End If
+    
     End If
     
-    Dim p_missingItem As Variant: Set p_missingItem = Nothing
-    Set p_missingItem = FindMissingItem(p_modules, p_knownTestModules)
-    
-    If Not p_missingItem Is Nothing Then
-        Set TestModuleList = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
-            "item " & CStr(p_missingItem) & " from the expected test module is not found in the actual collection of test modules")
-        Exit Function
-    End If
   
-    Set p_missingItem = FindMissingItem(p_knownTestModules, p_modules)
+    If Not p_isDone And p_outcome.AssertSuccessful Then
     
-    If Not p_missingItem Is Nothing Then
-        Set TestModuleList = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
-            "item " & CStr(p_missingItem) & _
-            " from the actual test module is not found in the exected collection of test modules")
-        Exit Function
+        Set p_missingItem = FindMissingItem(p_knownTestModules, p_modules)
+        
+        If Not p_missingItem Is Nothing Then
+            Set TestModuleList = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
+                "item " & CStr(p_missingItem) & _
+                " from the actual test module is not found in the exected collection of test modules")
+            p_isDone = True
+        End If
+    
     End If
-  
+    
+    Debug.Print "TestModuleList " & _
+        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    
+    Set TestModuleList = p_outcome
   
 End Function
+
+''' <summary>   Unit test. Asserts creating a list of test modules. </summary>
+''' <returns>   An <see cref="Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestNothingAssertion() As Assert
+
+    Dim p_object As Object
+    Set p_object = Nothing
+    
+    Dim p_outcome As Assert
+    
+    Set p_outcome = Assert.IsNothing(p_object, "Object should be noting")
+    
+    Debug.Print "TestNothingAssertion " & _
+        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    
+    Set TestNothingAssertion = p_outcome
+    
+End Function
+
 
