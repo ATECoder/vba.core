@@ -26,14 +26,16 @@ The [cc.isr.Core] demo workbook includes two worksheets:
 
 Testing information is included in the [Testing] document.
 
-## [User-Defined Type Not Defined error]
+## Scripts
 
-Occasionally, this error message displays when compiling this project.  Importing all code files did not resolve this 
-issue per the above link.
+* [Deploy]: copies the main workbook and its referenced workbooks to the deploy folder.
+* [Localize]: sets the folders of the referenced workbook of each workbook to the same folder as the  referencing workbook.
 
 [cc.isr.Core]: https://github.com/ATECoder/vba.core
 [cc.isr.Core.Demo]: https://github.com/ATECoder/vba.core.demo
 [Testing]: ./cc.isr.core.demo.testing.md
+[Deploy]: ./deploy.ps
+[Localize]: ./localize.ps
 
 [ISR]: https://www.integratedscientificresources.com
 
