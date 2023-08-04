@@ -107,12 +107,13 @@ Private Function ContainsAllModules(ByVal a_leftCol As VBA.Collection, ByVal a_r
 
 End Function
 
-
-''' <summary>   Adds the test modules. </summary>
+''' <summary>   Adds the known test modules. </summary>
+''' <para name="a_knownTestModules">   [Collection] holds the know test modules. </param>
 Private Sub AddTestModules(ByVal a_knownTestModules As VBA.Collection)
     
     Dim p_projectName As String: p_projectName = Excel.Application.ActiveWorkbook.VBProject.Name
     AddModule a_knownTestModules, p_projectName & ".WorkbookUtilitiesTests"
+    AddModule a_knownTestModules, p_projectName & ".AssetTests"
 
 End Sub
 
@@ -166,7 +167,6 @@ Public Function TestModuleList() As Assert
     
     End If
     
-  
     If Not p_isDone And p_outcome.AssertSuccessful Then
     
         Set p_missingItem = FindMissingItem(p_knownTestModules, p_modules)
@@ -186,23 +186,4 @@ Public Function TestModuleList() As Assert
     Set TestModuleList = p_outcome
   
 End Function
-
-''' <summary>   Unit test. Asserts creating a list of test modules. </summary>
-''' <returns>   An <see cref="Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
-Public Function TestNothingAssertion() As Assert
-
-    Dim p_object As Object
-    Set p_object = Nothing
-    
-    Dim p_outcome As Assert
-    
-    Set p_outcome = Assert.IsNothing(p_object, "Object should be noting")
-    
-    Debug.Print "TestNothingAssertion " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
-    
-    Set TestNothingAssertion = p_outcome
-    
-End Function
-
 

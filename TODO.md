@@ -2,7 +2,12 @@
 
 ## Code
 
+Add CHAT GPT Decimal to Binary code with and without bit counts.
+Add tests for the new code.
+Add tests for object and nothing. 
+
 ## Tests
+
 
 Dim MyInt As Integer              ' Declare variables.
 Dim YourObject, MyCheck           ' Note: Default variable type is Variant.

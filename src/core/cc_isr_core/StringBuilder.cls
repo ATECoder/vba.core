@@ -65,8 +65,8 @@ End Sub
 
 ''' <summary>   Returns the current length. </summary>
 ''' <value>   [Long]. </value>
-Public Property Get Length() As Long
-    Length = This.CurrentIndex
+Public Property Get length() As Long
+    length = This.CurrentIndex
 End Property
 
 ''' <summary>   Returns the text in this StringBuilder. </summary>
