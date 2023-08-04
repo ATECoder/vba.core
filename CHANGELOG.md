@@ -1,6 +1,10 @@
 # Change log
 All notable changes to these libraries will be documented in this file in a format based on [Keep a Change log]
 
+## [1.0.8616] - 2023-08-04
+* Add Pass Fail and Same and Not Same test assertions. 
+* Prepare to merge branch into main.
+
 ## [1.0.8613] - 2023-07-31
 * Implement .NET style string format.
 
