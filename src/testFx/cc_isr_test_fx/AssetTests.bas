@@ -182,6 +182,74 @@ Public Function TestNullShouldNotBeAsserted() As Assert
     
 End Function
 
+''' <summary>   Unit test. Asserting <see cref="Assert.Same"/> should report success if
+'''             objects are the same and failure if objects are not the same. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
+Public Function TestAssertingSamenessShouldReportSameness() As Assert
+
+    Dim p_outcome As Assert
+    
+    Dim p_object1 As Object
+    Dim p_object2 As Variant
+    
+    ' set the object tothe testing sheet.
+    Set p_object1 = cc_isr_Test_Fx.Testing
+    Set p_object2 = p_object1
+    
+    Set p_outcome = Assert.AreSame(p_object1, p_object2, "The objects should be the same.")
+    Set p_outcome = Assert.IsTrue(p_outcome.AssertSuccessful, _
+            "Asserting sameness on the same objects should report AssertSuccessful as True.")
+    
+    If p_outcome.AssertSuccessful Then
+    
+        Set p_object2 = Nothing
+        Set p_outcome = Assert.AreSame(p_object1, p_object2, "The objects should not be the same.")
+        Set p_outcome = Assert.IsFalse(p_outcome.AssertSuccessful, _
+                "Asserting sameness on different objects should report AssertSuccessful as False.")
+    
+    End If
+    
+    Debug.Print "TestAssertingSamenessShouldReportSameness " & _
+        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    
+    Set TestAssertingSamenessShouldReportSameness = p_outcome
+    
+End Function
+
+''' <summary>   Unit test. Asserting <see cref="Assert.NotSame"/> should report success if
+'''             objects are not the same and failure if objects are the same. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
+Public Function TestAssertingNonSamenessShouldReportNonSameness() As Assert
+
+    Dim p_outcome As Assert
+    
+    Dim p_object1 As Object
+    Dim p_object2 As Variant
+    
+    ' set the object tothe testing sheet.
+    Set p_object1 = cc_isr_Test_Fx.Testing
+    Set p_object2 = p_object1
+    
+    Set p_outcome = Assert.AreNotSame(p_object1, p_object2, "The objects should be the same.")
+    Set p_outcome = Assert.IsFalse(p_outcome.AssertSuccessful, _
+            "Asserting non sameness on the same objects should report AssertSuccessful as False.")
+    
+    If p_outcome.AssertSuccessful Then
+    
+        Set p_object2 = Nothing
+        Set p_outcome = Assert.AreNotSame(p_object1, p_object2, "The objects should not be the same.")
+        Set p_outcome = Assert.IsTrue(p_outcome.AssertSuccessful, _
+                "Asserting non sameness on different objects should report AssertSuccessful as True.")
+    
+    End If
+   
+    Debug.Print "TestAssertingNonSamenessShouldReportNonSameness " & _
+        IIf(p_outcome.AssertSuccessful, "passed.", "Passed: " & p_outcome.AssertMessage)
+    
+    Set TestAssertingNonSamenessShouldReportNonSameness = p_outcome
+    
+End Function
+
 
 
 

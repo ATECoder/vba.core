@@ -154,3 +154,41 @@ Public Function Pass(Optional ByVal a_message As String = VBA.vbNullString) As A
 
 End Function
 
+''' <summary>   Asserts that object are Same, in the sense that the actual object 'Is' the
+'''             expected object. If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [Variant] The expected object. </param
+''' <param name="a_actual">     [Variant] The actual object value. </param
+''' <param name=a_"message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> Sames True if values
+'''             are Same; otherwise, False. </returns>
+Public Function AreSame(ByVal a_expected As Object, ByVal a_actual As Object, ByVal a_message As String) As Assert
+
+    Set AreSame = Me.IsTrue(a_actual Is a_expected, a_message)
+    
+    If Not AreSame.AssertSuccessful Then
+        AreSame.AssertMessage = AreSame.AssertMessage & vbCrLf & _
+                "    Expected: " & TypeName(a_expected) & vbCrLf & _
+                "    Actual:   " & TypeName(a_actual)
+    End If
+End Function
+
+''' <summary>   Asserts that object are Not the Same, in the sense that the actual object
+'''             'Is' not the expected object. If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [Variant] The value the caller expects to have. </param
+''' <param name="a_actual">     [Variant] The actual value. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> Sames True if
+'''             values are not Same; otherwise, false. </returns>
+Public Function AreNotSame(ByVal a_expected As Object, ByVal a_actual As Object, ByVal a_message As String) As Assert
+    
+    Set AreNotSame = Me.IsFalse(a_actual Is a_expected, a_message)
+    
+    If Not AreNotSame.AssertSuccessful Then
+        AreNotSame.AssertMessage = AreNotSame.AssertMessage & vbCrLf & _
+                "    Expected: " & TypeName(a_expected) & vbCrLf & _
+                "    Actual:   " & TypeName(a_actual)
+    End If
+End Function
+
+
+
