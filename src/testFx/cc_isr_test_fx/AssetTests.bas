@@ -6,6 +6,40 @@ Attribute VB_Name = "AssetTests"
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
+''' <summary>   Unit test. Asserting <see cref="Assert.Fail"/> should report failure. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
+Public Function TestAssertingFailShouldReportFailure() As Assert
+
+    Dim p_outcome As Assert
+    
+    Set p_outcome = Assert.Fail("Asserting Fail to test failure reporting.")
+    
+    Set p_outcome = Assert.IsFalse(p_outcome.AssertSuccessful, "Asserting failure should report AssertSuccessful as false.")
+    
+    Debug.Print "TestAssertingFailShouldReportFailure " & _
+        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    
+    Set TestAssertingFailShouldReportFailure = p_outcome
+    
+End Function
+
+''' <summary>   Unit test. Asserting <see cref="Assert.Pass"/> should report pass. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
+Public Function TestAssertingPassShouldReportPass() As Assert
+
+    Dim p_outcome As Assert
+    
+    Set p_outcome = Assert.Pass("Asserting Pass to test Pass reporting.")
+    
+    Set p_outcome = Assert.IsTrue(p_outcome.AssertSuccessful, "Asserting Pass should report AssertSuccessful as True.")
+    
+    Debug.Print "TestAssertingPassShouldReportPass " & _
+        IIf(p_outcome.AssertSuccessful, "passed.", "Passed: " & p_outcome.AssertMessage)
+    
+    Set TestAssertingPassShouldReportPass = p_outcome
+    
+End Function
+
 ''' <summary>   Unit test. Asserting nothing should assert nothing. </summary>
 ''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
 Public Function TestNothingShouldBeAsserted() As Assert

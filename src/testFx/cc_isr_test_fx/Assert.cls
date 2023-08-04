@@ -25,8 +25,9 @@ Public AssertMessage As String
 ''' <param name="a_expected">   [Variant] The value the caller expects to have. </param
 ''' <param name="a_actual">     [Variant] The actual value. </param
 ''' <param name=a_"message">    [String] A message to show in case the assertion failed. </param
-''' <returns>   An <see cref="Assert"/>   instant of True if values are equal; otherwise, False. </returns>
-Public Function AreEqual(ByVal a_expected As Variant, ByVal a_actual As Variant, ByRef a_message As String) As Assert
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if values
+'''             are equal; otherwise, False. </returns>
+Public Function AreEqual(ByVal a_expected As Variant, ByVal a_actual As Variant, ByVal a_message As String) As Assert
 
     Set AreEqual = Me.IsTrue(Not a_expected <> a_actual, a_message)
     
@@ -41,8 +42,9 @@ End Function
 ''' <param name="a_expected">   [Variant] The value the caller expects to have. </param
 ''' <param name="a_actual">     [Variant] The actual value. </param
 ''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
-''' <returns> True if values are not equal; otherwise, false. </returns>
-Public Function AreNotEqual(ByVal a_expected As Variant, ByVal a_actual As Variant, ByRef a_message As String) As Assert
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             values are not equal; otherwise, false. </returns>
+Public Function AreNotEqual(ByVal a_expected As Variant, ByVal a_actual As Variant, ByVal a_message As String) As Assert
     
     Set AreNotEqual = Me.IsTrue(a_expected <> a_actual, a_message)
     
@@ -56,16 +58,18 @@ End Function
 ''' <summary>   Asserts that the given value is Nothing. </summary>
 ''' <param name="a_actual">    [Variant] The actual value. </param
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
-''' <returns> True if <paramref name="a_actual"/> is Nothing; otherwise, false. </returns>
-Public Function IsNothing(ByVal a_actual As Variant, ByRef a_message As String) As Assert
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             <paramref name="a_actual"/> is Nothing; otherwise, false. </returns>
+Public Function IsNothing(ByVal a_actual As Variant, ByVal a_message As String) As Assert
     Set IsNothing = Me.IsTrue(a_actual Is Nothing, a_message)
 End Function
 
 ''' <summary>   Asserts that the given value is not Nothing. </summary>
 ''' <param name="a_actual">    [Variant] The actual value. </param
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
-''' <returns> True if <paramref name="a_actual"/> is not Nothing; otherwise, false. </returns>
-Public Function IsNotNothing(ByVal a_actual As Variant, ByRef a_message As String) As Assert
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             <paramref name="a_actual"/> is not Nothing; otherwise, false. </returns>
+Public Function IsNotNothing(ByVal a_actual As Variant, ByVal a_message As String) As Assert
     
     Set IsNotNothing = Me.IsFalse(a_actual Is Nothing, a_message)
 
@@ -74,8 +78,9 @@ End Function
 ''' <summary>   Asserts that the given value is null. </summary>
 ''' <param name="a_actual">    [Variant] The actual value. </param
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
-''' <returns> True if <paramref name="a_actual"/> is null; otherwise, false. </returns>
-Public Function IsNull(ByVal a_actual As Variant, ByRef a_message As String) As Assert
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             <paramref name="a_actual"/> is null; otherwise, false. </returns>
+Public Function IsNull(ByVal a_actual As Variant, ByVal a_message As String) As Assert
     Set IsNull = Me.IsFalse(VBA.IsObject(a_actual), a_message)
 End Function
 
@@ -83,7 +88,7 @@ End Function
 ''' <param name="a_actual">    [Variant] The actual value. </param
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
 ''' <returns> True if <paramref name="a_actual"/> is not null; otherwise, false. </returns>
-Public Function IsNotNull(ByVal a_actual As Variant, ByRef a_message As String) As Assert
+Public Function IsNotNull(ByVal a_actual As Variant, ByVal a_message As String) As Assert
     
     Set IsNotNull = Me.IsTrue(VBA.IsObject(a_actual), a_message)
 
@@ -93,8 +98,9 @@ End Function
 ''' <param name="a_truthy">    [Variant] A value that can be seen as truthy. Very likely should be boolean,
 '''                             but maybe you like to live dangerously. </param
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
-''' <returns> True if <paramref name="truthy"/> is true; otherwise, false. </returns>
-Public Function IsTrue(ByVal a_truthy As Variant, ByRef a_message As String) As Assert
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             <paramref name="truthy"/> is true; otherwise, false. </returns>
+Public Function IsTrue(ByVal a_truthy As Variant, ByVal a_message As String) As Assert
     
     Set IsTrue = New Assert
     IsTrue.AssertSuccessful = True
@@ -111,8 +117,9 @@ End Function
 ''' <param name="a_falsy">     [Variant] A value that can be seen as falsy. Very likely should be boolean,
 '''                            but maybe you like to live dangerously. </param
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
-''' <returns>   False if <paramref name="falsy"/> is False; otherwise, false. </returns>
-Public Function IsFalse(ByVal a_falsy As Variant, ByRef a_message As String) As Assert
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals False if
+'''             <paramref name="falsy"/> is False; otherwise, True. </returns>
+Public Function IsFalse(ByVal a_falsy As Variant, ByVal a_message As String) As Assert
     
     Set IsFalse = New Assert
     IsFalse.AssertSuccessful = True
@@ -125,4 +132,25 @@ Public Function IsFalse(ByVal a_falsy As Variant, ByRef a_message As String) As 
 
 End Function
 
+''' <summary>   Asserts a failure with the specified message. </summary>
+''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals False.. </returns>
+Public Function Fail(ByVal a_message As String) As Assert
+    
+    Set Fail = New Assert
+    Fail.AssertSuccessful = False
+    Fail.AssertMessage = a_message
+
+End Function
+
+''' <summary>   Asserts a failure with the specified message. </summary>
+''' <param name="a_message">   [String, vbNullString] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals False.. </returns>
+Public Function Pass(Optional ByVal a_message As String = VBA.vbNullString) As Assert
+    
+    Set Pass = New Assert
+    Pass.AssertSuccessful = True
+    Pass.AssertMessage = a_message
+
+End Function
 

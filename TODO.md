@@ -1,7 +1,5 @@
 # TODO
 
-Update read me to add the VBScript regular expression DLL.
-
 ## Code
 
 ## Tests
