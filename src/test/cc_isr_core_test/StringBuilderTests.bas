@@ -10,7 +10,7 @@ Option Explicit
 Public Function TestAppendingToEmptyBuilder() As cc_isr_Test_Fx.Assert
     
     Dim p_builder As StringBuilder
-    Set p_builder = cc_isr_Core.Factory.NewStringBuilder
+    Set p_builder = cc_isr_core.Factory.NewStringBuilder
     Dim p_expected As String
     p_expected = "a"
     p_builder.Append p_expected
@@ -25,7 +25,7 @@ End Function
 Public Function TestAppendingEmptyString() As cc_isr_Test_Fx.Assert
     
     Dim p_builder As StringBuilder
-    Set p_builder = cc_isr_Core.Factory.NewStringBuilder
+    Set p_builder = cc_isr_core.Factory.NewStringBuilder
     Dim p_expected As String
     p_expected = vbNullString
     p_builder.Append p_expected
@@ -40,7 +40,7 @@ End Function
 Public Function TestAppendingLongString() As cc_isr_Test_Fx.Assert
     
     Dim p_builder As StringBuilder
-    Set p_builder = cc_isr_Core.Factory.NewStringBuilder
+    Set p_builder = cc_isr_core.Factory.NewStringBuilder
     Dim p_expected As String
     p_expected = StringExtensions.Repeat("a", 1000)
     p_builder.Append p_expected
@@ -54,7 +54,7 @@ End Function
 Public Function TestAppendingLineFeed() As cc_isr_Test_Fx.Assert
     
     Dim p_builder As StringBuilder
-    Set p_builder = cc_isr_Core.Factory.NewStringBuilder
+    Set p_builder = cc_isr_core.Factory.NewStringBuilder
     Dim p_expected As String
     p_expected = "a" & vbLf
     p_builder.Append p_expected
@@ -69,7 +69,7 @@ End Function
 Public Function TestAppendFormat() As cc_isr_Test_Fx.Assert
     
     Dim p_builder As StringBuilder
-    Set p_builder = cc_isr_Core.Factory.NewStringBuilder
+    Set p_builder = cc_isr_core.Factory.NewStringBuilder
     Dim p_expected As String
     p_expected = "a+b+c"
     Dim p_format As String: p_format = "{0}+{1}+{2}"

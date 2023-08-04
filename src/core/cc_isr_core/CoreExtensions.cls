@@ -79,4 +79,19 @@ Public Function GetDefaultValue(ByVal a_variableType As VBA.VbVarType) As Varian
     End Select
 End Function
 
+''' <summary>   Queries whether code is running in the IDE (true), or compiled (false). </summary>
+''' <returns>   [Boolean]. </returns>
+Public Function RunningInIde() As Boolean
+
+    Static p_counter As Variant
+    If IsEmpty(p_counter) Then
+        p_counter = 1
+        Debug.Assert RunningInIde() Or True
+        p_counter = p_counter - 1
+    ElseIf p_counter = 1 Then
+        p_counter = 0
+    End If
+    RunningInIde = p_counter
+ 
+End Function
 

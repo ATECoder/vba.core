@@ -10,7 +10,7 @@ Option Explicit
 ''' <returns>   An instance of the <see cref="cc_isr_Test_Fx.Assert"/>   class. </returns>
 Public Function TestElapsedTimeShouldExceedexpectedMs() As cc_isr_Test_Fx.Assert
     
-    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Core.Factory.NewStopWatch
+    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_core.Factory.NewStopWatch
     Dim p_expectedMs As Long
     p_expectedMs = 100
     p_stopper.Sleep p_expectedMs + 50
@@ -30,7 +30,7 @@ End Function
 Public Function TestTimeShouldExceedexpectedMs() As cc_isr_Test_Fx.Assert
     
     Dim p_expectedMs As Long: p_expectedMs = 100
-    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Core.Factory.NewStopWatch
+    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_core.Factory.NewStopWatch
     Dim p_actualMs As Long: p_actualMs = p_stopper.Wait(p_expectedMs)
     
     Set TestTimeShouldExceedexpectedMs = cc_isr_Test_Fx.Assert.IsTrue(p_actualMs >= p_expectedMs, _

@@ -46,7 +46,7 @@ Public Property Let Deployed(ByVal a_value As Boolean)
     ' toggle deploy mode on referenced workbooks.
 
     cc_isr_Core_IO.ThisWorkbook.Deployed = a_value
-    cc_isr_Core.ThisWorkbook.Deployed = a_value
+    cc_isr_core.ThisWorkbook.Deployed = a_value
     cc_isr_Test_Fx.ThisWorkbook.Deployed = a_value
     
 End Property
@@ -192,7 +192,7 @@ Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
     
     ' this disables the save dialog on read only workbooks.
     Me.MarkAsSaved cc_isr_Core_IO.ThisWorkbook, Me.Deployed
-    Me.MarkAsSaved cc_isr_Core.ThisWorkbook, Me.Deployed
+    Me.MarkAsSaved cc_isr_core.ThisWorkbook, Me.Deployed
     Me.MarkAsSaved cc_isr_Test_Fx.ThisWorkbook, Me.Deployed
     Me.MarkAsSaved ThisWorkbook, Me.Deployed
     
@@ -235,20 +235,20 @@ Private Sub Workbook_Open()
     
     ' turn on code exporting if not deploy or read only
     Me.DisableSavingCode cc_isr_Core_IO.ThisWorkbook, Me.Deployed
-    Me.DisableSavingCode cc_isr_Core.ThisWorkbook, Me.Deployed
+    Me.DisableSavingCode cc_isr_core.ThisWorkbook, Me.Deployed
     Me.DisableSavingCode cc_isr_Test_Fx.ThisWorkbook, Me.Deployed
     Me.DisableSavingCode ThisWorkbook, Me.Deployed
 
     ' hide the referenced workbooks
     Application.Windows(cc_isr_Core_IO.ThisWorkbook.name).Visible = False
-    Application.Windows(cc_isr_Core.ThisWorkbook.name).Visible = False
+    Application.Windows(cc_isr_core.ThisWorkbook.name).Visible = False
     Application.Windows(cc_isr_Test_Fx.ThisWorkbook.name).Visible = False
     
     ' show this work book
     Application.Windows(ThisWorkbook.name).Visible = True
     
     ' init the user defined errors.
-    cc_isr_Core.UserDefinedErrors.Initialize
+    cc_isr_core.userdefinederrors.Initialize
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:

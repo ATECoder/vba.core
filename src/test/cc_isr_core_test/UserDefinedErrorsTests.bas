@@ -15,9 +15,9 @@ Public Function TestUserDefinedErrorShouldExist() As cc_isr_Test_Fx.Assert
     ' this should be added to the activate event of the workbook
     ' cc_isr_Core.UserDefinedErrors.Initialize
     Dim p_userError As UserDefinedError
-    Set p_userError = cc_isr_Core.UserDefinedErrors.SocketConnectionError
+    Set p_userError = cc_isr_core.userdefinederrors.SocketConnectionError
     
-    Set TestUserDefinedErrorShouldExist = cc_isr_Test_Fx.Assert.IsTrue(UserDefinedErrors.UserDefinedErrorExists(p_userError), _
+    Set TestUserDefinedErrorShouldExist = cc_isr_Test_Fx.Assert.IsTrue(userdefinederrors.UserDefinedErrorExists(p_userError), _
                                                         p_userError.ToString(" should exist"))
 End Function
 

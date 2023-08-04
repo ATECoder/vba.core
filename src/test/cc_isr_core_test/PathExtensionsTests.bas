@@ -6,7 +6,7 @@ Attribute VB_Name = "PathExtensionsTests"
 Option Explicit
 
 ''' <summary>   Unit test. Asserts that the path elements should join and create the directory. </summary>
-''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestPathElementsShouldJoin() As cc_isr_Test_Fx.Assert
 
     Dim p_element1 As String: p_element1 = Excel.ActiveWorkbook.path

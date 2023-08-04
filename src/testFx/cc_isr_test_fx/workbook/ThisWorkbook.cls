@@ -23,7 +23,7 @@ Public Property Get ExportCodeAfterSave() As Boolean
 End Property
 
 ''' <summary>   Enables or disables exporting code files after save. </summary>
-''' <para name="value">   True to enable exporting code files after save. </param>
+''' <para name="value"> True to enable exporting code files after save. </param>
 Public Property Let ExportCodeAfterSave(ByVal a_value As Boolean)
     This.ExportCodeAfterSave = a_value
 End Property
@@ -36,7 +36,7 @@ Public Property Get Deployed() As Boolean
 End Property
 
 ''' <summary>   Sets the deployed status. </summary>
-''' <para name="value">   True to set the deployed status. </param>
+''' <para name="value"> True to set the deployed status. </param>
 Public Property Let Deployed(ByVal a_value As Boolean)
 
     This.Deployed = a_value

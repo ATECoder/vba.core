@@ -6,36 +6,36 @@ Attribute VB_Name = "CoreExtensionTests"
 Option Explicit
 
 ''' <summary>   Unit test. Asserts that default values are as expected. </summary>
-''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestDefaultValues() As Assert
 
     Dim outcome As Assert
     
-    Set outcome = Assert.AreEqual(False, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbBoolean), _
+    Set outcome = Assert.AreEqual(False, cc_isr_core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbBoolean), _
         "The default value of VBA.VbVarType.vbBoolean should equal.")
     
     If outcome.AssertSuccessful Then _
-        Set outcome = Assert.AreEqual(0, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbByte), _
+        Set outcome = Assert.AreEqual(0, cc_isr_core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbByte), _
             "The default value of VBA.VbVarType.vbByte should equal.")
     
     If outcome.AssertSuccessful Then _
-        Set outcome = Assert.AreEqual(Empty, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbArray), _
+        Set outcome = Assert.AreEqual(Empty, cc_isr_core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbArray), _
             "The default value of VBA.VbVarType.vbArray should equal.")
     
     If outcome.AssertSuccessful Then _
-        Set outcome = Assert.AreEqual(Null, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
+        Set outcome = Assert.AreEqual(Null, cc_isr_core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
             "The default value of VBA.VbVarType.vbNull should equal.")
     
     If outcome.AssertSuccessful Then _
-        Set outcome = Assert.IsNull(cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
+        Set outcome = Assert.IsNull(cc_isr_core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
             "The default value of VBA.VbVarType.vbNull should be Null.")
     
     If outcome.AssertSuccessful Then _
-        Set outcome = Assert.IsTrue(cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbObject) Is Nothing, _
+        Set outcome = Assert.IsTrue(cc_isr_core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbObject) Is Nothing, _
             "The default value of VBA.VbVarType.vbObject should be nothing.")
     
     If outcome.AssertSuccessful Then _
-        Set outcome = Assert.AreEqual(0, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbLongLong), _
+        Set outcome = Assert.AreEqual(0, cc_isr_core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbLongLong), _
             "The default value of VBA.VbVarType.vbLongLong should equal.")
     
     If outcome.AssertSuccessful Then
@@ -50,7 +50,7 @@ End Function
 
 ''' <summary>   Unit test. Asserts that the paramter array propagated through nested methods
 ''' without errors. </summary>
-''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestParameterArrayPropagated() As Assert
     
     On Error Resume Next

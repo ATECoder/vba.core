@@ -2,22 +2,7 @@
 
 ## Code
 
-Add CHAT GPT Decimal to Binary code with and without bit counts.
-Add tests for the new code.
-Add tests for object and nothing. 
-
 ## Tests
-
-
-Dim MyInt As Integer              ' Declare variables.
-Dim YourObject, MyCheck           ' Note: Default variable type is Variant.
-Dim MyObject As Object
-Set YourObject = MyObject         ' Assign an object reference.
-MyCheck = IsObject(YourObject)    ' Returns True.
-MyCheck = IsObject(MyInt)         ' Returns False.
-MyCheck = IsObject(Nothing)       ' Returns True.
-MyCheck = IsObject(Empty)         ' Returns False.
-MyCheck = IsObject(Null)          ' Returns False.
 
 * Add unit test for disposable.
 

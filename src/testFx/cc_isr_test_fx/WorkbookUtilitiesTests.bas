@@ -10,7 +10,7 @@ Option Explicit
 ''' <summary>   Returns true if the collection contains the specified key. </summary>
 ''' <param name="a_col">     [Collection] The subject collection. </param>
 ''' <param name="a_key">     [Variant] The key to check for in the collection. </param>
-''' <returns>   True if the key is contained in the collection. </returns>
+''' <returns> True if the key is contained in the collection. </returns>
 Public Function ContainsKey(ByVal a_col As VBA.Collection, ByVal a_key As Variant) As Boolean
     
     Dim p_found As Boolean
@@ -31,7 +31,7 @@ End Function
 ''' <param name="a_col">         [Collection] The subject collection. </param>
 ''' <param name="a_contained">   [Collection] The collection which to check for being contained in the
 '''                              subject collection. </param>
-''' <returns>   True if the contained collection is fully contained in the collection. </returns>
+''' <returns> True if the contained collection is fully contained in the collection. </returns>
 Public Function ContainsAll(ByVal a_col As VBA.Collection, ByVal a_contained As VBA.Collection) As Boolean
     
     Dim p_result As Boolean: p_result = True
@@ -134,7 +134,7 @@ Public Sub AfterAll()
 End Sub
 
 ''' <summary>   Unit test. Asserts creating a list of test modules. </summary>
-''' <returns>   An <see cref="Assert"/>   instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
 Public Function TestModuleList() As Assert
 
     Dim p_outcome As Assert
@@ -160,7 +160,7 @@ Public Function TestModuleList() As Assert
         Set p_missingItem = FindMissingItem(p_modules, p_knownTestModules)
     
         If Not p_missingItem Is Nothing Then
-            Set outcome = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
+            Set p_outcome = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
                 "item " & CStr(p_missingItem) & " from the expected test module is not found in the actual collection of test modules")
             p_isDone = True
         End If

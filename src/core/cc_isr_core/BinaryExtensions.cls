@@ -19,6 +19,12 @@ Option Explicit
 ''' <returns>   [String]. <returns>
 Public Function FractionalToBinary(ByVal a_value As Double, a_bitCount As Integer) As String
     
+    Const p_procedureName As String = "FractionalToBinary"
+    
+    If a_value < 0 Then _
+        UserDefinedErrors.RaiseError UserDefinedErrors.InvalidArgumentError, TypeName(Me) & "." & p_procedureName, _
+            " Argument: a_value = '" & VBA.CSng(a_value) & "' but must be non-negative."
+            
     Dim p_binary As String
     
     Do While a_value <> 0 And VBA.Len(p_binary) < a_bitCount
@@ -44,32 +50,28 @@ End Function
 ''' <returns>   [String]. <returns>
 Function DoubleToBinary(ByVal a_value As Double, ByVal a_bitCount As Integer) As String
 
+    Dim p_fractionalBinary As String
+    Dim p_integralBinary As String
+    
     If a_value = 0 Then
-        DoubleToBinary = VBA.String$(bitCount, "0")
+        
+        p_integralBinary = VBA.String$(a_bitCount, "0")
+        p_fractionalBinary = VBA.String$(a_bitCount, "0")
+    
     Else
-        Dim p_isNegative As Boolean
-        If a_value < 0 Then
-            p_isNegative = True
-            a_value = Abs(a_value)
-        End If
-
+        
         Dim p_integralValue As Long
         p_integralValue = Int(a_value)
         
         Dim p_franctionalValue As Double
-        p_franctionalValue = a_value - inValue
+        p_franctionalValue = a_value - p_integralValue
         
-        If p_isNegative And p_franctionalValue <> 0 Then
-            
-            p_franctionalValue = 1 - p_franctionalValue
-            p_integralValue = p_integralValue - 1
-        
-        End If
-        
-        DoubleToBinary = Me.LongToBinary(p_integralValue, a_bitCount) & "." & _
-                         Me.FractionalToBinary(p_franctionalValue, a_bitCount)
+        p_integralBinary = Me.LongToBinary(p_integralValue, a_bitCount)
+        p_fractionalBinary = Me.FractionalToBinary(p_franctionalValue, a_bitCount)
 
     End If
+
+    DoubleToBinary = p_integralBinary & "." & p_fractionalBinary
 
 End Function
 
@@ -97,13 +99,16 @@ Public Function LongToBinary(ByVal a_value As Long, ByVal a_bitCount As Integer)
             p_binary = VBA.CStr(p_remainder) & p_binary
         Loop
         
+        ' add leading zeros
+        p_binary = Me.AddLeadingZeros(p_binary, a_bitCount)
+        
         If p_isNegative Then
             
-            p_binary = Me.AddLeadingZeros(p_binary, a_bitCount)
             p_binary = Me.InvertBits(p_binary)
             
             ' convert to two's complement.
             p_binary = Me.AddBinary(p_binary, "1")
+        
         End If
         
         LongToBinary = p_binary
