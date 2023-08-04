@@ -1,17 +1,5 @@
-# TODO
+Implement inheritance
 
-## Code
-
-## Tests
-
-* Add unit test for disposable.
-
-## Fixes
-
-## Updates
-
-
-[Implement inheritance]: .\inheritance.md
 https://stackoverflow.com/questions/3669270/vba-inheritance-analog-of-super
 
 IBase							IErrorTracer							IDisposable								IConnectable
