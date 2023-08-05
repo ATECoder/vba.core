@@ -42,7 +42,7 @@ Function HasSuiteFlag($flags, $flag)
     Return ($flags -band $flag) -eq $flag
 }
 
-Function LogSummary($title, $passed, $failed)
+Function LogSummary($title, $passed, $failed, $inconclusive)
 {
     Write-Host $title -NoNewline
     Write-Host "$passed passed" -ForegroundColor Green -NoNewline
@@ -53,7 +53,13 @@ Function LogSummary($title, $passed, $failed)
         Write-Host "${failed} failed" -ForegroundColor Red -NoNewline
     }
 
-    $total = $passed + $failed
+    if ($inconclusive -gt 0)
+    {
+        Write-Host ", " -NoNewline
+        Write-Host "${$inconclusive} inconclusive" -ForegroundColor Yellow -NoNewline
+    }
+
+    $total = $passed + $failed + $inconclusive
     Write-Host ", $total total"
 }
 
@@ -173,6 +179,8 @@ LogEmptyLine
 
 $passedSuites = 0
 $passedTests = 0
+$failedTests = 0
+$inconclusiveTests = 0
 
 ForEach ($suite in $suites.Keys)
 {
@@ -204,13 +212,19 @@ ForEach ($suite in $suites.Keys)
 		
         Write-Host "  " -NoNewline
 
-        if ($result.AssertSuccessful)
+        if ($result.AssertInconclusive)
+        {
+            $inconclusiveTests += 1
+            Write-Host " MOOT " -BackgroundColor Brown -ForegroundColor White -NoNewline
+        }
+        elseif ($result.AssertSuccessful)
         {
             $passedTests += 1
             Write-Host " PASS " -BackgroundColor Green -ForegroundColor White -NoNewline
         }
         else
         {
+            $failedTests += 1
             $successful = $false
             Write-Host " FAIL " -BackgroundColor Red -ForegroundColor White -NoNewline
         }
@@ -225,7 +239,14 @@ ForEach ($suite in $suites.Keys)
         {
             LogEmptyLine
             LogEmptyLine
-            Write-Host $result.AssertMessage -ForegroundColor Red
+            if ($result.AssertInconclusive)
+            {
+                Write-Host $result.AssertMessage -ForegroundColor white
+            }
+            else
+            {
+                Write-Host $result.AssertMessage -ForegroundColor Red
+            }
             LogEmptyLine
         }
 
@@ -260,7 +281,7 @@ $excel.Quit()
 if ( $DEBUG ) { LogEmptyLine }
 
 LogSummary "Test suites: " $passedSuites ($suites.Count - $passedSuites)
-LogSummary "Tests:       " $passedTests ($testCount - $passedTests)
+LogSummary "Tests:       " $passedTests $failedTests $inconclusiveTests
 LogEmptyLine
 if ( $DEBUG ) { LogInfo "Ran all test suites." }
 LogEmptyLine

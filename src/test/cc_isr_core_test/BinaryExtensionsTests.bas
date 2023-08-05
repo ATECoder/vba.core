@@ -54,10 +54,9 @@ Public Function TestBitsShouldInvert() As cc_isr_Test_Fx.Assert
     
     End If
     
-    Debug.Print "TestBitsShouldInvert " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestBitsShouldInvert")
         
-      Set TestBitsShouldInvert = p_outcome
+    Set TestBitsShouldInvert = p_outcome
      
 End Function
 
@@ -115,10 +114,9 @@ Public Function TestBinaryValuesShouldAdd() As cc_isr_Test_Fx.Assert
     
     End If
     
-    Debug.Print "TestBinaryValuesShouldAdd " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestBinaryValuesShouldAdd")
         
-      Set TestBinaryValuesShouldAdd = p_outcome
+    Set TestBinaryValuesShouldAdd = p_outcome
      
 End Function
 
@@ -193,10 +191,9 @@ Public Function TestLongValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
     End If
     
-    Debug.Print "TestLongValueShouldConvertToBinary " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestLongValueShouldConvertToBinary")
         
-      Set TestLongValueShouldConvertToBinary = p_outcome
+    Set TestLongValueShouldConvertToBinary = p_outcome
      
 End Function
 
@@ -262,10 +259,9 @@ Public Function TestFractionalValueShouldConvertToBinary() As cc_isr_Test_Fx.Ass
     
     End If
     
-    Debug.Print "TestFractionalValueShouldConvertToBinary " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
-        
-      Set TestFractionalValueShouldConvertToBinary = p_outcome
+    Debug.Print p_outcome.BuildReport("TestFractionalValueShouldConvertToBinary")
+
+    Set TestFractionalValueShouldConvertToBinary = p_outcome
      
 End Function
 
@@ -385,21 +381,20 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     End If
     
     If p_outcome.AssertSuccessful Then
-    
+
         p_initialValue = -12.75
         p_expectedValue = "10011.01000"
         p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
-    
+
     End If
     
-    Debug.Print "TestLongValueShouldConvertToBinary " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
-        
-      Set TestDoubleValueShouldConvertToBinary = p_outcome
-     
+    Debug.Print p_outcome.BuildReport("TestLongValueShouldConvertToBinary")
+
+    Set TestDoubleValueShouldConvertToBinary = p_outcome
+
 End Function
 
 

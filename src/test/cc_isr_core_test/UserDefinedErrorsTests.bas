@@ -12,13 +12,20 @@ Private Const m_moduleName As String = "UserDefinedErrorsTests"
 ''' <see cref="cc_isr_Test_Fx.Assert.AssertSuccessful"/> True if the test passed. </returns>
 Public Function TestUserDefinedErrorShouldExist() As cc_isr_Test_Fx.Assert
     
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    
     ' this should be added to the activate event of the workbook
     ' cc_isr_Core.UserDefinedErrors.Initialize
     Dim p_userError As UserDefinedError
     Set p_userError = cc_isr_core.userdefinederrors.SocketConnectionError
     
-    Set TestUserDefinedErrorShouldExist = cc_isr_Test_Fx.Assert.IsTrue(userdefinederrors.UserDefinedErrorExists(p_userError), _
+    Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(userdefinederrors.UserDefinedErrorExists(p_userError), _
                                                         p_userError.ToString(" should exist"))
+                                                        
+    Debug.Print p_outcome.BuildReport("TestUserDefinedErrorShouldExist")
+    
+    Set TestUserDefinedErrorShouldExist = p_outcome
+
 End Function
 
 ''' <summary>   Unit test. Asserts buidling the error message. </summary>
@@ -26,6 +33,8 @@ End Function
 Public Function TestErrorMessageShouldBuild() As cc_isr_Test_Fx.Assert
 
     Const thisProcedureName = "TestErrorMessageShouldBuild"
+    
+    Dim p_outcome As cc_isr_Test_Fx.Assert
     
     ' Trap errors to the error handler
     On Error GoTo err_Handler
@@ -37,6 +46,9 @@ Public Function TestErrorMessageShouldBuild() As cc_isr_Test_Fx.Assert
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
+    Set TestErrorMessageShouldBuild = p_outcome
+    Debug.Print p_outcome.BuildReport("TestErrorMessageShouldBuild")
+   
     On Error GoTo 0
     Exit Function
 
@@ -46,24 +58,24 @@ err_Handler:
     ' build the error source
     cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource thisProcedureName, m_moduleName
     
-    Set TestErrorMessageShouldBuild = cc_isr_Test_Fx.Assert.IsTrue(Len(Err.Source) > 0, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(Err.Source) > 0, _
             "VBA.Err.Source should not be empty")
     
-    If TestErrorMessageShouldBuild.AssertSuccessful Then
+    If p_outcome.AssertSuccessful Then
     
         Dim p_expectedErrorSource As String
         p_expectedErrorSource = ThisWorkbook.VBProject.name & "." & m_moduleName & "." & thisProcedureName
         
-        Set TestErrorMessageShouldBuild = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
                 VBA.Err.Source, "VBA.Err.Source should equal the expected value")
     
     End If
     
-    If TestErrorMessageShouldBuild.AssertSuccessful Then
+    If p_outcome.AssertSuccessful Then
     
         Dim p_errorMessage As String: p_errorMessage = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage()
         
-        Set TestErrorMessageShouldBuild = cc_isr_Test_Fx.Assert.IsTrue(Len(p_errorMessage) > 0, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(p_errorMessage) > 0, _
                 "error message should build")
     
     End If

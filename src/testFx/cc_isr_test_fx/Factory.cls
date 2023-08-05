@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   Instantiates public not creatable objects for external workbooks. </summary>
-''' <remarks>   Dependencies: Assert.cls, MacroInfo.cls, ModuleInfo.cls, StopWatch.cls. </remakrs>
+''' <remarks>   Dependencies: Assert.cls, MacroInfo.cls, ModuleInfo.cls, StopWatch.cls. </remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit

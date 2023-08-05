@@ -180,8 +180,7 @@ Public Function TestModuleList() As Assert
     
     End If
     
-    Debug.Print "TestModuleList " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestModuleList")
     
     Set TestModuleList = p_outcome
   

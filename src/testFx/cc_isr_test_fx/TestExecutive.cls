@@ -33,6 +33,9 @@ Private Const TestNameLabel As String = "Test Name"
 Private Const TestOutcomeLabel As String = "Outcome"
 Private Const TestDurationLabel As String = "Duration"
 Private Const TestDurationUnits As String = " ms"
+Private Const InconclusiveColorIndex As Integer = 6
+Private Const InconclusiveOutcomeLabel As String = "inconclusive"
+Private Const InconclusiveLabel As String = "Inconclusive"
 
 ''' <summary>   Executes all test macros in the module specified in the test sheet. </summary>
 ''' <para name="a_testSheet">             [Worksheet] Specifies the work sheet were test data are set and logged. </param>
@@ -50,6 +53,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
 
     Dim p_moduleFullName As String
    
+    Dim p_inconclusiveCount As Integer
     Dim p_passedCount As Integer
     Dim p_failedCount As Integer
     Dim p_rowNo As Integer
@@ -82,6 +86,10 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     Dim p_failCountRow As Integer: p_failCountRow = p_rowNo
     a_testSheet.Range(LabelColumn & p_failCountRow).value = FailLabel
     
+    p_rowNo = p_rowNo + 1
+    Dim p_inconclusiveCountRow As Integer: p_inconclusiveCountRow = p_rowNo
+    a_testSheet.Range(LabelColumn & p_inconclusiveCountRow).value = InconclusiveLabel
+
     p_rowNo = p_rowNo + 1
     Dim p_durationRow As Integer: p_durationRow = p_rowNo
     a_testSheet.Range(LabelColumn & p_durationRow).value = TestDurationLabel
@@ -135,7 +143,11 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
         
         If IsObject(Assert) Then
             a_testSheet.Range(TestNameColumn & p_rowNo).value = p_macroInfo.MacroName
-            If Assert.AssertSuccessful Then
+            If Assert.AssertInconclusive Then
+                p_inconclusiveCount = p_inconclusiveCount + 1
+                a_testSheet.Range(OutcomeColumn & p_rowNo).value = InconclusiveOutcomeLabel
+                a_testSheet.Range(OutcomeColumn & p_rowNo).Interior.ColorIndex = InconclusiveColorIndex
+            ElseIf Assert.AssertSuccessful Then
                 p_passedCount = p_passedCount + 1
                 a_testSheet.Range(OutcomeColumn & p_rowNo).value = PassOutcomeLabel
                 a_testSheet.Range(OutcomeColumn & p_rowNo).Interior.ColorIndex = PassColorIndex
@@ -175,6 +187,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     
     p_stopper.StopCounter
     
+    a_testSheet.Range(ItemColumn & p_inconclusiveCountRow).value = p_inconclusiveCount
     a_testSheet.Range(ItemColumn & p_passCountRow).value = p_passedCount
     a_testSheet.Range(ItemColumn & p_failCountRow).value = p_failedCount
     a_testSheet.Range(ItemColumn & p_durationRow).value = CStr(p_stopper.ElapsedMilliseconds) & TestDurationUnits

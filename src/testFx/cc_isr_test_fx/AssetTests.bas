@@ -6,18 +6,42 @@ Attribute VB_Name = "AssetTests"
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
+''' <summary>   Unit test. Asserting <see cref="Assert.Inconclusive"/> should report Inconclusive. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertInconclusive"/> True. </returns>
+Public Function TestAssertingInconclusiveShouldReportInconclusive() As Assert
+
+    Dim p_assert As Assert
+
+    Dim p_outcome As Assert
+    
+    Set p_assert = Assert.Inconclusive("Asserting Inconclusive to test inconclusive outcome.")
+    
+    Set p_outcome = Assert.IsTrue(p_assert.AssertInconclusive, "Asserting inconclusive should report AssertInconclusive as True.")
+    
+    If p_outcome.AssertSuccessful Then
+    
+        Set p_outcome = Assert.IsFalse(p_assert.AssertSuccessful, "Asserting inconclusive should report AssertSuccessful as False.")
+    
+    End If
+    
+    Debug.Print p_outcome.BuildReport("TestAssertingInconclusiveShouldReportInconclusive")
+    
+    Set TestAssertingInconclusiveShouldReportInconclusive = p_outcome
+    
+End Function
+
 ''' <summary>   Unit test. Asserting <see cref="Assert.Fail"/> should report failure. </summary>
 ''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
 Public Function TestAssertingFailShouldReportFailure() As Assert
 
+    Dim p_assert As Assert
     Dim p_outcome As Assert
     
-    Set p_outcome = Assert.Fail("Asserting Fail to test failure reporting.")
+    Set p_assert = Assert.Fail("Asserting Fail to test failure outcome.")
     
-    Set p_outcome = Assert.IsFalse(p_outcome.AssertSuccessful, "Asserting failure should report AssertSuccessful as false.")
+    Set p_outcome = Assert.IsFalse(p_assert.AssertSuccessful, "Asserting failure should report AssertSuccessful as false.")
     
-    Debug.Print "TestAssertingFailShouldReportFailure " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestAssertingFailShouldReportFailure")
     
     Set TestAssertingFailShouldReportFailure = p_outcome
     
@@ -27,14 +51,14 @@ End Function
 ''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
 Public Function TestAssertingPassShouldReportPass() As Assert
 
+    Dim p_assert As Assert
     Dim p_outcome As Assert
     
-    Set p_outcome = Assert.Pass("Asserting Pass to test Pass reporting.")
+    Set p_assert = Assert.Pass("Asserting Pass to test Pass outcome.")
     
-    Set p_outcome = Assert.IsTrue(p_outcome.AssertSuccessful, "Asserting Pass should report AssertSuccessful as True.")
+    Set p_outcome = Assert.IsTrue(p_assert.AssertSuccessful, "Asserting Pass should report AssertSuccessful as True.")
     
-    Debug.Print "TestAssertingPassShouldReportPass " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "Passed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestAssertingPassShouldReportPass")
     
     Set TestAssertingPassShouldReportPass = p_outcome
     
@@ -51,8 +75,7 @@ Public Function TestNothingShouldBeAsserted() As Assert
     
     Set p_outcome = Assert.IsNothing(p_object, "Object should be noting.")
     
-    Debug.Print "TestNothingShouldBeAsserted " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestNothingShouldBeAsserted")
     
     Set TestNothingShouldBeAsserted = p_outcome
     
@@ -69,8 +92,7 @@ Public Function TestNothingShouldNotBeAsserted() As Assert
     
     Set p_outcome = Assert.IsNotNothing(p_object, "Object should be not be noting.")
     
-    Debug.Print "TestNothingShouldNotBeAsserted " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestNothingShouldNotBeAsserted")
     
     Set TestNothingShouldNotBeAsserted = p_outcome
     
@@ -122,8 +144,7 @@ Public Function TestNullShouldBeAsserted() As Assert
     
     End If
     
-    Debug.Print "TestNullShouldBeAsserted " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestNullShouldBeAsserted")
     
     Set TestNullShouldBeAsserted = p_outcome
     
@@ -175,8 +196,7 @@ Public Function TestNullShouldNotBeAsserted() As Assert
     
     End If
     
-    Debug.Print "TestNullShouldNotBeAsserted " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestNullShouldNotBeAsserted")
     
     Set TestNullShouldNotBeAsserted = p_outcome
     
@@ -209,8 +229,7 @@ Public Function TestAssertingSamenessShouldReportSameness() As Assert
     
     End If
     
-    Debug.Print "TestAssertingSamenessShouldReportSameness " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "failed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestAssertingSamenessShouldReportSameness")
     
     Set TestAssertingSamenessShouldReportSameness = p_outcome
     
@@ -243,8 +262,7 @@ Public Function TestAssertingNonSamenessShouldReportNonSameness() As Assert
     
     End If
    
-    Debug.Print "TestAssertingNonSamenessShouldReportNonSameness " & _
-        IIf(p_outcome.AssertSuccessful, "passed.", "Passed: " & p_outcome.AssertMessage)
+    Debug.Print p_outcome.BuildReport("TestAssertingNonSamenessShouldReportNonSameness")
     
     Set TestAssertingNonSamenessShouldReportNonSameness = p_outcome
     

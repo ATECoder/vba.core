@@ -13,13 +13,91 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-''' <summary>   Indicates whether the assertion was successful. </summary>
-''' <value>   [Boolean]. </value>
-Public AssertSuccessful As Boolean
+Private Type ThisData
+    AssertSuccessful As Boolean
+    AssertInconclusive As Boolean
+    AssertMessage As String
+End Type
 
-''' <summary>   The outcome message of this assertion. </summary>
-''' <value>   A String. </value>
-Public AssertMessage As String
+Private This As ThisData
+
+''' <summary>   Gets or set the indication of whether the assertion was successful. </summary>
+''' <value>   [Boolean]. </value>
+Public Property Get AssertSuccessful() As Boolean
+    AssertSuccessful = This.AssertSuccessful
+End Property
+
+Public Property Let AssertSuccessful(ByVal a_value As Boolean)
+    This.AssertSuccessful = a_value
+End Property
+
+''' <summary>   Gets or sets the indication of whether the assertion was inconclusive. </summary>
+''' <remarks>   An assertion might be inconclusive if, for example, a device test cannot
+'''             run because the device does not exist on the system as could be
+'''             determined by a failure to ping the device. </remarks>
+''' <value>   [Boolean]. </value>
+Public Property Get AssertInconclusive() As Boolean
+    AssertInconclusive = This.AssertInconclusive
+End Property
+
+Public Property Let AssertInconclusive(ByVal a_value As Boolean)
+    This.AssertInconclusive = a_value
+End Property
+
+''' <summary>   Gets or sets the outcome message of this assertion. </summary>
+''' <value>   [String]. </value>
+Public Property Get AssertMessage() As String
+    AssertMessage = This.AssertMessage
+End Property
+
+Public Property Let AssertMessage(ByVal a_value As String)
+    This.AssertMessage = a_value
+End Property
+
+''' <summary>   Selects an outcome. </summary>
+''' <param name="a_passed">         [Variant] The value or object representing the passed outcome. </param
+''' <param name="a_failed">         [Variant] The value or object representing the failed outcome. </param
+''' <param name="a_inconclusive">   [Variant] The value or object representing the inconclusive outcome. </param
+''' <returns>   [Variant]. </returns>
+Public Function Choose(ByVal a_passed As Variant, ByVal a_failed As Variant, ByVal a_inconclusive As Variant) As Variant
+
+    If Me.AssertInconclusive Then
+        If IsObject(a_inconclusive) Then
+            Set Choose = a_inconclusive
+        Else
+            Choose = a_inconclusive
+        End If
+    ElseIf Me.AssertSuccessful Then
+        If IsObject(a_passed) Then
+            Set Choose = a_passed
+        Else
+            Choose = a_passed
+        End If
+    Else
+        If IsObject(a_failed) Then
+            Set Choose = a_failed
+        Else
+            Choose = a_failed
+        End If
+    End If
+
+End Function
+
+''' <summary>   Builds a report consisting of the supplied test name, outcome, and message. </summary>
+''' <param name="a_testName">   [String] The name of the unit test to include in the report. </param
+''' <param name="a_passed">         [String, ' passsed.'] The passed part of the report. </param
+''' <param name="a_failed">         [String] ' failed.'] The failed part of the outcome. </param
+''' <param name="a_inconclusive">   [String] ' inconclusive.'] The inconclusive part of the report. </param
+''' <returns>   [String]. </returns>
+Public Function BuildReport(ByVal a_testName As String, _
+        Optional ByVal a_passed As String = " passed.", _
+        Optional ByVal a_failed As String = " failed.", _
+        Optional ByVal a_inconclusive As String = " inconclusive.") As String
+
+    BuildReport = a_testName & Me.Choose(a_passed, a_failed, a_inconclusive) & _
+                    IIf(Me.AssertSuccessful, VBA.vbNullString, " " & Me.AssertMessage)
+    
+End Function
 
 ''' <summary>   Asserts that values are equal. If not, this will return a failed assertion. </summary>
 ''' <param name="a_expected">   [Variant] The value the caller expects to have. </param
@@ -103,13 +181,8 @@ End Function
 Public Function IsTrue(ByVal a_truthy As Variant, ByVal a_message As String) As Assert
     
     Set IsTrue = New Assert
-    IsTrue.AssertSuccessful = True
+    IsTrue.AssertSuccessful = a_truthy
     IsTrue.AssertMessage = a_message
-
-    If Not a_truthy Then
-        IsTrue.AssertSuccessful = False
-        IsTrue.AssertMessage = "Assert failed: " & a_message
-    End If
 
 End Function
 
@@ -122,19 +195,14 @@ End Function
 Public Function IsFalse(ByVal a_falsy As Variant, ByVal a_message As String) As Assert
     
     Set IsFalse = New Assert
-    IsFalse.AssertSuccessful = True
+    IsFalse.AssertSuccessful = Not a_falsy
     IsFalse.AssertMessage = a_message
-
-    If a_falsy Then
-        IsFalse.AssertSuccessful = False
-        IsFalse.AssertMessage = "Assert failed: " & a_message
-    End If
 
 End Function
 
 ''' <summary>   Asserts a failure with the specified message. </summary>
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param
-''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals False.. </returns>
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals False. </returns>
 Public Function Fail(ByVal a_message As String) As Assert
     
     Set Fail = New Assert
@@ -145,7 +213,7 @@ End Function
 
 ''' <summary>   Asserts a failure with the specified message. </summary>
 ''' <param name="a_message">   [String, vbNullString] A message to show in case the assertion failed. </param
-''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals False.. </returns>
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals False. </returns>
 Public Function Pass(Optional ByVal a_message As String = VBA.vbNullString) As Assert
     
     Set Pass = New Assert
@@ -188,6 +256,17 @@ Public Function AreNotSame(ByVal a_expected As Object, ByVal a_actual As Object,
                 "    Expected: " & TypeName(a_expected) & vbCrLf & _
                 "    Actual:   " & TypeName(a_actual)
     End If
+End Function
+
+''' <summary>   Asserts an <see cref="AssertInconclusive"/> outcome with the specified message. </summary>
+''' <param name="a_message">   [String, vbNullString] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertInconclusive"/> equals True. </returns>
+Public Function Inconclusive(Optional ByVal a_message As String = VBA.vbNullString) As Assert
+    
+    Set Inconclusive = New Assert
+    Inconclusive.AssertInconclusive = True
+    Inconclusive.AssertMessage = a_message
+
 End Function
 
 

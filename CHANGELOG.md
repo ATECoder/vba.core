@@ -1,6 +1,9 @@
 # Change log
 All notable changes to these libraries will be documented in this file in a format based on [Keep a Change log]
 
+## [1.0.8617] - 2023-08-05
+* Test and Test Framework: Add inconclusive outcome condition and reporting.
+
 ## [1.0.8616] - 2023-08-04
 * Add Pass Fail and Same and Not Same test assertions. 
 * Prepare to merge branch into main.
@@ -18,6 +21,6 @@ Forked from [TCP].
 
 &copy;  2023 Integrated Scientific Resources, Inc. All rights reserved.
 
-[1.0.8616]: https://github.com/ATECoder/vba.core
+[1.0.8617]: https://github.com/ATECoder/vba.core
 [Keep a Change log]: https://keepachangelog.com/en/1.0.0/
 [TCP]: https://github.com/ATECoder/vba.iot.tcp
