@@ -6,7 +6,7 @@ Attribute VB_Name = "TestFileHandle"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   A test file handle. </summary>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -20,19 +20,21 @@ End Type
 
 Private This As ThisData
 
-
-''' <summary>   Creates a temporary test file. </summary>
+''' <summary>   Initializes and returns a temporary test file. </summary>
 ''' <returns>   A <see cref="TestFileHandle"/>. <returns>
-Public Function CreateTestFile() As TestFileHandle
+Public Function Initialize() As TestFileHandle
     
     Dim p_fileInfo As FileSystemObject: Set p_fileInfo = New FileSystemObject
     
-    ' Creates a specified file name and returns a TextStream object that can be used to read from
-    ' or write to the file.
-    Dim p_handle As TestFileHandle: Set p_handle = New TestFileHandle
-    p_handle.FileName = p_fileInfo.BuildPath(ActiveWorkbook.path, p_fileInfo.GetTempName())
-    Set p_handle.FileStream = p_fileInfo.CreateTextFile(p_handle.FileName, True)
-    Set CreateTestFile = p_handle
+    ' Creates a specified file name
+    
+    This.FileName = p_fileInfo.BuildPath(ActiveWorkbook.path, p_fileInfo.GetTempName())
+    
+    ' sets a TextStream object that can be used to read from or write to the file.
+    
+    Set This.FileStream = p_fileInfo.CreateTextFile(This.FileName, True)
+    
+    Set Initialize = Me
 
 End Function
 
@@ -57,24 +59,32 @@ End Sub
 ''' <summary>   Gets the file name. </summary>
 ''' <value>   [String]. </value>
 Public Property Get FileName() As String
+    
     FileName = This.FileName
+
 End Property
 
 ''' <summary>   Sets the file name. </summary>
 ''' <param name="a_value">   [String] The name of the file. </param>
 Public Property Let FileName(ByVal a_value As String)
+    
     This.FileName = a_value
+
 End Property
 
 ''' <summary>   Gets the file <see cref="Scripting.TextStream"/>. </summary>
 ''' <value>   [TextStream]. </value>
 Public Property Get FileStream() As TextStream
+    
     Set FileStream = This.FileStream
+
 End Property
 
 ''' <summary>   Sets the file <see cref="Scripting.TextStream"/>. </summary>
 ''' <param name="a_value">   [TextStream]. </param>
 Public Property Set FileStream(ByVal a_value As TextStream)
+    
     Set This.FileStream = a_value
+
 End Property
 

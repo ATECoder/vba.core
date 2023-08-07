@@ -21,42 +21,49 @@ End Type
 
 Private This As ThisData
 
-
-''' <summary>   Initializes this class. </summary>
+''' <summary>   Initializes and returns this class. </summary>
 ''' <param name="a_projectName">      [String] The project name. </param>
 ''' <param name="a_codeModuleName">   [String] The component code module name. </param>
 ''' <param name="a_macroName">        [String] The name of the macro. </param>
-Public Sub Initialize(ByVal a_projectName As String, ByVal a_codeModuleName As String, ByVal a_macroName As String)
+''' <returns>   [<see cref="MacroInfo"/>]. </returns>
+Public Function Initialize(ByVal a_projectName As String, _
+        ByVal a_codeModuleName As String, ByVal a_macroName As String) As MacroInfo
     This.ProjectName = a_projectName
     This.ModuleName = a_codeModuleName
     This.MacroName = a_macroName
-End Sub
+    Set Initialize = Me
+End Function
 
-''' <summary>   Initializes this class. </summary>
+''' <summary>   Initializes and returns this class. </summary>
 ''' <param name="a_module">      [<see cref="ModuleInfo"/>] The module info. </param>
 ''' <param name="a_macroName">   [String] The name of the macro. </param>
-Public Sub InitializeModuelMacro(ByVal a_module As ModuleInfo, ByVal a_macroName As String)
+''' <returns>   [<see cref="MacroInfo"/>]. </returns>
+Public Function InitializeModuelMacro(ByVal a_module As ModuleInfo, _
+        ByVal a_macroName As String) As MacroInfo
     This.ProjectName = a_module.ProjectName
     This.ModuleName = a_module.ModuleName
     This.MacroName = a_macroName
-End Sub
+    Set InitializeModuelMacro = Me
+End Function
 
-''' <summary>   Initializes this class from a macro full name. </summary>
+''' <summary>   Initializes and returns this class from a macro full name. </summary>
 ''' <param name="a_macroFullName">     [String] the macro full name. </param>
-Public Sub FromMacroFullName(ByVal a_macroFullName As String)
+''' <returns>   [<see cref="MacroInfo"/>]. </returns>
+Public Function FromMacroFullName(ByVal a_macroFullName As String) As MacroInfo
     
     Dim p_names() As String: p_names() = Split(a_macroFullName, ".")
     This.ProjectName = p_names(LBound(p_names))
     This.ModuleName = p_names(LBound(p_names) + 1)
     This.MacroName = p_names(LBound(p_names) + 2)
+    Set FromMacroFullName = Me
 
-End Sub
+End Function
 
 ''' <summary>   Creates a clone of the this macro info. </summary>
-Public Function Clone() As cc_isr_Test_Fx.MacroInfo
+''' <returns>   [<see cref="MacroInfo"/>]. </returns>
+Public Function Clone() As MacroInfo
     
-    Set Clone = New cc_isr_Test_Fx.MacroInfo
-    Clone.Initialize Me.ProjectName, Me.ModuleName, Me.MacroName
+    Set Clone = Factory.NewMacroInfo.Initialize(Me.ProjectName, Me.ModuleName, Me.MacroName)
 
 End Function
 

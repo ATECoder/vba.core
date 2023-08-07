@@ -67,8 +67,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     
     ' get the module info
     Dim p_moduleInfo As ModuleInfo
-    Set p_moduleInfo = cc_isr_Test_Fx.Factory.NewModuleInfo
-    p_moduleInfo.FromModuleFullName p_moduleFullName
+    Set p_moduleInfo = Factory.NewModuleInfo.FromModuleFullName(p_moduleFullName)
     
     p_rowNo = p_rowNo + 1
     a_testSheet.Range(LabelColumn & p_rowNo).value = ProjectLabel

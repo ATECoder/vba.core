@@ -56,7 +56,7 @@ exit_Handler:
 err_Handler:
   
     ' build the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource thisProcedureName, m_moduleName
+    ThisWorkbook.SetErrSource thisProcedureName, m_moduleName
     
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(Err.Source) > 0, _
             "VBA.Err.Source should not be empty")
@@ -73,7 +73,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Dim p_errorMessage As String: p_errorMessage = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage()
+        Dim p_errorMessage As String: p_errorMessage = ThisWorkbook.BuildStandardErrorMessage()
         
         Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(p_errorMessage) > 0, _
                 "error message should build")

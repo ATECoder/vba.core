@@ -81,42 +81,45 @@ Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleNam
 End Sub
 
 ''' <summary>   Builds a standard error message. </summary>
-''' <param name="a_displayWarning">         [Optional, Boolean, false] True
+''' <param name="a_displayWarning">         [Boolean, false] True
 '''                                         to display a warning rather than
 '''                                         an error message. </param>
-''' <param name="a_descriptionDelimiter">   [Optional, String, ': '] Specify
+''' <param name="a_descriptionDelimiter">   [String, ': '] Specify
 '''                                         the delimiter preceding the description. </param>
 ''' <returns>   A Standard error message string in the form: <para>
-''' Error # (0x#) occurred in <c>Source</c>: Description </para><para>
+''' Error 0x# (Last DLL Error 0x#) occurred in <c>Source</c>: Description </para><para>
 ''' or  </para><para>
-''' Warning # (0x#) occurred in <c>Source</c>: Description  </para>
+''' Warning 0x#  (Last DLL Error 0x#) occurred in <c>Source</c>: Description  </para>
 ''' </returns>
 Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boolean = False, _
                 Optional a_descriptionDelimiter As String = ": ") As String
 
-    Dim p_builder As String
+    Dim p_builder As String: p_builder = VBA.vbNullString
   
     ' check if we have an error
-    If Err.Number <> 0 Then
+    If VBA.Err.Number <> 0 Then
     
         p_builder = p_builder & IIf(a_displayWarning, "Warning ", "Error ")
-        p_builder = p_builder & Format$(Err.Number)
+        p_builder = p_builder & Format$(VBA.Err.Number)
         
-        Dim p_errNumber As Long: p_errNumber = Err.Number - vbObjectError
+        Dim p_errNumber As Long: p_errNumber = VBA.Err.Number - vbObjectError
         
         If Abs(p_errNumber) < &HFFFF& Then
             p_errNumber = p_errNumber - &H200
-            p_builder = p_builder & " (+0x"
+            p_builder = p_builder & " +0x"
         Else
-            p_errNumber = Err.Number
-            p_builder = p_builder & " (0x"
+            p_errNumber = VBA.Err.Number
+            p_builder = p_builder & " 0x"
         End If
-        p_builder = p_builder & Hex$(p_errNumber)
-        p_builder = p_builder & ") "
-        p_builder = p_builder & "occurred in "
-        p_builder = p_builder & Err.Source
+        p_builder = p_builder & VBA.LCase$(VBA.Hex$(p_errNumber))
+        If Err.LastDllError <> 0 Then
+            p_builder = p_builder & " (Last DLL Error 0x"
+            p_builder = p_builder & VBA.LCase$(VBA.Hex$(Err.LastDllError)) & ")"
+        End If
+        p_builder = p_builder & " occurred in "
+        p_builder = p_builder & VBA.Err.Source
         p_builder = p_builder & a_descriptionDelimiter
-        p_builder = p_builder & Err.Description
+        p_builder = p_builder & VBA.Err.Description
         
     End If
 

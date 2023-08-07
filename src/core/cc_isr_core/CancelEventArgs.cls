@@ -18,10 +18,13 @@ End Type
 
 Private This As ThisData
 
-''' <summary>   Initializes the event arguments. </summary>
-Public Sub Initialize()
-    This.CancelRequested = False
-End Sub
+''' <summary>   Initializes and returns this object. </summary>
+''' <param name="a_cancelRequested">   [Boolean] true to request the cancellation of the event. </param>
+''' <returns>   [<see cref="CancelEventArgs"/>]. </returns>
+Public Function Initialize(Optional ByVal a_cancelRequested As Boolean = False) As CancelEventArgs
+    This.CancelRequested = a_cancelRequested
+    Set Initialize = Me
+End Function
 
 ''' <summary>   Gets the cancel requested value. </summary>
 ''' <value>   [Boolean] True to request the cancellation of the event. </value>

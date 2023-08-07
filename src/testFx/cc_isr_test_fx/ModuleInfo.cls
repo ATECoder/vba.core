@@ -9,12 +9,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   Module information for enumeratingmodules. </summary>
-' ModuleInfo.cls
-'
-' Dependencies:
-'
-' TBA
-'
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -26,38 +20,46 @@ End Type
 
 Private This As ThisData
 
-''' <summary>   Initializes this class. </summary>
+''' <summary>   Initializes and returns this class. </summary>
 ''' <param name="a_projectName">      [String] The project name. </param>
 ''' <param name="a_codeModuleName">   [String] The component code module name. </param>
-Public Sub Initialize(ByVal a_projectName As String, ByVal a_codeModuleName As String)
+''' <returns>   [<see cref="ModuleInfo"/>]. </returns>
+Public Function Initialize(ByVal a_projectName As String, ByVal a_codeModuleName As String) As ModuleInfo
     This.ProjectName = a_projectName
     This.ModuleName = a_codeModuleName
-End Sub
+    Set Initialize = Me
+End Function
 
-''' <summary>   Initializes this class from a module full name. </summary>
+''' <summary>   Initializes and returns this class from a module full name. </summary>
 ''' <param name="a_moduleFullName">   [String] The module full name. </param>
-Public Sub FromModuleFullName(ByVal a_moduleFullName As String)
+''' <returns>   [<see cref="ModuleInfo"/>]. </returns>
+Public Function FromModuleFullName(ByVal a_moduleFullName As String) As ModuleInfo
     
     Dim p_names() As String: p_names() = Split(a_moduleFullName, ".")
     This.ProjectName = p_names(LBound(p_names))
     This.ModuleName = p_names(LBound(p_names) + 1)
+    Set FromModuleFullName = Me
 
-End Sub
+End Function
 
-''' <summary>   Initializes this class from a macro full name. </summary>
+''' <summary>   Initializes and returns this class from a macro full name. </summary>
 ''' <param name="a_macroFullName">   [String] The macro full name. </param>
-Public Sub FromMacroFullName(ByVal a_macroFullName As String)
+''' <returns>   [<see cref="ModuleInfo"/>]. </returns>
+Public Function FromMacroFullName(ByVal a_macroFullName As String) As ModuleInfo
     
     Dim p_names() As String: p_names() = Split(a_macroFullName, ".")
     This.ProjectName = p_names(LBound(p_names))
     This.ModuleName = p_names(LBound(p_names) + 1)
-
-End Sub
+    Set FromMacroFullName = Me
+    
+End Function
 
 ''' <summary>   Creates a clone of the this module info. </summary>
+''' <returns>   [<see cref="ModuleInfo"/>]. </returns>
 Public Function Clone() As ModuleInfo
-    Set Clone = New ModuleInfo
-    Clone.Initialize Me.ProjectName, Me.ModuleName
+    
+    Set Clone = Factory.NewModuleInfo.Initialize(Me.ProjectName, Me.ModuleName)
+
 End Function
 
 ''' <summary>   Gets the project name. </summary>

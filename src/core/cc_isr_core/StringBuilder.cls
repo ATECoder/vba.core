@@ -13,7 +13,7 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Const initialSize As Integer = 16
+Private Const m_initialSize As Long = 16
 
 Private Type ThisData
     Buffer() As String
@@ -30,10 +30,23 @@ Private This As ThisData
 Private Sub Class_Initialize()
 
     This.CurrentIndex = 0
-    This.MaxIndex = initialSize
+    This.MaxIndex = m_initialSize
     ReDim This.Buffer(1 To This.MaxIndex)
 
 End Sub
+
+''' <summary>   Initializes and return this user defined error. </summary>
+''' <param name="a_initialCapacity">     [Long] The error code. </param>
+''' <param name="a_errorName">     [String] The error name. </param>
+''' <param name="a_eescription">   [String] The error description. </param>
+''' <returns>   [<see cref="StringBuilder"/>]. </returns>
+Public Function Initialize(Optional ByVal a_initialCapacity As Long = m_initialSize) As StringBuilder
+    This.CurrentIndex = 0
+    This.MaxIndex = a_initialCapacity
+    ReDim This.Buffer(1 To This.MaxIndex)
+    Set Initialize = Me
+End Function
+
 
 ''' < summary>   Appends the given text to this StringBuilder. </summary>
 ''' <param name="a_text">   [String] the text to append. </param>

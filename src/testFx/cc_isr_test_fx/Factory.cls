@@ -55,3 +55,9 @@ Public Function NewStopWatch() As StopWatch
     Set NewStopWatch = New StopWatch
 End Function
 
+''' <summary>   Instantiates a new temporary test file. </summary>
+''' <returns>   [<see cref="TestFileHandle"/>]. <returns>
+Public Function NewTestFileHandle() As TestFileHandle
+    Set NewTestFileHandle = New TestFileHandle
+End Function
+

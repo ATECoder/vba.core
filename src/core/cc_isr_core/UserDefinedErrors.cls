@@ -34,6 +34,7 @@ Private Type ThisData
     InvalidOperationError As UserDefinedError
     TimeoutError As UserDefinedError
     FormatError As UserDefinedError
+    LastErrorCode As Long
 End Type
 
 Private This As ThisData
@@ -42,125 +43,108 @@ Private This As ThisData
 Private Sub Class_Initialize()
 
     Set This.ErrorsDix = New Dictionary
-    Dim p_errorCode As Long
     Dim p_dummyError As UserDefinedError
     Set p_dummyError = New UserDefinedError
-    p_errorCode = VBA.vbObjectError + p_dummyError.UserErrorNumberBase
+    This.LastErrorCode = VBA.vbObjectError + p_dummyError.UserErrorNumberBase
     
-    p_errorCode = p_errorCode + 1
-    Set This.WinsockStartingError = New UserDefinedError
-    This.WinsockStartingError.InitiateProperties p_errorCode, "WinsockStartingError", _
-        "Failed starting Winsock using Winsock WSAStartup()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.WinsockStartingError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "WinsockStartingError", _
+                                        "Failed starting Winsock using Winsock WSAStartup().")
     AddUserDefinedError Me.WinsockStartingError
     
-    p_errorCode = p_errorCode + 1
-    Set This.WinsockCleanupError = New UserDefinedError
-    This.WinsockCleanupError.InitiateProperties p_errorCode, "WinsockCleanupError", _
-        "Failed disposing Winsock using Winsock WSACleanup()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.WinsockCleanupError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "WinsockCleanupError", _
+                                        "Failed disposing Winsock using Winsock WSACleanup().")
     AddUserDefinedError Me.WinsockCleanupError
     
-    p_errorCode = p_errorCode + 1
-    Set This.SocketCreationError = New UserDefinedError
-    This.SocketCreationError.InitiateProperties p_errorCode, "SocketCreationError", _
-        "Failed creating socket using Winsock socket()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketCreationError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketCreationError", _
+                                        "Failed creating socket using Winsock socket().")
     AddUserDefinedError Me.SocketCreationError
     
-    p_errorCode = p_errorCode + 1
-    Set This.SocketConnectionError = New UserDefinedError
-    This.SocketConnectionError.InitiateProperties p_errorCode, "SocketConnectionError", _
-        "Failed connecting socket using Winsock connect()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketConnectionError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketConnectionError", _
+                                        "Failed connecting socket using Winsock connect().")
     AddUserDefinedError Me.SocketConnectionError
     
-    p_errorCode = p_errorCode + 1
-    Set This.SocketDisconnectionError = New UserDefinedError
-    This.SocketDisconnectionError.InitiateProperties p_errorCode, "SocketDisconnectionError", _
-        "Failed disconnecting socket using Winsock closesocket()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketDisconnectionError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketDisconnectionError", _
+                                            "Failed disconnecting socket using Winsock closesocket().")
     AddUserDefinedError Me.SocketDisconnectionError
     
-    p_errorCode = p_errorCode + 1
-    Set This.SocketOptionSettingError = New UserDefinedError
-    This.SocketOptionSettingError.InitiateProperties p_errorCode, "SocketOptionSettingError", _
-        "Failed setting socket options using Winsock setsockopt()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketOptionSettingError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketOptionSettingError", _
+                                            "Failed setting socket options using Winsock setsockopt().")
     AddUserDefinedError Me.SocketOptionSettingError
     
-    p_errorCode = p_errorCode + 1
-    Set This.SocketSendError = New UserDefinedError
-    This.SocketSendError.InitiateProperties p_errorCode, "SocketSendError", _
-        "Failed send a socket message using Winsock send()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketSendError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketSendError", _
+                                    "Failed send a socket message using Winsock send().")
     AddUserDefinedError Me.SocketSendError
 
-    p_errorCode = p_errorCode + 1
-    Set This.SocketReceiveError = New UserDefinedError
-    This.SocketReceiveError.InitiateProperties p_errorCode, "SocketReceiveError", _
-        "Failed receiving a socket message using Winsock recv()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketReceiveError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketReceiveError", _
+                                    "Failed receiving a socket message using Winsock recv().")
     AddUserDefinedError Me.SocketReceiveError
 
-    p_errorCode = p_errorCode + 1
-    Set This.SocketBindError = New UserDefinedError
-    This.SocketBindError.InitiateProperties p_errorCode, "SocketBindError", _
-        "Failed binding a socket using Winsock bind()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketBindError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketBindError", _
+                                    "Failed binding a socket using Winsock bind().")
     AddUserDefinedError Me.SocketBindError
 
-    p_errorCode = p_errorCode + 1
-    Set This.SocketListenError = New UserDefinedError
-    This.SocketListenError.InitiateProperties p_errorCode, "SocketListenError", _
-        "Failed stating a socket listening using Winsock listen()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketListenError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketListenError", _
+                                    "Failed stating a socket listening using Winsock listen().")
     AddUserDefinedError Me.SocketListenError
 
-    p_errorCode = p_errorCode + 1
-    Set This.SocketAcceptError = New UserDefinedError
-    This.SocketAcceptError.InitiateProperties p_errorCode, "SocketAcceptError", _
-        "Failed permitting an incoming connection attempt on a socket using Winsock accept()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketAcceptError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketAcceptError", _
+                                    "Failed permitting an incoming connection attempt on a socket using Winsock accept().")
     AddUserDefinedError Me.SocketAcceptError
 
-    p_errorCode = p_errorCode + 1
-    Set This.SocketSetStatusError = New UserDefinedError
-    This.SocketSetStatusError.InitiateProperties p_errorCode, "SocketSetStatusError", _
-        "Failed determining the socket status using Winsock select()."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.SocketSetStatusError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "SocketSetStatusError", _
+                                        "Failed determining the socket status using Winsock select().")
     AddUserDefinedError Me.SocketSetStatusError
 
-    p_errorCode = p_errorCode + 1
-    Set This.NullArgumentError = New UserDefinedError
-    This.NullArgumentError.InitiateProperties p_errorCode, "nullArgumentError", _
-        "null argument error."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.NullArgumentError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "nullArgumentError", _
+                                    "Null argument error.")
     AddUserDefinedError Me.NullArgumentError
 
-    p_errorCode = p_errorCode + 1
-    Set This.InvalidArgumentError = New UserDefinedError
-    This.InvalidArgumentError.InitiateProperties p_errorCode, "InvalidArgumentError", _
-        "Invalid argument error."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.InvalidArgumentError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "InvalidArgumentError", _
+                                        "Invalid argument error.")
     AddUserDefinedError Me.InvalidArgumentError
 
-    p_errorCode = p_errorCode + 1
-    Set This.InvalidFormatStringError = New UserDefinedError
-    This.InvalidFormatStringError.InitiateProperties p_errorCode, "InvalidFormatStringError", _
-        "Invalid format string."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.InvalidFormatStringError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "InvalidFormatStringError", _
+                                            "Invalid format string.")
     AddUserDefinedError Me.InvalidFormatStringError
 
-    p_errorCode = p_errorCode + 1
-    Set This.InvalidOperationError = New UserDefinedError
-    This.InvalidOperationError.InitiateProperties p_errorCode, "InvalidOperationError", _
-        "Invalid operation error."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.InvalidOperationError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "InvalidOperationError", _
+                                        "Invalid operation error.")
     AddUserDefinedError Me.InvalidOperationError
     
-    p_errorCode = p_errorCode + 1
-    Set This.TimeoutError = New UserDefinedError
-    This.TimeoutError.InitiateProperties p_errorCode, "TimeoutError", _
-        "Timeout error."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.TimeoutError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "TimeoutError", _
+                                "Timeout error.")
     AddUserDefinedError Me.TimeoutError
 
-    p_errorCode = p_errorCode + 1
-    Set This.FormatError = New UserDefinedError
-    This.FormatError.InitiateProperties p_errorCode, "FormatError", _
-        "The number indicating an argument to format is less than zero or greater than or equal to the length of the array of arguments."
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.FormatError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "FormatError", _
+        "The number indicating an argument to format is less than zero or greater than or equal to the length of the array of arguments.")
     AddUserDefinedError Me.FormatError
 
 End Sub
 
 ''' <summary>   Initializes the error codes and descriptions. </summary>
-Public Sub Initialize()
+''' <returns>   [<see cref="UserDefinedErrors"/>]. </returns>
+Public Function Initialize() As UserDefinedErrors
     Class_Initialize
-End Sub
+    Set Initialize = Me
+End Function
 
 ''' <summary>   Adds a user defined error to the error dictionary. </summary>
 ''' <para name"a_userError">   The error of type <see cref="UserDefinedError"/>   </param>
@@ -187,20 +171,21 @@ Public Function UserDefinedErrorCodeExists(ByVal a_userErrorCode As Long) As Boo
 End Function
 
 ''' <summary>   Returns a user defined error. </summary>
-''' <param name="a_key">   The user defined error code. </param>
+''' <param name="a_key">   [Long] The user defined error code. </param>
+''' <returns>   An existing or a new 'unknown' <see cref="UserDefinedError"/>. </returns>
 Public Function GetUserDefinedError(ByVal a_key As Long) As UserDefinedError
     
     If This.ErrorsDix.Exists(a_key) Then
         Set GetUserDefinedError = This.ErrorsDix.Item(a_key)
     Else
-        Set GetUserDefinedError = New UserDefinedError
-        GetUserDefinedError.InitiateProperties a_key, "UnknwonUserDefinedError", "Unknown error."
+        Set GetUserDefinedError = Factory.NewUserDefinedError.Initialize(a_key, _
+                                        "UnknownUserDefinedError", "Unknown error.")
     End If
 
 End Function
 
 ''' <summary>   Get the error that occurred starting Winsock. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get WinsockStartingError() As UserDefinedError
     
     Set WinsockStartingError = This.WinsockStartingError
@@ -208,7 +193,7 @@ Public Property Get WinsockStartingError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred ending Winsock. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get WinsockCleanupError() As UserDefinedError
     
     Set WinsockCleanupError = This.WinsockCleanupError
@@ -216,7 +201,7 @@ Public Property Get WinsockCleanupError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred creating a socket. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketCreationError() As UserDefinedError
     
     Set SocketCreationError = This.SocketCreationError
@@ -224,7 +209,7 @@ Public Property Get SocketCreationError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred connecting a socket. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketConnectionError() As UserDefinedError
     
     Set SocketConnectionError = This.SocketConnectionError
@@ -232,7 +217,7 @@ Public Property Get SocketConnectionError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred disconnecting a socket. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketDisconnectionError() As UserDefinedError
     
     Set SocketDisconnectionError = This.SocketDisconnectionError
@@ -240,7 +225,7 @@ Public Property Get SocketDisconnectionError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred setting a socket option. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketOptionSettingError() As UserDefinedError
     
     Set SocketOptionSettingError = This.SocketOptionSettingError
@@ -248,7 +233,7 @@ Public Property Get SocketOptionSettingError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred sending a socket message. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketSendError() As UserDefinedError
     
     Set SocketSendError = This.SocketSendError
@@ -256,7 +241,7 @@ Public Property Get SocketSendError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred receiving a socket message. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketReceiveError() As UserDefinedError
     
     Set SocketReceiveError = This.SocketReceiveError
@@ -264,7 +249,7 @@ Public Property Get SocketReceiveError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred binding a socket to an address. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketBindError() As UserDefinedError
     
     Set SocketBindError = This.SocketBindError
@@ -272,7 +257,7 @@ Public Property Get SocketBindError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred starting to listen on a socket. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketListenError() As UserDefinedError
     
     Set SocketListenError = This.SocketListenError
@@ -280,7 +265,7 @@ Public Property Get SocketListenError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred accepting an incoming connection. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketAcceptError() As UserDefinedError
     
     Set SocketAcceptError = This.SocketAcceptError
@@ -288,7 +273,7 @@ Public Property Get SocketAcceptError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred determining the status of a socket set. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get SocketSetStatusError() As UserDefinedError
     
     Set SocketSetStatusError = This.SocketSetStatusError
@@ -296,7 +281,7 @@ Public Property Get SocketSetStatusError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred when the method argument is null. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get NullArgumentError() As UserDefinedError
     
     Set NullArgumentError = This.NullArgumentError
@@ -304,7 +289,7 @@ Public Property Get NullArgumentError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred when the method argument is invalid. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get InvalidArgumentError() As UserDefinedError
     
     Set InvalidArgumentError = This.InvalidArgumentError
@@ -312,7 +297,7 @@ Public Property Get InvalidArgumentError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred when the format string is invalid. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get InvalidFormatStringError() As UserDefinedError
     
     Set InvalidFormatStringError = This.InvalidFormatStringError
@@ -320,7 +305,7 @@ Public Property Get InvalidFormatStringError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred when the method operation is invalid. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get InvalidOperationError() As UserDefinedError
     
     Set InvalidOperationError = This.InvalidOperationError
@@ -328,7 +313,7 @@ Public Property Get InvalidOperationError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred when the method operation times out. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get TimeoutError() As UserDefinedError
     
     Set TimeoutError = This.TimeoutError
@@ -336,11 +321,22 @@ Public Property Get TimeoutError() As UserDefinedError
 End Property
 
 ''' <summary>   Get the error that occurred when a format error occurred. </summary>
-''' <value>   <see cref="UserDefinedError"/>. </value>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
 Public Property Get FormatError() As UserDefinedError
     
     Set FormatError = This.FormatError
 
+End Property
+
+''' <summary>   gets or sets the last error code. </summary>
+Public Property Get LastErrorCode() As Long
+    LastErrorCode = This.LastErrorCode
+End Property
+
+''' <summary>   gets or sets the last error code. </summary>
+''' <param name="a_value">    [Long] the new last error code. </param>
+Public Property Let LastErrorCode(ByVal a_value As Long)
+    This.LastErrorCode = a_value
 End Property
 
 ''' <summary>   Raises a user defined error. </summary>

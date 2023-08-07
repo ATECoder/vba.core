@@ -221,11 +221,13 @@ Public Function EnumerateComponentMacros(ByVal a_module As ModuleInfo, _
     For p_lineNo = 1 To a_component.CodeModule.CountOfLines
         p_newName = a_component.CodeModule.ProcOfLine(Line:=p_lineNo, prockind:=vbext_pk_Proc)
         If p_currentName <> p_newName Then
+            
             p_currentName = p_newName
+            
             If Me.StartsWith(p_currentName, a_prefix) Then
-                Dim p_macroInfo As MacroInfo: Set p_macroInfo = cc_isr_Test_Fx.Factory.NewMacroInfo()
-                p_macroInfo.InitializeModuelMacro a_module, p_currentName
-                p_macros.Add p_macroInfo
+                
+                p_macros.Add Factory.NewMacroInfo.InitializeModuelMacro(a_module, p_currentName)
+            
             End If
         End If
     Next
@@ -288,9 +290,7 @@ Public Function EnumerateComponentTestMacros(ByVal a_module As ModuleInfo, _
         If p_currentName <> p_newName Then
             p_currentName = p_newName
             If Me.StartsWith(p_currentName, TestMethodPrefix) Then
-                Dim p_macroInfo As MacroInfo: Set p_macroInfo = cc_isr_Test_Fx.Factory.NewMacroInfo()
-                p_macroInfo.InitializeModuelMacro a_module, p_currentName
-                p_macros.Add p_macroInfo
+                p_macros.Add Factory.NewMacroInfo.InitializeModuelMacro(a_module, p_currentName)
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.BeforeAllMethodName, vbTextCompare) Then
                 a_methods = a_methods Or ModuleTestMethods.BeforeAll
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.AfterAllMethodName, vbTextCompare) Then

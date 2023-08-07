@@ -22,6 +22,12 @@ Option Explicit
 Private Sub Class_Initialize()
 End Sub
 
+''' <summary>   Instantiates a new <see cref="CancelEventArgs"/> object. </summary>
+''' <returns>   [<see cref="CancelEventArgs"/>]. </returns>
+Public Function NewCancelEventArgs() As CancelEventArgs
+    Set NewCancelEventArgs = New CancelEventArgs
+End Function
+
 ''' <summary>   Instantiates an instance of an <see cref="EventTimer"/> object. </summary>
 ''' <returns>   [<see cref="EventTimer"/>]. </returns>
 Public Function NewEventTimer() As EventTimer
@@ -46,10 +52,10 @@ Public Function NewStringBuilder() As StringBuilder
     Set NewStringBuilder = New StringBuilder
 End Function
 
-''' <summary>   Instantiates a new <see cref="CancelEventArgs"/> object. </summary>
-''' <returns>   [<see cref="CancelEventArgs"/>]. </returns>
-Public Function NewCancelEventArgs() As CancelEventArgs
-    Set NewCancelEventArgs = New CancelEventArgs
+''' <summary>   Instantiates a new <see cref="UserDefinedError"/> object. </summary>
+''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
+Public Function NewUserDefinedError() As UserDefinedError
+    Set NewUserDefinedError = New UserDefinedError
 End Function
 
 

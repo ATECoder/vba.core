@@ -21,16 +21,18 @@ End Type
 
 Private This As ThisData
 
-
-''' <summary>   Initializes a user defined error. </summary>
+''' <summary>   Initializes and return this user defined error. </summary>
 ''' <param name="a_errorCode">     [Long] The error code. </param>
 ''' <param name="a_errorName">     [String] The error name. </param>
 ''' <param name="a_eescription">   [String] The error description. </param>
-Public Sub InitiateProperties(ByVal a_errorCode As Long, ByVal a_errorName As String, ByVal a_description As String)
+''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
+Public Function Initialize(ByVal a_errorCode As Long, ByVal a_errorName As String, _
+        ByVal a_description As String) As UserDefinedError
     This.Name = a_errorName
     This.Code = a_errorCode
     This.Description = a_description
-End Sub
+    Set Initialize = Me
+End Function
 
 ''' <summary>   Gets the error code. </summary>
 ''' <value>   [Long] error code. </value>

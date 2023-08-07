@@ -69,10 +69,7 @@ End Function
 
 Private Sub AddModule(ByVal a_col As VBA.Collection, ByVal a_moduleFullName As String)
     
-    Dim p_module As cc_isr_Test_Fx.ModuleInfo
-    Set p_module = cc_isr_Test_Fx.Factory.NewModuleInfo
-    p_module.FromModuleFullName a_moduleFullName
-    a_col.Add p_module
+    a_col.Add Factory.NewModuleInfo.FromModuleFullName(a_moduleFullName)
 
 End Sub
 

@@ -1,6 +1,12 @@
 # Change log
 All notable changes to these libraries will be documented in this file in a format based on [Keep a Change log]
 
+## [1.0.8619] - 2023-08-07
+* Use ThisWorkbook error source and message builder to report errors.
+* Add initialization to classes. 
+* Update initializing the user defined errors.
+* Report last DLL error if not zero.
+
 ## [1.0.8617] - 2023-08-05
 * Test and Test Framework: Add inconclusive outcome condition and reporting.
 

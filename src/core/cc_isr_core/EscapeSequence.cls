@@ -20,6 +20,17 @@ End Type
 
 Private This As ThisData
 
+''' <summary>   Initializes and returns this object. </summary>
+''' <param name="a_value">     [String] The value, e.g., '/r'. </param>
+''' <param name="a_literal">   [String] The Literal value corresponding to the value,
+'''                            e.g., <see cref="VBA.VbCr"/>. </param>
+''' <returns>   [<see cref="EscapeSequence"/>]. </returns>
+Public Function Initialize(ByVal a_value As String, ByVal a_literal As String) As EscapeSequence
+    This.Value = a_value
+    This.Literal = a_literal
+    Set Initialize = Me
+End Function
+
 ''' <summary>   Gets the escape sequence value. </summary>
 ''' <value>   [String]. </value>
 Public Property Get Value() As String
@@ -27,7 +38,7 @@ Public Property Get Value() As String
 End Property
 
 ''' <summary>   Sets the escape sequence value. </summary>
-''' <param name="a_value">   [String] The value., e.g., '/r'. </param>
+''' <param name="a_value">   [String] The value, e.g., '/r'. </param>
 Public Property Let Value(ByVal a_value As String)
     This.Value = a_value
 End Property
@@ -39,7 +50,8 @@ Public Property Get Literal() As String
 End Property
 
 ''' <summary>   Sets the escape sequence literal representation value. </summary>
-''' <param name="a_value">   [String] The Literal value., e.g., <see cref="VBA.VbCr"/>. </param>
+''' <param name="a_value">   [String] The Literal value corresponding to the value,
+'''                          e.g., <see cref="VBA.VbCr"/>. </param>
 Public Property Let Literal(ByVal a_value As String)
     This.Literal = a_value
 End Property
