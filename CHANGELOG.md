@@ -1,6 +1,9 @@
 # Change log
 All notable changes to these libraries will be documented in this file in a format based on [Keep a Change log]
 
+## [1.0.8623] - 2023-08-10
+* Add a message tracer interface.
+
 ## [1.0.8619] - 2023-08-07
 * Use ThisWorkbook error source and message builder to report errors.
 * Add initialization to classes. 
