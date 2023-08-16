@@ -251,7 +251,7 @@ Private Sub Workbook_Open()
     Application.Windows(ThisWorkbook.name).Visible = True
     
     ' init the user defined errors.
-    cc_isr_core.userdefinederrors.Initialize
+    cc_isr_core.UserDefinedErrors.Initialize
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:

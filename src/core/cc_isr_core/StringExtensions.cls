@@ -80,7 +80,7 @@ Public Function EndsWith(ByVal a_text As String, ByVal a_endText As String, _
 End Function
 
 ''' <summary>   Creates a new escape sequence. </summary>
-''' <remarks>   Escape sequences are haracter combinations consisting of a backslash (\) followed by a letter
+''' <remarks>   Escape sequences are character combinations consisting of a backslash (\) followed by a letter
 ''' or by a combination of digits. Escape sequences are used to represent a newline character, single quotation mark,
 ''' or certain other characters in a character constant. In C#, an escape sequence is regarded as a single character
 ''' and is therefore valid as a character constant.
@@ -166,7 +166,7 @@ Function ReplaceEscapeSequences(ByVal a_original As String) As String
     
     If Me.StringContains(a_original, "\") Then
     
-        ' replace "ASCII (oct)" escape sequence
+        ' replace octal escape sequence
     
         Set p_regex = New VBScript_RegExp_55.RegExp
         p_regex.Pattern = "\\(\d{3})"
@@ -345,8 +345,8 @@ Public Function StringFormatReplace(ByVal a_format As String, ParamArray a_value
     
     Else
     
-        ' unbox the paramter array in case it came from another
-        ' function which argument too is a paramter array.
+        ' unbox the parameter array in case it came from another
+        ' function which argument too is a parameter array.
     
         Dim p_tokens As Variant
         p_tokens = CoreExtensions.UnboxParameterArray(a_values)
@@ -477,7 +477,7 @@ Public Function StringFormatValue(ByVal a_format As String, ByVal a_value As Var
         
         If p_success Then
         
-            ' handle the case introduced by the Stack Overflow artical of a custom date format that starts with a c.
+            ' handle the case introduced by the Stack Overflow article of a custom date format that starts with a c.
             If VBA.Len(p_formatSpecifier) > 1 Then
                 If Me.StartsWith(p_formatSpecifier, "c", vbTextCompare) Then
                     p_formatSpecifier = VBA.Right$(p_formatSpecifier, VBA.LenB(p_formatSpecifier) / 2 - 1)
@@ -519,7 +519,7 @@ Public Function StringFormatNumber(ByVal a_format As String, _
     If p_precisionString <> vbNullString And Not IsNumeric(p_precisionString) Then _
         cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
             TypeName(Me) & "." & p_procedureName, _
-            " Preceision string '" & p_precisionString & "' is not numeric."
+            " Precision string '" & p_precisionString & "' is not numeric."
 
     If p_precisionString = vbNullString Then p_precisionString = "0"
 
@@ -813,7 +813,7 @@ Public Function StringFormatDate(ByVal a_format As String, ByVal a_value As Date
     
     End If
     
-    ' handle the case introduced by the Stack Overflow artical of a custom date format that starts with a c.
+    ' handle the case introduced by the Stack Overflow article of a custom date format that starts with a c.
     If VBA.Len(p_formatSpecifier) > 1 Then
         If Not Me.StartsWith(p_formatSpecifier, "c", vbTextCompare) Then
             p_formatSpecifier = "c" & p_formatSpecifier
@@ -913,8 +913,8 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
                     "cc_isr_Core.StringExtensions.StringFormat", _
                     "Argument name: 'a_format'."
     
-    ' unbox the paramter array in case it came from another
-    ' function which argument too is a paramter array.
+    ' unbox the parameter array in case it came from another
+    ' function which argument too is a parameter array.
 
     Dim p_values As Variant
     p_values = CoreExtensions.UnboxParameterArray(a_values)
@@ -950,21 +950,21 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
 
     ' determine if parameter array argument count matches number of unique regex matches:
     
-    Dim uniqueCount As Integer
-    Dim tmpCSV As String
+    Dim p_uniqueCount As Integer
+    Dim p_commaSeparatedValues As String
     For Each p_match In p_matches
-        If Not Me.StringContains(tmpCSV, p_match.SubMatches(1)) Then
-            uniqueCount = uniqueCount + 1
-            tmpCSV = tmpCSV & p_match.SubMatches(1) & ","
+        If Not Me.StringContains(p_commaSeparatedValues, p_match.SubMatches(1)) Then
+            p_uniqueCount = p_uniqueCount + 1
+            p_commaSeparatedValues = p_commaSeparatedValues & p_match.SubMatches(1) & ","
         End If
     Next
 
     ' unique indices count must match p_valuesCount:
     
-    If p_matches.count > 0 And uniqueCount <> p_valuesCount Then _
+    If p_matches.count > 0 And p_uniqueCount <> p_valuesCount Then _
         cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                 TypeName(Me) & "." & p_procedureName & _
-                " Unique count " & CStr(uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
+                " Unique count " & CStr(p_uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
                 
     p_useLiteral = Me.StartsWith(a_format, "@")
 
@@ -1011,12 +1011,12 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
             Set p_match = p_matches(i)
             p_valueIndex = CInt(p_match.SubMatches(1))
     
-            ' if specified index (0-based) > uniqueCount (1-based), something's wrong:
+            ' if specified index (0-based) > p_uniqueCount (1-based), something's wrong:
             
-            If p_valueIndex > uniqueCount - 1 Then _
+            If p_valueIndex > p_uniqueCount - 1 Then _
                 cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                     TypeName(Me) & "." & p_procedureName, _
-                    " Specified index " & VBA.CStr(p_valueIndex) & " exceeds " & VBA.CStr(uniqueCount - 1) & "."
+                    " Specified index " & VBA.CStr(p_valueIndex) & " exceeds " & VBA.CStr(p_uniqueCount - 1) & "."
             
             p_value = p_values(p_valueIndex)
             p_stringValue = VBA.CStr(p_value)
@@ -1121,8 +1121,8 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
                     "cc_isr_Core.StringExtensions.StringFormat", _
                     "Argument name: 'a_format'."
     
-    ' unbox the paramter array in case it came from another
-    ' function which argument too is a paramter array.
+    ' unbox the parameter array in case it came from another
+    ' function which argument too is a parameter array.
 
     Dim p_values As Variant
     p_values = CoreExtensions.UnboxParameterArray(a_values)
@@ -1160,21 +1160,21 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
 
     ' determine if parameter array argument count matches number of unique regex matches:
     
-    Dim uniqueCount As Integer
-    Dim tmpCSV As String
+    Dim p_uniqueCount As Integer
+    Dim p_commaSeparatedValues As String
     For Each p_match In p_matches
-        If Not Me.StringContains(tmpCSV, p_match.SubMatches(1)) Then
-            uniqueCount = uniqueCount + 1
-            tmpCSV = tmpCSV & p_match.SubMatches(1) & ","
+        If Not Me.StringContains(p_commaSeparatedValues, p_match.SubMatches(1)) Then
+            p_uniqueCount = p_uniqueCount + 1
+            p_commaSeparatedValues = p_commaSeparatedValues & p_match.SubMatches(1) & ","
         End If
     Next
 
     ' unique indices count must match p_valuesCount:
     
-    If p_matches.count > 0 And uniqueCount <> p_valuesCount Then _
+    If p_matches.count > 0 And p_uniqueCount <> p_valuesCount Then _
         cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                 TypeName(Me) & "." & p_procedureName & _
-                " Unique count " & CStr(uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
+                " Unique count " & CStr(p_uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
                 
     p_useLiteral = Me.StartsWith(a_format, "@")
 
@@ -1220,12 +1220,12 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
         Set p_match = p_matches(i)
         p = CInt(p_match.SubMatches(1))
 
-        ' if specified index (0-based) > uniqueCount (1-based), something's wrong:
+        ' if specified index (0-based) > p_uniqueCount (1-based), something's wrong:
         
-        If p > uniqueCount - 1 Then _
+        If p > p_uniqueCount - 1 Then _
             cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                 TypeName(Me) & "." & p_procedureName, _
-                " Specified index " & CStr(p) & " exceeds " & CStr(uniqueCount - 1) & "."
+                " Specified index " & CStr(p) & " exceeds " & CStr(p_uniqueCount - 1) & "."
         
         p_value = p_values(p)
         p_stringValue = CStr(p_value)
@@ -1293,7 +1293,7 @@ NumberFormatSpecifiers:
             If p_precisionString <> vbNullString And Not IsNumeric(p_precisionString) Then _
                 cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
                     TypeName(Me) & "." & p_procedureName, _
-                    " Preceision string '" & p_precisionString & "' is not numeric."
+                    " Precision string '" & p_precisionString & "' is not numeric."
 
             If p_precisionString = vbNullString Then p_precisionString = "0"
 

@@ -85,7 +85,7 @@ End Function
 
 ''' <summary>   Builds a report consisting of the supplied test name, outcome, and message. </summary>
 ''' <param name="a_testName">   [String] The name of the unit test to include in the report. </param
-''' <param name="a_passed">         [String, ' passsed.'] The passed part of the report. </param
+''' <param name="a_passed">         [String, ' passed.'] The passed part of the report. </param
 ''' <param name="a_failed">         [String] ' failed.'] The failed part of the outcome. </param
 ''' <param name="a_inconclusive">   [String] ' inconclusive.'] The inconclusive part of the report. </param
 ''' <returns>   [String]. </returns>

@@ -33,7 +33,7 @@ Public Function TestEndsWith() As cc_isr_Test_Fx.Assert
 
 End Function
 
-''' <summary>   Unit test. Asserts escape seqquences existence and values. </summary>
+''' <summary>   Unit test. Asserts escape sequences existence and values. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestEscapeSequences() As cc_isr_Test_Fx.Assert
 

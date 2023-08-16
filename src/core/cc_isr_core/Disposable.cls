@@ -25,7 +25,7 @@ Option Explicit
 ''' <summary>   Tries to dispose a target object. </summary>
 ''' <param name="a_target">          [Object] The object which to dispose. </param>
 ''' <param name="a_tryLateBound">    [Boolean, Optional, False] True to attempt to force dispose on the object if
-'''                                   it was not cast to Idisposable. </param>
+'''                                   it was not cast to IDisposable. </param>
 '''< returns>   True if a Dispose method was successfully invoked (early-bound IDisposable.Dispose unless
 ''' specified otherwise). </returns>
 Public Function TryDispose(ByVal a_target As Object, Optional ByVal a_tryLateBound As Boolean = False) As Boolean

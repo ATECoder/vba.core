@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   An exectutive for executing test methods. </summary>
+''' <summary>   An executive for executing test methods. </summary>
 ''' <remarks>   Dependencies: MacroInfo.cls, ModuleInfo.cls, WorkbookUtilities.cls. </remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -101,14 +101,14 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     Dim p_macros As Collection: Set p_macros = WorkbookUtilities.EnumerateTestMacros(p_moduleInfo, p_moduleTestMethods)
     Dim p_macroInfo As MacroInfo
     
-    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Test_Fx.Factory.NewStopWatch
+    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Test_Fx.Factory.NewStopwatch
     
     Dim p_macroFullName As String
     
     Dim p_moduleMacroInfo As MacroInfo: Set p_moduleMacroInfo = cc_isr_Test_Fx.Factory.NewMacroInfo()
     
     If ModuleTestMethods.BeforeAll = (p_moduleTestMethods And ModuleTestMethods.BeforeAll) Then
-        p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.BeforeAllMethodName
+        p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.BeforeAllMethodName
         p_macroFullName = p_moduleMacroInfo.FullName
         If a_usingRemoteWorkbook Then
             p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
@@ -123,7 +123,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
         ' execute the Before Each module test method.
         
         If ModuleTestMethods.BeforeEach = (p_moduleTestMethods And ModuleTestMethods.BeforeEach) Then
-            p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.BeforeEachMethodName
+            p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.BeforeEachMethodName
             p_macroFullName = p_moduleMacroInfo.FullName
             If a_usingRemoteWorkbook Then
                 p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
@@ -162,7 +162,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
         ' execute the After Each module test method.
         
         If ModuleTestMethods.AfterEach = (p_moduleTestMethods And ModuleTestMethods.AfterEach) Then
-            p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.AfterEachMethodName
+            p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.AfterEachMethodName
             p_macroFullName = p_moduleMacroInfo.FullName
             If a_usingRemoteWorkbook Then
                 p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName
@@ -175,7 +175,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     ' execute the After All module test method.
     
     If ModuleTestMethods.AfterAll = (p_moduleTestMethods And ModuleTestMethods.AfterAll) Then
-        p_moduleMacroInfo.InitializeModuelMacro p_moduleInfo, ConstantsEnums.AfterAllMethodName
+        p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.AfterAllMethodName
         p_macroFullName = p_moduleMacroInfo.FullName
         If a_usingRemoteWorkbook Then
             p_macroFullName = "'" & p_filePath & "'!" & p_macroFullName

@@ -17,9 +17,9 @@ Public Function TestUserDefinedErrorShouldExist() As cc_isr_Test_Fx.Assert
     ' this should be added to the activate event of the workbook
     ' cc_isr_Core.UserDefinedErrors.Initialize
     Dim p_userError As UserDefinedError
-    Set p_userError = cc_isr_core.userdefinederrors.SocketConnectionError
+    Set p_userError = cc_isr_core.UserDefinedErrors.SocketConnectionError
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(userdefinederrors.UserDefinedErrorExists(p_userError), _
+    Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(UserDefinedErrors.UserDefinedErrorExists(p_userError), _
                                                         p_userError.ToString(" should exist"))
                                                         
     Debug.Print p_outcome.BuildReport("TestUserDefinedErrorShouldExist")
@@ -28,7 +28,7 @@ Public Function TestUserDefinedErrorShouldExist() As cc_isr_Test_Fx.Assert
 
 End Function
 
-''' <summary>   Unit test. Asserts buidling the error message. </summary>
+''' <summary>   Unit test. Asserts building the error message. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestErrorMessageShouldBuild() As cc_isr_Test_Fx.Assert
 

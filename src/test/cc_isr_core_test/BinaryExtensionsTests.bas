@@ -252,7 +252,7 @@ Public Function TestFractionalValueShouldConvertToBinary() As cc_isr_Test_Fx.Ass
         p_initialValue = -0.75
         p_actualValue = cc_isr_core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(userdefinederrors.InvalidArgumentError.Code, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(UserDefinedErrors.InvalidArgumentError.Code, _
                 Err.Number, _
                 "Attempting to convert a negative fractional should raise the Invalid Argument Error code..")
         On Error GoTo 0

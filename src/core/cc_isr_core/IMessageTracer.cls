@@ -32,7 +32,7 @@ End Enum
 ''' <param name="a_level">    [<see cref="TraceLevel"/>, Info] The level at which the message is traced. </param>
 Public Sub TraceMessage(ByVal a_message As String, Optional ByVal a_level As TraceLevel = TraceLevel.Info): End Sub
 
-''' <summary>   Gets or sets the maximum trace level. MNessages are trace at or below this level.  </summary>
+''' <summary>   Gets or sets the maximum trace level. Messages are traced at or below this level.  </summary>
 Public Property Get TraceLevel() As TraceLevel: End Property
 
 Public Property Let TraceLevel(ByVal a_value As TraceLevel): End Property

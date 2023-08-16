@@ -38,12 +38,12 @@ End Function
 ''' <param name="a_module">      [<see cref="ModuleInfo"/>] The module info. </param>
 ''' <param name="a_macroName">   [String] The name of the macro. </param>
 ''' <returns>   [<see cref="MacroInfo"/>]. </returns>
-Public Function InitializeModuelMacro(ByVal a_module As ModuleInfo, _
+Public Function InitializeModuleMacro(ByVal a_module As ModuleInfo, _
         ByVal a_macroName As String) As MacroInfo
     This.ProjectName = a_module.ProjectName
     This.ModuleName = a_module.ModuleName
     This.MacroName = a_macroName
-    Set InitializeModuelMacro = Me
+    Set InitializeModuleMacro = Me
 End Function
 
 ''' <summary>   Initializes and returns this class from a macro full name. </summary>

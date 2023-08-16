@@ -19,7 +19,7 @@ Option Explicit
 ''' <remarks>
 ''' <see href="https://stackoverflow.com/questions/20783170/pass-array-to-paramarray"/> <para>
 ''' When passing a parameter array that is received as an argument in function A to another function
-''' B that expects a parameter array, the parameter array is received in function A appeats at element
+''' B that expects a parameter array, the parameter array is received in function A appears at element
 ''' zero of the function B. </para><para>
 ''' Generally, when each subsequent function receives the parameter array, and passes it on, it increases
 ''' the depth of the parameter array. </para><para>
@@ -34,7 +34,7 @@ Public Function UnboxParameterArray(ParamArray a_values() As Variant) As Variant
     Dim p_params() As Variant, p_workArray() As Variant
     
     ' When a_values(0) is Array, it is assumed that the
-    ' parameter arrayt was passed from another function
+    ' parameter array was passed from another function
     p_params = a_values
     Do While VBA.VarType(p_params(0)) >= VBA.vbArray And UBound(p_params) < 1
         p_workArray = p_params(0)
@@ -72,7 +72,7 @@ Public Function GetDefaultValue(ByVal a_variableType As VBA.VbVarType) As Varian
             Set GetDefaultValue = Nothing
 #If VBA7 Then
 #If Win64 Then
-        Case VBA.VbVarType.vbLongLong ' VF: include longptr(?) if using GuardClauses with WinAPIs
+        Case VBA.VbVarType.vbLongLong
             GetDefaultValue = 0
 #End If
 #End If
@@ -81,17 +81,17 @@ End Function
 
 ''' <summary>   Queries whether code is running in the IDE (true), or compiled (false). </summary>
 ''' <returns>   [Boolean]. </returns>
-Public Function RunningInIde() As Boolean
+Public Function RunningInIDE() As Boolean
 
     Static p_counter As Variant
     If IsEmpty(p_counter) Then
         p_counter = 1
-        Debug.Assert RunningInIde() Or True
+        Debug.Assert RunningInIDE() Or True
         p_counter = p_counter - 1
     ElseIf p_counter = 1 Then
         p_counter = 0
     End If
-    RunningInIde = p_counter
+    RunningInIDE = p_counter
  
 End Function
 

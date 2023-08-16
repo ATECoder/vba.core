@@ -23,7 +23,7 @@ Public Property Get ExportCodeAfterSave() As Boolean
 End Property
 
 ''' <summary>   Enables or disables exporting code files after save. </summary>
-''' <para name="value">   True to enable exporting code files after save. </param>
+''' <param name="value">   True to enable exporting code files after save. </param>
 Public Property Let ExportCodeAfterSave(ByVal a_value As Boolean)
     This.ExportCodeAfterSave = a_value
 End Property
@@ -36,7 +36,7 @@ Public Property Get Deployed() As Boolean
 End Property
 
 ''' <summary>   Sets the deployed status. </summary>
-''' <para name="value">   True to set the deployed status. </param>
+''' <param name="value">   True to set the deployed status. </param>
 Public Property Let Deployed(ByVal a_value As Boolean)
     This.Deployed = a_value
 End Property
@@ -261,7 +261,7 @@ End Sub
 ''' <summary>   Handles the workbook before close event. </summary>
 ''' <remarks>   Disables the save dialog for deployed or read-only workbooks.
 '''             Disposes any disposable worksheets. </remarks>
-''' <para name="a_cancel">   [Boolean] Set to true to cancel closing. </param>
+''' <param name="a_cancel">   [Boolean] Set to true to cancel closing. </param>
 Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
     
     Const p_procedureName As String = "Workbook_BeforeClose"

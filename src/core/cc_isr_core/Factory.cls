@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   Constructs public not creatable objects for use by referencing workbooks. </summary>
-''' <remarks>   Dependencies: EventTimer.cls, StopWatch.cls, StringBuilder.cls. <remarks>
+''' <remarks>   Dependencies: EventTimer.cls, Stopwatch.cls, StringBuilder.cls. <remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -34,13 +34,13 @@ Public Function NewEventTimer() As EventTimer
   Set NewEventTimer = New EventTimer
 End Function
 
-''' <summary>   Instantiates a new <see cref="StopWatch"/> object. </summary>
+''' <summary>   Instantiates a new <see cref="Stopwatch"/> object. </summary>
 ''' <remarks>
 ''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
 ''' </remarks>
-''' <returns>   [<see cref="StopWatch"/>]. </returns>
-Public Function NewStopWatch() As StopWatch
-    Set NewStopWatch = New StopWatch
+''' <returns>   [<see cref="Stopwatch"/>]. </returns>
+Public Function NewStopwatch() As StopWatch
+    Set NewStopwatch = New StopWatch
 End Function
 
 ''' <summary>   Instantiates a new <see cref="StringBuilder"/> object. </summary>

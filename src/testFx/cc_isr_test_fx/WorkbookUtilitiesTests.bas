@@ -1,7 +1,7 @@
 Attribute VB_Name = "WorkbookUtilitiesTests"
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   Workbook utility tests.  </summary>
-''' <remarks>   Dependencies: Assert.cls, MactroInfo.cls, ModuleInfo.cls, WorkbookUtilites.cls.
+''' <remarks>   Dependencies: Assert.cls, MacroInfo.cls, ModuleInfo.cls, WorkbookUtilities.cls.
 ''' </remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -171,7 +171,7 @@ Public Function TestModuleList() As Assert
         If Not p_missingItem Is Nothing Then
             Set TestModuleList = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
                 "item " & CStr(p_missingItem) & _
-                " from the actual test module is not found in the exected collection of test modules")
+                " from the actual test module is not found in the expected collection of test modules")
             p_isDone = True
         End If
     

@@ -27,14 +27,14 @@ End Sub
 ''' <remarks> About logical operations in VBA and MS Extensibility VB Component:
 ''' It's a non standard boolean implementation, where True is not -1. Consequently, logical operation
 ''' using True (-1) and False (0) fail.
-''' Specifically, a <c>Not A</c> operation is the bitwise inversion of A (booleans are stored as long).
-''' If A=-1 its bits are 1111111111111111 and the inverson is 0000000000000000. But if A=1 then its bits
+''' Specifically, a <c>Not A</c> operation is the bitwise inversion of A (Boolean is stored as long).
+''' If A=-1 its bits are 1111111111111111 and the inversion is 0000000000000000. But if A=1 then its bits
 ''' are 0000000000000001 and the inversion gets 1111111111111110 what is representing -2.
 ''' So <c>Not 1</c> is -2 that is True because it is not equal to 0!
 ''' That's why <c>Not VBComponent.Saved = True</c> (=-2) when <c>VBComponent.Saved = True</c> (=1) too!
 ''' <code>
-''' -1 = cint(True): 0 = CInt(False): False = Not True
-''' 1 = cint(p_vbComponent.Saved): -2 = cint(Not p_vbComponent.Saved): True = Cbool( -2)
+''' -1 = CInt(True): 0 = CInt(False): False = Not True
+''' 1 = CInt(p_vbComponent.Saved): -2 = CInt(Not p_vbComponent.Saved): True = CBool( -2)
 ''' </code>
 ''' </remarks>
 ''' <param name="a_project">           [VBProject, The VB Project which code files to export. </param>
@@ -75,7 +75,7 @@ Public Sub ExportProjectCodeFiles(ByVal a_project As VBIDE.VBProject, _
     For Each p_vbComponent In a_project.VBComponents
         DoEvents
         ' Because VB Component is Type 100 document, 1 is True in this boolean implementation; -2 is false.
-        If Not (a_skipSavedFile And 1 = CInt(p_vbComponent.Saved)) Then
+        If Not (a_skipSavedFile And 1 = VBA.CInt(p_vbComponent.Saved)) Then
             Dim p_name As String
             p_name = p_vbComponent.Name
             p_extension = VbComponentExtensions.GetFileExtension(p_vbComponent)

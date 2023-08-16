@@ -8,8 +8,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   Encalsulates throwing methods upon meeting some error conditions. </summary>
-''' <remarks>   Dependencies: UserDefiendErrors.cls. </remarks>
+''' <summary>   Encapsulates throwing methods upon meeting some error conditions. </summary>
+''' <remarks>   Dependencies: UserDefinedErrors.cls. </remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -17,7 +17,7 @@ Option Explicit
 ''' <summary>   Raises a run-time error if the specified Boolean expression is True. </summary>
 ''' <param name="a_throw">     [Boolean] True if the error is to be thrown. </param>
 ''' <param name="a_source">    [String] The source of the error. </param>
-''' <param name="a_message">   [String] The messsage to append to the standard error description. </param>
+''' <param name="a_message">   [String] The message to append to the standard error description. </param>
 ''' <param name="a_error">     [<see cref="UserDefinedError"/>] to raise. </param>
 Public Sub GuardExpression(ByVal a_throw As Boolean, ByVal a_source As String, _
         ByVal a_message As String, _
@@ -27,11 +27,11 @@ Public Sub GuardExpression(ByVal a_throw As Boolean, ByVal a_source As String, _
 
 End Sub
 
-''' <summary>   Raises a run-time error if the specified instance isn't the default /pre-declated. </summary>
+''' <summary>   Raises a run-time error if the specified instance isn't the default /predeclared. </summary>
 ''' <param name="a_instance">           [Object] The instance. </param>
-''' <param name="a_defaultInstance">    [Object] The default /pre-declated instance. </param>
+''' <param name="a_defaultInstance">    [Object] The default /predeclared instance. </param>
 ''' <param name="a_source">             [String, VBA.vbNullString] The source of the error. </param>
-''' <param name="a_message">            [String, 'Methods shoud be ...'] The messsage to append to the standard
+''' <param name="a_message">            [String, 'Methods should be ...'] The message to append to the standard
 '''                                     error description. </param>
 Public Sub GuardNonDefaultInstance(ByVal a_instance As Object, ByVal a_defaultInstance As Object, _
         Optional ByVal a_source As String = VBA.vbNullString, _
@@ -47,9 +47,9 @@ End Sub
 
 ''' <summary>   Raises a run-time error if the specified instance is the default instance. </summary>
 ''' <param name="a_instance">           [Object] The instance. </param>
-''' <param name="a_defaultInstance">    [Object] The default /pre-declated instance. </param>
+''' <param name="a_defaultInstance">    [Object] The default /predeclared instance. </param>
 ''' <param name="a_source">             [String, VBA.vbNullString] The source of the error. </param>
-''' <param name="a_message">            [String, 'Methods shoud be ...'] The messsage to append to the standard
+''' <param name="a_message">            [String, 'Methods should be ...'] The message to append to the standard
 '''                                     error description. </param>
 Public Sub GuardDefaultInstance(ByVal a_instance As Object, ByVal a_defaultInstance As Object, _
         Optional ByVal a_source As String = VBA.vbNullString, _
@@ -65,7 +65,7 @@ End Sub
 ''' <summary>   Raises a run-time error if the specified object reference is already set. </summary>
 ''' <param name="a_value">     [Variant] The object reference that might already exist. </param>
 ''' <param name="a_source">    [String, VBA.vbNullString] The source of the error. </param>
-''' <param name="a_message">   [String, 'Value is already initialized.'] The messsage to append to the standard
+''' <param name="a_message">   [String, 'Value is already initialized.'] The message to append to the standard
 '''                            error description. </param>
 Public Sub GuardDoubleInitialization(ByVal a_value As Variant, _
         Optional ByVal a_source As String = VBA.vbNullString, _
@@ -85,7 +85,7 @@ End Sub
 ''' <summary>   Raises a run-time error if the specified object reference is Nothing. </summary>
 ''' <param name="a_instance">   [Object] The instance. </param>
 ''' <param name="a_source">     [String, VBA.vbNullString] The source of the error. </param>
-''' <param name="a_message">    [String, 'Object reference cannot be Nothing.'] The messsage to append to the standard
+''' <param name="a_message">    [String, 'Object reference cannot be Nothing.'] The message to append to the standard
 '''                             error description. </param>
 Public Sub GuardNullReference(ByVal a_instance As Object, _
         Optional ByVal a_source As String = VBA.vbNullString, _
@@ -98,9 +98,9 @@ End Sub
 
 ''' <summary>   Raises a run-time error if the specified string is empty. </summary>
 ''' <param name="a_instance">           [Object] The instance. </param>
-''' <param name="a_defaultInstance">    [Object] The default /pre-declated instance. </param>
+''' <param name="a_defaultInstance">    [Object] The default /predeclared instance. </param>
 ''' <param name="a_source">             [String, VBA.vbNullString] The source of the error. </param>
-''' <param name="a_message">            [String, 'String cannot be empty.'] The messsage to append to the standard
+''' <param name="a_message">            [String, 'String cannot be empty.'] The message to append to the standard
 '''                                     error description. </param>
 Public Sub GuardEmptyString(ByVal a_value As String, _
         Optional ByVal a_source As String = VBA.vbNullString, _

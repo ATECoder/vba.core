@@ -226,7 +226,7 @@ Public Function EnumerateComponentMacros(ByVal a_module As ModuleInfo, _
             
             If Me.StartsWith(p_currentName, a_prefix) Then
                 
-                p_macros.Add Factory.NewMacroInfo.InitializeModuelMacro(a_module, p_currentName)
+                p_macros.Add Factory.NewMacroInfo.InitializeModuleMacro(a_module, p_currentName)
             
             End If
         End If
@@ -290,7 +290,7 @@ Public Function EnumerateComponentTestMacros(ByVal a_module As ModuleInfo, _
         If p_currentName <> p_newName Then
             p_currentName = p_newName
             If Me.StartsWith(p_currentName, TestMethodPrefix) Then
-                p_macros.Add Factory.NewMacroInfo.InitializeModuelMacro(a_module, p_currentName)
+                p_macros.Add Factory.NewMacroInfo.InitializeModuleMacro(a_module, p_currentName)
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.BeforeAllMethodName, vbTextCompare) Then
                 a_methods = a_methods Or ModuleTestMethods.BeforeAll
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.AfterAllMethodName, vbTextCompare) Then

@@ -17,7 +17,7 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-''' <summary>   Removes any broken library references fromthe active workbook. </summary>
+''' <summary>   Removes any broken library references from the active workbook. </summary>
 Public Sub RemoveWorkbookBrokenReferences()
 
     Me.RemoveBrokenReferences ThisWorkbook.VBProject

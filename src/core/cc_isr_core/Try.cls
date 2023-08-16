@@ -8,25 +8,25 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   A pre-declared class for trying new code. </summary>
+''' <summary>   A predeclared class for trying new code. </summary>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
-Function DecimalToBinary(decimalNum As Double, bitCount As Integer) As String
+Function DecimalToBinary(a_value As Double, bitCount As Integer) As String
     Dim binaryString As String
     Dim isNegative As Boolean
 
-    If decimalNum = 0 Then
+    If a_value = 0 Then
         DecimalToBinary = AddLeadingZeros("0", bitCount)
     Else
-        If decimalNum < 0 Then
+        If a_value < 0 Then
             isNegative = True
-            decimalNum = Abs(decimalNum)
+            a_value = Abs(a_value)
         End If
 
         Dim intValue As Long
-        intValue = Int(decimalNum)
+        intValue = Int(a_value)
 
         Do While intValue > 0
             Dim remainder As Integer
@@ -40,7 +40,7 @@ Function DecimalToBinary(decimalNum As Double, bitCount As Integer) As String
         If isNegative Then
             ' Convert the fractional part to binary
             Dim fractionalPart As Double
-            fractionalPart = decimalNum - Int(decimalNum)
+            fractionalPart = a_value - Int(a_value)
 
             binaryString = AddLeadingZeros(binaryString, bitCount) ' Pad with leading zeros to bitCount
 
@@ -57,10 +57,10 @@ Function DecimalToBinary(decimalNum As Double, bitCount As Integer) As String
         Else
             ' Pad with leading zeros to bitCount, including fractional part
             Do While Len(binaryString) < bitCount
-                decimalNum = decimalNum * 2
-                bit = Int(decimalNum)
+                a_value = a_value * 2
+                bit = Int(a_value)
                 binaryString = binaryString & CStr(bit)
-                decimalNum = decimalNum - bit ' Update decimal number for the next bit
+                a_value = a_value - bit ' Update decimal number for the next bit
             Loop
         End If
 

@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   An event tyimer. </summary>
+''' <summary>   An event timer. </summary>
 ''' <remarks>   Dependencies: IRunnable.cls.
 '''
 ''' This timer comes from <see href="https://github.com/sancarn/stdVBA/blob/master/src/stdTimer.cls"/>
@@ -33,7 +33,7 @@ Attribute VB_Exposed = True
 ''' When a timer is initialized it:
 '''   * Ensures VBOM is enabled
 '''   * Creates a `new Application` object and adds a workbook to this new application.
-'''   * Adds Timer code to this workbook and schedules this code to run with `xlApp.OnTime Now(), "MainLoop"`
+'''   * Adds Timer code to this workbook and schedules this code to run with `Application.OnTime Now(), "MainLoop"`
 ''' Every time the timer loops
 '''   * A change to the remote workbook's worksheet is made
 '''   * In the original workbook we register to receive these events, and receive a `This.remoteWorkbook_SheetChange` event.
