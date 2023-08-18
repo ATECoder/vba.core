@@ -39,7 +39,7 @@ Public Function TestEscapeSequences() As cc_isr_Test_Fx.Assert
 
     Dim p_outcome As cc_isr_Test_Fx.Assert
     Dim p_escapes As Collection
-    Set p_escapes = cc_isr_core.StringExtensions.EscapeSequences
+    Set p_escapes = cc_isr_Core.StringExtensions.EscapeSequences
     Set p_outcome = cc_isr_Test_Fx.Assert.IsNotNull(p_escapes, _
             "Escape sequences should be created")
             
@@ -85,9 +85,9 @@ Public Function TestInsertRepelaceEscapeSequences() As cc_isr_Test_Fx.Assert
     Dim p_outcome As cc_isr_Test_Fx.Assert
     Dim p_original As String: p_original = "\t1234\r\n"
     Dim p_expected As String: p_expected = VBA.vbTab & "1234" & VBA.Chr$(13) & VBA.Chr$(10)
-    Dim p_actual As String: p_actual = cc_isr_core.StringExtensions.ReplaceEscapeSequences(p_original)
+    Dim p_actual As String: p_actual = cc_isr_Core.StringExtensions.ReplaceEscapeSequences(p_original)
 
-    Dim p_areEqual As Boolean: p_areEqual = cc_isr_core.StringExtensions.AreEqualDebug(p_expected, p_actual)
+    Dim p_areEqual As Boolean: p_areEqual = cc_isr_Core.StringExtensions.AreEqualDebug(p_expected, p_actual)
     
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_actual, _
             "Literal values should be inserted in place of the escaped sequences.")
@@ -96,7 +96,7 @@ Public Function TestInsertRepelaceEscapeSequences() As cc_isr_Test_Fx.Assert
     
         p_expected = p_original
         p_original = p_actual
-        p_actual = cc_isr_core.StringExtensions.InsertEscapeSequences(p_original)
+        p_actual = cc_isr_Core.StringExtensions.InsertEscapeSequences(p_original)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_actual, _
                 "Escape sequences should be inserted in place of the literal characters.")
     End If
@@ -264,7 +264,7 @@ Public Function TestFormatStringParser() As cc_isr_Test_Fx.Assert
     p_expectedPrecisionString = "11"
     p_expectedFormatSpecifier = "F"
     
-    p_success = cc_isr_core.StringExtensions.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
+    p_success = cc_isr_Core.StringExtensions.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
                                          p_precisionString, p_formatSpecifier, _
                                          p_message)
         
@@ -296,7 +296,7 @@ Public Function TestFormatStringParser() As cc_isr_Test_Fx.Assert
     p_expectedPrecisionString = "1"
     p_expectedFormatSpecifier = "F"
     
-    p_success = cc_isr_core.StringExtensions.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
+    p_success = cc_isr_Core.StringExtensions.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
                                          p_precisionString, p_formatSpecifier, _
                                          p_message)
         
@@ -328,7 +328,7 @@ Public Function TestFormatStringParser() As cc_isr_Test_Fx.Assert
     p_expectedPrecisionString = ""
     p_expectedFormatSpecifier = "MMMM dd, yyyy"
     
-    p_success = cc_isr_core.StringExtensions.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
+    p_success = cc_isr_Core.StringExtensions.ParseFormatSpecification(p_format, p_itemIndex, p_formatGroup, _
                                          p_precisionString, p_formatSpecifier, _
                                          p_message)
         
@@ -377,14 +377,14 @@ Public Function TestDateStringFormat() As cc_isr_Test_Fx.Assert
     p_dateTime = CDate(p_stringValue)
     p_format = "{0:MMMM dd, yyyy}"
     p_expected = "December 30, 1899"
-    p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_dateTime)
+    p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_dateTime)
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
             p_actual, "'" & p_format & "' should format CDate('" & p_stringValue & "' as expected.")
     
     p_stringValue = "12:00:00 AM"
     p_format = "{0:MMMM dd, yyyy}"
     p_expected = "December 30, 1899"
-    p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_stringValue)
+    p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_stringValue)
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
             p_actual, "'" & p_format & "' should format '" & p_stringValue & "' as expected.")
     
@@ -407,14 +407,14 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     
     p_format = "a{0}{1}"
     p_expected = "abc"
-    p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, "b", "c")
+    p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, "b", "c")
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
             p_actual, "'" & p_format & "' should format the expected value.")
             
     If p_outcome.AssertSuccessful Then
         p_format = "(B) Binary: {0:B}"
         p_expected = "(B) Binary: 10000101"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -422,7 +422,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(B) Binary: {0:B16}"
         p_expected = "(B) Binary: 1111111110000101"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -430,7 +430,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(C) Currency: {0:C}\n"
         p_expected = "(C) Currency: -123.45$" & VBA.vbLf
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -438,7 +438,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(C) Currency: {0:C}"
         p_expected = "(C) Currency: -123.00$"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -446,7 +446,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(D) Decimal:. . . . . . . . . {0:D}"
         p_expected = "(D) Decimal:. . . . . . . . . -123"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -455,7 +455,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(E) Scientific: . . . . . . . {0:E}"
         p_expected = "(E) Scientific: . . . . . . . -1.23450E2"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -463,7 +463,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(F) Fixed point:. . . . . . . {0:F}"
         p_expected = "(F) Fixed point:. . . . . . . -123.45"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -471,7 +471,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(F) Fixed point:. . . . . . . {0:F1}"
         p_expected = "(F) Fixed point:. . . . . . . -123.5"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -479,7 +479,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(G) General:. . . . . . . {0:G}"
         p_expected = "(G) General:. . . . . . . -1.23450E2"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -487,7 +487,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(G) General:. . . . . . . {0:G4}"
         p_expected = "(G) General:. . . . . . . -123.5"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -495,7 +495,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(N) Number: . . . . . . . . . {0:N}"
         p_expected = "(N) Number: . . . . . . . . . -123"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -503,7 +503,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(P) Percent:. . . . . . . . . {0:P}"
         p_expected = "(P) Percent:. . . . . . . . . -12,345%"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -511,7 +511,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(R) Round-trip: . . . . . . . {0:R}"
         p_expected = "(R) Round-trip: . . . . . . . -123.45"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, -123.45)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -519,7 +519,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(X) Hexadecimal:. . . . . . . {0:X}"
         p_expected = "(X) Hexadecimal:. . . . . . . FF85"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, CInt(-123))
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, CInt(-123))
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -527,7 +527,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(X) Hexadecimal:. . . . . . . {0:x}"
         p_expected = "(X) Hexadecimal:. . . . . . . ff85"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, CInt(-123))
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, CInt(-123))
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -537,7 +537,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(c) Custom format: . . . . . .{0:cYYYY-MM-DD (MMMM)}"
         p_expected = "(c) Custom format: . . . . . .2013-01-26 (January)"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_date)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -545,7 +545,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(d) Short date: . . . . . . . {0:d}"
         p_expected = "(d) Short date: . . . . . . . 1/26/2013"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_date)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -553,7 +553,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(D) Long date:. . . . . . . . {0:D}"
         p_expected = "(D) Long date:. . . . . . . . Saturday, January 26, 2013"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_date)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -564,7 +564,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(T) Long time:. . . . . . . . {0:T}"
         p_expected = "(T) Long time:. . . . . . . . 8:28:11 PM"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_date)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -572,7 +572,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(f) Full date/short time: . . {0:f}"
         p_expected = "(f) Full date/short time: . . Saturday, January 26, 2013 8:28 PM"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_date)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -580,7 +580,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(F) Full date/long time:. . . {0:F}"
         p_expected = "(F) Full date/long time:. . . Saturday, January 26, 2013 8:28:11 PM"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_date)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -588,7 +588,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_format = "(s) Sortable: . . . . . . . . {0:s}"
         p_expected = "(s) Sortable: . . . . . . . . 2013-01-26T20:28:11"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, p_date)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
@@ -598,7 +598,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         
         p_format = "\q{0}, {1}!\x20\n'{2,10:C2}'\n'{2,-10:C2}'"
         p_expected = """hello, world! " & VBA.vbLf & "'   100.00$'" & VBA.vbLf & "'100.00$   '"
-        p_actual = cc_isr_core.StringExtensions.StringFormat(p_format, "hello", "world", 100)
+        p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, "hello", "world", 100)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
@@ -722,14 +722,14 @@ Public Function TestToBinary() As cc_isr_Test_Fx.Assert
     
     p_value = 5
     p_expected = "101"
-    p_actual = cc_isr_core.StringExtensions.ToBinary(p_value)
+    p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value)
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
             p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
     
     If p_outcome.AssertSuccessful Then
         p_value = 16
         p_expected = "10000"
-        p_actual = cc_isr_core.StringExtensions.ToBinary(p_value)
+        p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
     End If
@@ -737,7 +737,7 @@ Public Function TestToBinary() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         p_value = 5
         p_expected = "00000101"
-        p_actual = cc_isr_core.StringExtensions.ToBinary(p_value, 8)
+        p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value, 8)
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
                 p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
     End If

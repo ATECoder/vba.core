@@ -17,7 +17,7 @@ Public Function TestUserDefinedErrorShouldExist() As cc_isr_Test_Fx.Assert
     ' this should be added to the activate event of the workbook
     ' cc_isr_Core.UserDefinedErrors.Initialize
     Dim p_userError As UserDefinedError
-    Set p_userError = cc_isr_core.UserDefinedErrors.SocketConnectionError
+    Set p_userError = cc_isr_Core.UserDefinedErrors.SocketConnectionError
     
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(UserDefinedErrors.UserDefinedErrorExists(p_userError), _
                                                         p_userError.ToString(" should exist"))
@@ -56,7 +56,7 @@ exit_Handler:
 err_Handler:
   
     ' build the error source
-    ThisWorkbook.SetErrSource thisProcedureName, m_moduleName
+    ErrorMessageBuilder.SetErrSource thisProcedureName, m_moduleName
     
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(Err.Source) > 0, _
             "VBA.Err.Source should not be empty")
@@ -64,7 +64,7 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Dim p_expectedErrorSource As String
-        p_expectedErrorSource = ThisWorkbook.VBProject.name & "." & m_moduleName & "." & thisProcedureName
+        p_expectedErrorSource = ThisWorkbook.VBProject.Name & "." & m_moduleName & "." & thisProcedureName
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
                 VBA.Err.Source, "VBA.Err.Source should equal the expected value")
@@ -73,7 +73,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Dim p_errorMessage As String: p_errorMessage = ThisWorkbook.BuildStandardErrorMessage()
+        Dim p_errorMessage As String: p_errorMessage = ErrorMessageBuilder.BuildStandardErrorMessage()
         
         Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(p_errorMessage) > 0, _
                 "error message should build")

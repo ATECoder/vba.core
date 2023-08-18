@@ -41,10 +41,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    ThisWorkbook.SetErrSource p_procedureName, Me.name
+    ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    MsgBox ThisWorkbook.BuildStandardErrorMessage(), vbExclamation
+    MsgBox ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next

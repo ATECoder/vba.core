@@ -35,6 +35,7 @@ Private Type ThisData
     TimeoutError As UserDefinedError
     FormatError As UserDefinedError
     LastErrorCode As Long
+    LastError As UserDefinedError
 End Type
 
 Private This As ThisData
@@ -339,6 +340,23 @@ Public Property Let LastErrorCode(ByVal a_value As Long)
     This.LastErrorCode = a_value
 End Property
 
+''' <summary>   gets or sets the last error. </summary>
+''' <remarks>   The last used defined error is saved in case an autoamtion error is
+'''             raised, in which case the source of the error is hidden in the calling
+'''             workbook.
+''' </remarks>
+Public Property Get LastError() As UserDefinedError
+    Set LastError = This.LastError
+End Property
+
+''' <summary>   sets the last error. </summary>
+''' <param name="a_value">    [<see cref="UserDefinedError"/>] the last error. </param>
+Public Property Set LastError(ByVal a_value As UserDefinedError)
+    
+    Set This.LastError = a_value
+
+End Property
+
 ''' <summary>   Raises a user defined error. </summary>
 ''' <param name="a_error">    [<see cref="UserDefinedError"/>]. </param>
 ''' <param name="a_source">   [String] The error source. </param>
@@ -346,7 +364,65 @@ End Property
 Public Sub RaiseError(ByVal a_error As UserDefinedError, ByVal a_source As String, _
         Optional a_suffix As String = VBA.vbNullString)
 
-    VBA.Err.Raise a_error.Code, a_source, a_error.Description & a_suffix
+    ' clone the last error
+    Set Me.LastError = Factory.NewUserDefinedError.Initialize(a_error.Code, a_error.Name, _
+        a_error.Description & a_suffix)
+    Me.LastError.Source = a_source
+   
+    VBA.Err.Raise Me.LastError.Code, Me.LastError.Source, Me.LastError.Description
 
 End Sub
 
+''' <summary>   Builds a user defined error message. </summary>
+''' <param name="a_displayWarning">         [<see cref="UserDefinedError"/>]. </param>
+''' <param name="a_displayWarning">         [Boolean, false] True
+'''                                         to display a warning rather than
+'''                                         an error message. </param>
+''' <param name="a_descriptionDelimiter">   [String, ': '] Specify
+'''                                         the delimiter preceding the description. </param>
+''' <returns>   A Standard error message string in the form: <para>
+''' Error 0x# (Last DLL Error 0x#) occurred in <c>Source</c>: Description </para><para>
+''' or  </para><para>
+''' Warning 0x#  (Last DLL Error 0x#) occurred in <c>Source</c>: Description  </para>
+''' </returns>
+Public Function BuildUserDefinedErrorMessage(ByVal a_error As UserDefinedError, _
+                Optional a_descriptionDelimiter As String = ": ") As String
+
+    Dim p_builder As String: p_builder = VBA.vbNullString
+  
+    p_builder = p_builder & a_error.Name & " "
+    p_builder = p_builder & Format$(a_error.Code)
+    
+    Dim p_errNumber As Long: p_errNumber = a_error.Code - vbObjectError
+    
+    If Abs(p_errNumber) < &HFFFF& Then
+        p_errNumber = p_errNumber - &H200
+        p_builder = p_builder & "(+0x"
+    Else
+        p_errNumber = a_error.Code
+        p_builder = p_builder & "(0x"
+    End If
+    p_builder = p_builder & VBA.LCase$(VBA.Hex$(p_errNumber)) & ")"
+    If VBA.vbNullString <> a_error.Source Then
+        p_builder = p_builder & " occurred in "
+        p_builder = p_builder & a_error.Source
+    End If
+    p_builder = p_builder & a_descriptionDelimiter
+    p_builder = p_builder & a_error.Description
+        
+    BuildUserDefinedErrorMessage = p_builder
+
+End Function
+
+''' <summary>   Tests raising a user defined error message for checking the automation error. </summary>
+Public Sub TestRaisingNullArgumentError(a_object As Object)
+
+    If a_object Is Nothing Then
+    
+        UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
+                    "cc_isr_Core.UserDefinedErrors.TestRaisingNullArgumentError", _
+                    " Argument name: 'a_value'."
+    
+    End If
+
+End Sub

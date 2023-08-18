@@ -17,6 +17,7 @@ Private Type ThisData
     Code As Long
     Name As String
     Description As String
+    Source As String
 End Type
 
 Private This As ThisData
@@ -24,7 +25,7 @@ Private This As ThisData
 ''' <summary>   Initializes and return this user defined error. </summary>
 ''' <param name="a_errorCode">     [Long] The error code. </param>
 ''' <param name="a_errorName">     [String] The error name. </param>
-''' <param name="a_eescription">   [String] The error description. </param>
+''' <param name="a_description">   [String] The error description. </param>
 ''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
 Public Function Initialize(ByVal a_errorCode As Long, ByVal a_errorName As String, _
         ByVal a_description As String) As UserDefinedError
@@ -65,8 +66,20 @@ Public Property Get Description() As String
     Description = This.Description
 End Property
 
+''' <summary>   Gets the error source. </summary>
+''' <value>   The error source of String type. </value>
+Public Property Get Source() As String
+    Source = This.Source
+End Property
+
+''' <summary>   Sets the error source. </summary>
+''' <param name="a_value">   [String] The error source. </param>
+Public Property Let Source(ByVal a_value As String)
+    This.Source = a_value
+End Property
+
 ''' <summary>   Returns a string representation of the error. </summary>
-''' <param name="additionaInfo">   [Optional, empty] additional information to append to the error message. </param>
+''' <param name="additionalInfo">   [Optional, empty] additional information to append to the error message. </param>
 ''' <returns>   A String representation of the error. </returns>
 Public Function ToString(Optional ByVal a_additionalInfo As String = vbNullString) As String
     ToString = "User Error " & Me.Name & " (0x" & VBA.LCase$(VBA.Hex$(Me.Code)) & " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & "): " & _

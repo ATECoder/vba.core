@@ -16,7 +16,7 @@ Public Function TestBitsShouldInvert() As cc_isr_Test_Fx.Assert
     
     p_initialValue = "101"
     p_expectedValue = "010"
-    p_actualValue = cc_isr_core.BinaryExtensions.InvertBits(p_initialValue)
+    p_actualValue = cc_isr_Core.BinaryExtensions.InvertBits(p_initialValue)
     
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
             "Actual value should equal the inverted bits of '" & p_initialValue & "'.")
@@ -25,7 +25,7 @@ Public Function TestBitsShouldInvert() As cc_isr_Test_Fx.Assert
     
         p_initialValue = "0"
         p_expectedValue = "1"
-        p_actualValue = cc_isr_core.BinaryExtensions.InvertBits(p_initialValue)
+        p_actualValue = cc_isr_Core.BinaryExtensions.InvertBits(p_initialValue)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should equal the inverted bits of '" & p_initialValue & "'.")
@@ -36,7 +36,7 @@ Public Function TestBitsShouldInvert() As cc_isr_Test_Fx.Assert
     
         p_initialValue = "00"
         p_expectedValue = "11"
-        p_actualValue = cc_isr_core.BinaryExtensions.InvertBits(p_initialValue)
+        p_actualValue = cc_isr_Core.BinaryExtensions.InvertBits(p_initialValue)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should equal the inverted bits of '" & p_initialValue & "'.")
@@ -47,7 +47,7 @@ Public Function TestBitsShouldInvert() As cc_isr_Test_Fx.Assert
     
         p_initialValue = "11"
         p_expectedValue = "00"
-        p_actualValue = cc_isr_core.BinaryExtensions.InvertBits(p_initialValue)
+        p_actualValue = cc_isr_Core.BinaryExtensions.InvertBits(p_initialValue)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should equal the inverted bits of '" & p_initialValue & "'.")
@@ -73,7 +73,7 @@ Public Function TestBinaryValuesShouldAdd() As cc_isr_Test_Fx.Assert
     p_initialValue1 = "1"
     p_initialValue2 = "0"
     p_expectedValue = "1"
-    p_actualValue = cc_isr_core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
+    p_actualValue = cc_isr_Core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
     
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
             "Actual value should equal the sum of '" & p_initialValue1 & "' and '" & p_initialValue2 & "'.")
@@ -83,7 +83,7 @@ Public Function TestBinaryValuesShouldAdd() As cc_isr_Test_Fx.Assert
         p_initialValue1 = "10"
         p_initialValue2 = "0"
         p_expectedValue = "10"
-        p_actualValue = cc_isr_core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
+        p_actualValue = cc_isr_Core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should equal the sum of '" & p_initialValue1 & "' and '" & p_initialValue2 & "'.")
@@ -95,7 +95,7 @@ Public Function TestBinaryValuesShouldAdd() As cc_isr_Test_Fx.Assert
         p_initialValue1 = "10"
         p_initialValue2 = "10"
         p_expectedValue = "100"
-        p_actualValue = cc_isr_core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
+        p_actualValue = cc_isr_Core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should equal the sum of '" & p_initialValue1 & "' and '" & p_initialValue2 & "'.")
@@ -107,7 +107,7 @@ Public Function TestBinaryValuesShouldAdd() As cc_isr_Test_Fx.Assert
         p_initialValue1 = "11"
         p_initialValue2 = "10"
         p_expectedValue = "101"
-        p_actualValue = cc_isr_core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
+        p_actualValue = cc_isr_Core.BinaryExtensions.AddBinary(p_initialValue1, p_initialValue2)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should equal the sum of '" & p_initialValue1 & "' and '" & p_initialValue2 & "'.")
@@ -131,7 +131,7 @@ Public Function TestLongValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
     p_initialValue = 0
     p_expectedValue = "0000"
-    p_actualValue = cc_isr_core.BinaryExtensions.LongToBinary(p_initialValue, 4)
+    p_actualValue = cc_isr_Core.BinaryExtensions.LongToBinary(p_initialValue, 4)
     
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
             "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -140,7 +140,7 @@ Public Function TestLongValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = 1
         p_expectedValue = "0001"
-        p_actualValue = cc_isr_core.BinaryExtensions.LongToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.LongToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -151,7 +151,7 @@ Public Function TestLongValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = 5
         p_expectedValue = "0101"
-        p_actualValue = cc_isr_core.BinaryExtensions.LongToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.LongToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -162,7 +162,7 @@ Public Function TestLongValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = -1
         p_expectedValue = 1111
-        p_actualValue = cc_isr_core.BinaryExtensions.LongToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.LongToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -173,7 +173,7 @@ Public Function TestLongValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = -2
         p_expectedValue = 1110
-        p_actualValue = cc_isr_core.BinaryExtensions.LongToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.LongToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -184,7 +184,7 @@ Public Function TestLongValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = -3
         p_expectedValue = 1101
-        p_actualValue = cc_isr_core.BinaryExtensions.LongToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.LongToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -208,7 +208,7 @@ Public Function TestFractionalValueShouldConvertToBinary() As cc_isr_Test_Fx.Ass
     
     p_initialValue = 0
     p_expectedValue = "0000"
-    p_actualValue = cc_isr_core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
+    p_actualValue = cc_isr_Core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
     
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
             "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -217,7 +217,7 @@ Public Function TestFractionalValueShouldConvertToBinary() As cc_isr_Test_Fx.Ass
     
         p_initialValue = 0.5
         p_expectedValue = "1000"
-        p_actualValue = cc_isr_core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -228,7 +228,7 @@ Public Function TestFractionalValueShouldConvertToBinary() As cc_isr_Test_Fx.Ass
     
         p_initialValue = 0.25
         p_expectedValue = "0100"
-        p_actualValue = cc_isr_core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -239,7 +239,7 @@ Public Function TestFractionalValueShouldConvertToBinary() As cc_isr_Test_Fx.Ass
     
         p_initialValue = 0.75
         p_expectedValue = 1100
-        p_actualValue = cc_isr_core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -250,7 +250,7 @@ Public Function TestFractionalValueShouldConvertToBinary() As cc_isr_Test_Fx.Ass
     
         On Error Resume Next
         p_initialValue = -0.75
-        p_actualValue = cc_isr_core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.FractionalToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(UserDefinedErrors.InvalidArgumentError.Code, _
                 Err.Number, _
@@ -276,7 +276,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
     p_initialValue = 0
     p_expectedValue = "0000.0000"
-    p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
+    p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
     
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
             "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -285,7 +285,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = 1.5
         p_expectedValue = "0001.1000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -296,7 +296,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = 1.25
         p_expectedValue = "0001.0100"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -307,7 +307,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = -1#
         p_expectedValue = "1111.0000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -318,7 +318,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = -1.5
         p_expectedValue = "1110.1000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 4)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -329,7 +329,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = 12.5
         p_expectedValue = "01100.10000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -340,7 +340,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = 12.25
         p_expectedValue = "01100.01000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -351,7 +351,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = 12.75
         p_expectedValue = "01100.11000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -362,7 +362,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = -12.5
         p_expectedValue = "10011.10000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -373,7 +373,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
     
         p_initialValue = -12.25
         p_expectedValue = "10011.11000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")
@@ -384,7 +384,7 @@ Public Function TestDoubleValueShouldConvertToBinary() As cc_isr_Test_Fx.Assert
 
         p_initialValue = -12.75
         p_expectedValue = "10011.01000"
-        p_actualValue = cc_isr_core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
+        p_actualValue = cc_isr_Core.BinaryExtensions.DoubleToBinary(p_initialValue, 5)
         
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
                 "Actual value should be the binary value of '" & VBA.CStr(p_initialValue) & "'.")

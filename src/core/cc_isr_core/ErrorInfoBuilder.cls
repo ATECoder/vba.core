@@ -2,37 +2,16 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "ErrorMessageBuilder"
+Attribute VB_Name = "ErrorInfoBuilder"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   Builds error messages. </summary>
-''' <remarks> Dependencies: StringBuilder.cls.
-''' </remarks>
+''' <summary>   Constructs workbook level error source and messages. </summary>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
-
-''' <summary>   Builds a an error message from the VBA <see cref="Err"/>. </summary>
-''' <returns>   A comma-separated error message string in the form: <para>
-''' Error Number=#(#/0x# (Last DLL Error 0x#)), Source={source}, Description={description}.
-''' </returns>
-Public Function FormattedErr() As String
-    
-    Dim p_errNoDetails As String
-    p_errNoDetails = "(" & (VBA.Err.Number - VBA.vbObjectError) & "/0x" & _
-                     VBA.LCase$(VBA.Hex$(VBA.Err.Number))
-    If Err.LastDllError <> 0 Then
-        p_errNoDetails = p_errNoDetails & " (Last DLL Error 0x"
-        p_errNoDetails = p_errNoDetails & VBA.LCase$(VBA.Hex$(Err.LastDllError)) & ")"
-    End If
-    p_errNoDetails = p_errNoDetails & ")"
-    FormattedErr = "Error Number=" & VBA.Err.Number & p_errNoDetails & ", Source=" & _
-                   VBA.Err.Source & ", Description=" & VBA.Err.Description
-
-End Function
 
 ''' <summary>   Builds the Err object source string to project.module.procedure. </summary>
 ''' <param name="a_errProcedureName">   [String] Specifies the name of the procedure. </param>
@@ -51,14 +30,17 @@ Friend Function BuildErrSource(ByVal a_errProcedureName As String, ByVal a_errMo
     
     If VBA.vbNullString = a_errProjectName Then a_errProjectName = ActiveWorkbook.VBProject.Name
     
-    Dim p_builder As String
-    p_builder = a_errProjectName & "." & a_errModuleName & "." & a_errProcedureName
+    ' get the current source string
     
-    If 1 > VBA.InStr(1, p_builder, Err.Source) Then
-        p_builder = p_builder & " in " & Err.Source
-    End If
+    Dim p_errorSource As String: p_errorSource = Err.Source
     
-    BuildErrSource = p_builder
+    ' build the error source.
+    
+    p_errorSource = a_errProjectName & "." & a_errModuleName & "." & a_errProcedureName
+  
+    ' Update the Err.Source
+    
+    Err.Source = p_errorSource
  
 End Function
 
@@ -71,11 +53,26 @@ Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleNam
         Optional ByVal a_errProjectName As String = vbNullString)
 
     Dim p_errorSource As String
-    p_errorSource = Me.BuildErrSource(a_errProcedureName, a_errModuleName, a_errProjectName)
+
+    On Error Resume Next
+    
+    ' Try to build the error source the user defined errors object.
+    ' This is done in case we have an issue connecting to the external
+    ' workbook and wish to prevent a crash of this workbook.
+    p_errorSource = cc_isr_Core.UserDefinedErrors.BuildErrSource(a_errProcedureName, a_errModuleName, a_errProjectName)
+    
+    On Error GoTo 0
+    
+    If VBA.vbNullString = p_errorSource Then
+    
+        ' if the build failed, use the local method to build the error source.
+        p_errorSource = Me.BuildErrSource(a_errProcedureName, a_errModuleName, a_errProjectName)
+    
+    End If
     
     ' Update the Err.Source for reporting the error.
-    
-    VBA.Err.Source = p_errorSource
+   
+    Err.Source = p_errorSource
  
 End Sub
 
@@ -141,11 +138,24 @@ Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boo
                 Optional a_descriptionDelimiter As String = ": ") As String
 
     Dim p_builder As String: p_builder = VBA.vbNullString
-    p_builder = Me.BuildErrorMessage(a_displayWarning, a_descriptionDelimiter)
+
+    On Error Resume Next
+    
+    ' Try to build the error message the user defined errors object.
+    ' This is done in case we have an issue connecting to the external
+    ' workbook and wish to prevent a crash of this workbook.
+    p_builder = cc_isr_Core.UserDefinedErrors.BuildStandardErrorMessage(a_displayWarning, a_descriptionDelimiter)
+    
+    On Error GoTo 0
+    
+    If VBA.vbNullString = p_builder Then
+    
+        ' if the build failed, use the local method to build the error message.
+        p_builder = Me.BuildErrorMessage(a_displayWarning, a_descriptionDelimiter)
+    
+    End If
+
     BuildStandardErrorMessage = p_builder
 
 End Function
-
-
-
 

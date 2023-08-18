@@ -27,3 +27,35 @@ Private Sub RunTestsButton_Click()
     cc_isr_Test_Fx.TestExecutive.Execute TestSheet, True
 
 End Sub
+
+Private Sub TestRaisingRemoteError()
+
+    Const p_procedureName As String = "TestRaisingRemoteError"
+    
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+    
+    Dim p_object As Object
+    
+    cc_isr_Core.UserDefinedErrors.TestRaisingNullArgumentError p_object
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    
+    ' display the error message
+    MsgBox ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+
+End Sub

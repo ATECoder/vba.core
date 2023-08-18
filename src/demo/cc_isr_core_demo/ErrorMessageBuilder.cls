@@ -8,9 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   Builds error messages. </summary>
-''' <remarks> Dependencies: StringBuilder.cls.
-''' </remarks>
+''' <summary>   Constructs workbook level error source and messages. </summary>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -72,10 +70,9 @@ Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleNam
 
     Dim p_errorSource As String
     p_errorSource = Me.BuildErrSource(a_errProcedureName, a_errModuleName, a_errProjectName)
-    
+
     ' Update the Err.Source for reporting the error.
-    
-    VBA.Err.Source = p_errorSource
+    Err.Source = p_errorSource
  
 End Sub
 
@@ -141,11 +138,21 @@ Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boo
                 Optional a_descriptionDelimiter As String = ": ") As String
 
     Dim p_builder As String: p_builder = VBA.vbNullString
-    p_builder = Me.BuildErrorMessage(a_displayWarning, a_descriptionDelimiter)
+    Dim p_errorNumber As Long: p_errorNumber = VBA.Err.Number
+    If p_errorNumber <> 0 Then
+        p_builder = Me.BuildErrorMessage(a_displayWarning, a_descriptionDelimiter)
+    End If
+    
+    If Not cc_isr_Core.UserDefinedErrors.LastError Is Nothing Then
+        If p_errorNumber <> cc_isr_Core.UserDefinedErrors.LastError.Code Then
+            If VBA.Len(p_builder) > 0 Then p_builder = p_builder & vbCrLf
+            p_builder = p_builder & _
+                cc_isr_Core.UserDefinedErrors.BuildUserDefinedErrorMessage(cc_isr_Core.UserDefinedErrors.LastError)
+        End If
+    End If
+    
     BuildStandardErrorMessage = p_builder
 
 End Function
-
-
 
 
