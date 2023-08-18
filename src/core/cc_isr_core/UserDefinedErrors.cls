@@ -373,47 +373,6 @@ Public Sub RaiseError(ByVal a_error As UserDefinedError, ByVal a_source As Strin
 
 End Sub
 
-''' <summary>   Builds a user defined error message. </summary>
-''' <param name="a_displayWarning">         [<see cref="UserDefinedError"/>]. </param>
-''' <param name="a_displayWarning">         [Boolean, false] True
-'''                                         to display a warning rather than
-'''                                         an error message. </param>
-''' <param name="a_descriptionDelimiter">   [String, ': '] Specify
-'''                                         the delimiter preceding the description. </param>
-''' <returns>   A Standard error message string in the form: <para>
-''' Error 0x# (Last DLL Error 0x#) occurred in <c>Source</c>: Description </para><para>
-''' or  </para><para>
-''' Warning 0x#  (Last DLL Error 0x#) occurred in <c>Source</c>: Description  </para>
-''' </returns>
-Public Function BuildUserDefinedErrorMessage(ByVal a_error As UserDefinedError, _
-                Optional a_descriptionDelimiter As String = ": ") As String
-
-    Dim p_builder As String: p_builder = VBA.vbNullString
-  
-    p_builder = p_builder & a_error.Name & " "
-    p_builder = p_builder & Format$(a_error.Code)
-    
-    Dim p_errNumber As Long: p_errNumber = a_error.Code - vbObjectError
-    
-    If Abs(p_errNumber) < &HFFFF& Then
-        p_errNumber = p_errNumber - &H200
-        p_builder = p_builder & "(+0x"
-    Else
-        p_errNumber = a_error.Code
-        p_builder = p_builder & "(0x"
-    End If
-    p_builder = p_builder & VBA.LCase$(VBA.Hex$(p_errNumber)) & ")"
-    If VBA.vbNullString <> a_error.Source Then
-        p_builder = p_builder & " occurred in "
-        p_builder = p_builder & a_error.Source
-    End If
-    p_builder = p_builder & a_descriptionDelimiter
-    p_builder = p_builder & a_error.Description
-        
-    BuildUserDefinedErrorMessage = p_builder
-
-End Function
-
 ''' <summary>   Tests raising a user defined error message for checking the automation error. </summary>
 Public Sub TestRaisingNullArgumentError(a_object As Object)
 

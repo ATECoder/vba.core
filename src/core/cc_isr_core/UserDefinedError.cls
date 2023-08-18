@@ -32,6 +32,7 @@ Public Function Initialize(ByVal a_errorCode As Long, ByVal a_errorName As Strin
     This.Name = a_errorName
     This.Code = a_errorCode
     This.Description = a_description
+    This.Source = VBA.vbNullString
     Set Initialize = Me
 End Function
 
@@ -82,7 +83,10 @@ End Property
 ''' <param name="additionalInfo">   [Optional, empty] additional information to append to the error message. </param>
 ''' <returns>   A String representation of the error. </returns>
 Public Function ToString(Optional ByVal a_additionalInfo As String = vbNullString) As String
-    ToString = "User Error " & Me.Name & " (0x" & VBA.LCase$(VBA.Hex$(Me.Code)) & " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & "): " & _
+    ToString = "User Error " & Me.Name & " " & _
+                VBA.Str$(Me.Code) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Code)) & _
+                " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ")" & _
+                IIf(VBA.vbNullString = Me.Source, ": ", " in " & Me.Source & ": ") & _
                 Me.Description & a_additionalInfo
 End Function
 

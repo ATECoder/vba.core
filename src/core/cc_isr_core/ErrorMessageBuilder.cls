@@ -146,8 +146,7 @@ Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boo
     If Not cc_isr_Core.UserDefinedErrors.LastError Is Nothing Then
         If p_errorNumber <> cc_isr_Core.UserDefinedErrors.LastError.Code Then
             If VBA.Len(p_builder) > 0 Then p_builder = p_builder & vbCrLf
-            p_builder = p_builder & _
-                cc_isr_Core.UserDefinedErrors.BuildUserDefinedErrorMessage(cc_isr_Core.UserDefinedErrors.LastError)
+            p_builder = p_builder & cc_isr_Core.UserDefinedErrors.LastError.ToString()
         End If
     End If
     
