@@ -92,7 +92,7 @@ Public Sub GuardNullReference(ByVal a_instance As Object, _
         Optional ByVal a_message As String = "Object reference cannot be Nothing.")
     
     Me.GuardExpression a_instance Is Nothing, a_source, a_message, _
-        cc_isr_Core.UserDefinedErrors.NullArgumentError
+        cc_isr_Core_IO.UserDefinedErrors.NullArgumentError
 
 End Sub
 
@@ -107,7 +107,7 @@ Public Sub GuardEmptyString(ByVal a_value As String, _
         Optional ByVal a_message As String = "String cannot be empty.")
     
     Me.GuardExpression a_value = VBA.vbNullString, a_source, a_message, _
-        cc_isr_Core.UserDefinedErrors.InvalidArgumentError
+        cc_isr_Core_IO.UserDefinedErrors.InvalidArgumentError
                     
 End Sub
 

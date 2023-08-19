@@ -339,8 +339,8 @@ Public Function StringFormatReplace(ByVal a_format As String, ParamArray a_value
     
     If VBA.vbNullString = a_format Then
         
-        UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
-                    "cc_isr_Core.StringExtensions.StringFormat", _
+        UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+                    ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormatReplace", _
                     "Argument name: 'a_format'."
     
     Else
@@ -486,7 +486,9 @@ Public Function StringFormatValue(ByVal a_format As String, ByVal a_value As Var
             StringFormatValue = VBA.Format$(a_value, p_formatSpecifier)
         Else
         
-            UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, TypeName(Me) & "." & p_procedureName, " " & p_message
+            UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                " " & p_message
     
         End If
     
@@ -512,13 +514,15 @@ Public Function StringFormatNumber(ByVal a_format As String, _
     
     If Not p_success Then
     
-        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, TypeName(Me) & "." & p_procedureName, " " & p_message
+        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                " " & p_message
     
     End If
 
     If p_precisionString <> vbNullString And Not IsNumeric(p_precisionString) Then _
-        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-            TypeName(Me) & "." & p_procedureName, _
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+            ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
             " Precision string '" & p_precisionString & "' is not numeric."
 
     If p_precisionString = vbNullString Then p_precisionString = "0"
@@ -590,10 +594,10 @@ Public Function StringFormatNumber(ByVal a_format As String, _
 
             ElseIf VBA.LenB(a_format) > 2 And p_precisionSpecifier = 0 Then
                 
-                cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
-                    TypeName(Me) & "." & p_procedureName, _
-                    " Format group '" & a_format & "' length " & CStr(VBA.LenB(a_format)) & _
-                    " is greater than 2 and the precision specifier is 0."
+                cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.InvalidFormatStringError, _
+                        ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                        " Format group '" & a_format & "' length " & CStr(VBA.LenB(a_format)) & _
+                        " is greater than 2 and the precision specifier is 0."
             
             End If
             
@@ -785,10 +789,10 @@ Public Function StringFormatNumber(ByVal a_format As String, _
                 StringFormatNumber = VBA.Format$(p_stringValue, a_valueFormat)
             
             Else
-                cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
-                    TypeName(Me) & "." & p_procedureName, _
-                    " Format specifier '" & p_formatSpecifier & "' is not numeric" & _
-                    " or value of format group '" & Val(a_format) & "' is not zero."
+                cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.InvalidFormatStringError, _
+                        ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                        " Format specifier '" & p_formatSpecifier & "' is not numeric" & _
+                        " or value of format group '" & Val(a_format) & "' is not zero."
             End If
     End Select
     
@@ -809,7 +813,9 @@ Public Function StringFormatDate(ByVal a_format As String, ByVal a_value As Date
 
     If Not p_success Then
     
-        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, TypeName(Me) & ".StringFormatDate", " " & p_message
+        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormatDate", _
+                " " & p_message
     
     End If
     
@@ -886,9 +892,9 @@ Public Function StringFormatDate(ByVal a_format As String, ByVal a_value As Date
 
         Case Else
             
-            cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-                TypeName(Me) & "." & p_procedureName, _
-                " Unknown format specifier '" & p_formatSpecifier & "'."
+            cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+                    ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                    " Unknown format specifier '" & p_formatSpecifier & "'."
         
     End Select
     
@@ -909,8 +915,8 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
     Dim p_valuesCount As Integer
 
     If VBA.vbNullString = a_format Then _
-        UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
-                    "cc_isr_Core.StringExtensions.StringFormat", _
+        UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+                    ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormat", _
                     "Argument name: 'a_format'."
     
     ' unbox the parameter array in case it came from another
@@ -962,9 +968,10 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
     ' unique indices count must match p_valuesCount:
     
     If p_matches.count > 0 And p_uniqueCount <> p_valuesCount Then _
-        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-                TypeName(Me) & "." & p_procedureName & _
-                " Unique count " & CStr(p_uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName & _
+                " Unique count " & VBA.CStr(p_uniqueCount) & " not equal the number of values of " & _
+                VBA.CStr(p_valuesCount) & "."
                 
     p_useLiteral = Me.StartsWith(a_format, "@")
 
@@ -986,8 +993,9 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
         
     ElseIf UBound(p_values) = -1 And p_matches.count > 0 Then
        
-        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
-            TypeName(Me) & "." & p_procedureName, " Argument name: 'p_values'."
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                " Argument name: 'p_values'."
     
     Else
     
@@ -1014,9 +1022,9 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
             ' if specified index (0-based) > p_uniqueCount (1-based), something's wrong:
             
             If p_valueIndex > p_uniqueCount - 1 Then _
-                cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-                    TypeName(Me) & "." & p_procedureName, _
-                    " Specified index " & VBA.CStr(p_valueIndex) & " exceeds " & VBA.CStr(p_uniqueCount - 1) & "."
+                cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+                        ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                        " Specified index " & VBA.CStr(p_valueIndex) & " exceeds " & VBA.CStr(p_uniqueCount - 1) & "."
             
             p_value = p_values(p_valueIndex)
             p_stringValue = VBA.CStr(p_value)
@@ -1117,8 +1125,8 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
     Dim p_valuesCount As Integer
 
     If VBA.vbNullString = a_format Then _
-        UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
-                    "cc_isr_Core.StringExtensions.StringFormat", _
+        UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+                    ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormatGoTo", _
                     "Argument name: 'a_format'."
     
     ' unbox the parameter array in case it came from another
@@ -1172,9 +1180,10 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
     ' unique indices count must match p_valuesCount:
     
     If p_matches.count > 0 And p_uniqueCount <> p_valuesCount Then _
-        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-                TypeName(Me) & "." & p_procedureName & _
-                " Unique count " & CStr(p_uniqueCount) & " not equal the number of values of " & CStr(p_valuesCount) & "."
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName & _
+                " Unique count " & VBA.CStr(p_uniqueCount) & " not equal the number of values of " & _
+                VBA.CStr(p_valuesCount) & "."
                 
     p_useLiteral = Me.StartsWith(a_format, "@")
 
@@ -1197,8 +1206,9 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
         
     ElseIf UBound(p_values) = -1 And p_matches.count > 0 Then
        
-        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.NullArgumentError, _
-            TypeName(Me) & "." & p_procedureName, " Argument name: 'p_values'."
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                " Argument name: 'p_values'."
     
     End If
 
@@ -1223,9 +1233,9 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
         ' if specified index (0-based) > p_uniqueCount (1-based), something's wrong:
         
         If p > p_uniqueCount - 1 Then _
-            cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-                TypeName(Me) & "." & p_procedureName, _
-                " Specified index " & CStr(p) & " exceeds " & CStr(p_uniqueCount - 1) & "."
+            cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                " Specified index " & VBA.CStr(p) & " exceeds " & VBA.CStr(p_uniqueCount - 1) & "."
         
         p_value = p_values(p)
         p_stringValue = CStr(p_value)
@@ -1291,9 +1301,9 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
 NumberFormatSpecifiers:
 
             If p_precisionString <> vbNullString And Not IsNumeric(p_precisionString) Then _
-                cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-                    TypeName(Me) & "." & p_procedureName, _
-                    " Precision string '" & p_precisionString & "' is not numeric."
+                cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+                        ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                        " Precision string '" & p_precisionString & "' is not numeric."
 
             If p_precisionString = vbNullString Then p_precisionString = "0"
 
@@ -1349,10 +1359,10 @@ NumberFormatSpecifiers:
 
                     ElseIf VBA.LenB(p_formatGroup) > 2 And p_precisionSpecifier = 0 Then
                         
-                        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
-                            TypeName(Me) & "." & p_procedureName, _
-                            " Format group '" & p_formatGroup & "' length " & CStr(VBA.LenB(p_formatGroup)) & _
-                            " is greater than 2 and the precision specifier is 0."
+                        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.InvalidFormatStringError, _
+                                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                                " Format group '" & p_formatGroup & "' length " & VBA.CStr(VBA.LenB(p_formatGroup)) & _
+                                " is greater than 2 and the precision specifier is 0."
                     
                     End If
 
@@ -1530,10 +1540,10 @@ NumberFormatSpecifiers:
                         p_stringValue = Format(p_stringValue, p_formatGroup)
                     
                     Else
-                        cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.InvalidFormatStringError, _
-                            TypeName(Me) & "." & p_procedureName, _
-                            " Format specifier '" & p_formatSpecifier & "' is not numeric" & _
-                            " or value of format group '" & Val(p_formatGroup) & "' is not zero."
+                        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.InvalidFormatStringError, _
+                                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                                " Format specifier '" & p_formatSpecifier & "' is not numeric" & _
+                                " or value of format group '" & Val(p_formatGroup) & "' is not zero."
                     End If
             End Select
 
@@ -1610,9 +1620,9 @@ DateTimeFormatSpecifiers:
 
                 Case Else
                     
-                    cc_isr_Core.UserDefinedErrors.RaiseError cc_isr_Core.UserDefinedErrors.FormatError, _
-                        TypeName(Me) & "." & p_procedureName, _
-                        " Unknown format specifier '" & p_formatSpecifier & "'."
+                    cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
+                            ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
+                            " Unknown format specifier '" & p_formatSpecifier & "'."
                 
             End Select
             GoTo ApplyStringFormat

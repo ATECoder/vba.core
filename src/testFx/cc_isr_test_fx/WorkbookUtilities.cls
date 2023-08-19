@@ -69,8 +69,8 @@ Public Function EnumerateModules(Optional ByVal a_macroNamePrefix As String = "T
     For Each p_vbProject In Application.VBE.VBProjects
         VBA.DoEvents
         Me.AddItems EnumerateProjectModules(p_vbProject, _
-                                        a_macroNamePrefix, a_moduleNameSuffix), _
-                                        p_modules
+                                            a_macroNamePrefix, a_moduleNameSuffix), _
+                                            p_modules
     Next p_vbProject
     Set EnumerateModules = p_modules
 

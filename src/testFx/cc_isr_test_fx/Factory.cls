@@ -8,14 +8,15 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   Instantiates public not creatable objects for external workbooks. </summary>
+''' <summary>   A public creatable singleton class for creating instances of this workbook
+'''             classes to share with external workbooks. </summary>
 ''' <remarks>   Dependencies: Assert.cls, MacroInfo.cls, ModuleInfo.cls, Stopwatch.cls. </remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
 
 ''' <summary>   A public creatable singleton class for creating instances of this workbook
-''' classes to share with external workbooks. </summary>
+'''             classes to share with external workbooks. </summary>
 ''' <remarks>
 ''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
 ''' </remarks>
@@ -29,27 +30,18 @@ Public Function NewAssert() As Assert
 End Function
 
 ''' <summary>   Instantiates a new <see cref="MacroInfo"/>] object. </summary>
-''' <remarks>
-''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
-''' </remarks>
 ''' <returns>   {<see cref="MacroInfo"/>]. </returns>
 Public Function NewMacroInfo() As MacroInfo
     Set NewMacroInfo = New MacroInfo
 End Function
 
 ''' <summary>   Instantiates a new <see cref="ModuleInfo"/>] object. </summary>
-''' <remarks>
-''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
-''' </remarks>
 ''' <returns>   {<see cref="ModuleInfo"/>]. </returns>
 Public Function NewModuleInfo() As ModuleInfo
     Set NewModuleInfo = New ModuleInfo
 End Function
 
 ''' <summary>   Instantiates a new <see cref="Stopwatch"/>] object. </summary>
-''' <remarks>
-''' <see href="https://learn.Microsoft.com/en-us/previous-versions/office/troubleshoot/office-developer/set-up-vb-project-using-class"/>
-''' </remarks>
 ''' <returns>   {<see cref="Stopwatch"/>]. </returns>
 Public Function NewStopwatch() As StopWatch
     Set NewStopwatch = New StopWatch

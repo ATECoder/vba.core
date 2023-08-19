@@ -135,10 +135,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    VBA.MsgBox ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
+    VBA.MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -170,10 +170,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    VBA.MsgBox ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
+    VBA.MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -212,10 +212,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    VBA.MsgBox ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
+    VBA.MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -240,10 +240,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    VBA.MsgBox ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
+    VBA.MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -276,10 +276,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    VBA.MsgBox ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
+    VBA.MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), VBA.vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next

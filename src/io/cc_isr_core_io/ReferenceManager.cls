@@ -142,8 +142,9 @@ Public Function AddReferenceByName(ByVal a_project As VBIDE.VBProject, _
     If p_exists And a_force Then
         
         ' if failed to remove then throw an exception
-        Err.Raise VBA.vbObjectError + 9001, TypeName(Me) & ".AddReferenceByName", _
-                  "Failed removing existing reference '" & a_referenceName & "'."
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.InvalidOperationError, _
+                ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".AddReferenceByName", _
+                " Failed removing an existing reference '" & a_referenceName & "'."
                   
     Else
     
@@ -153,9 +154,11 @@ Public Function AddReferenceByName(ByVal a_project As VBIDE.VBProject, _
         If p_reference Is Nothing Then
         
             ' if failed to add then throw an exception
-            Err.Raise VBA.vbObjectError + 9001, TypeName(Me) & ".AddReferenceByName", _
-                      "Failed adding reference '" & a_referenceName & "' From '" & _
-                      a_referencePath & "'. Add returned an empty reference."
+            cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.InvalidOperationError, _
+                    ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".AddReferenceByName", _
+                    " Failed adding reference '" & a_referenceName & "' from '" & _
+                      a_referencePath & "'. 'AddFromFile' returned an empty reference."
+            
         End If
         
     End If
