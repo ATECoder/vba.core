@@ -339,7 +339,7 @@ Public Function StringFormatReplace(ByVal a_format As String, ParamArray a_value
     
     If VBA.vbNullString = a_format Then
         
-        UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
                     ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormatReplace", _
                     "Argument name: 'a_format'."
     
@@ -486,7 +486,7 @@ Public Function StringFormatValue(ByVal a_format As String, ByVal a_value As Var
             StringFormatValue = VBA.Format$(a_value, p_formatSpecifier)
         Else
         
-            UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, _
+            cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
                 " " & p_message
     
@@ -514,7 +514,7 @@ Public Function StringFormatNumber(ByVal a_format As String, _
     
     If Not p_success Then
     
-        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, _
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
                 " " & p_message
     
@@ -813,7 +813,7 @@ Public Function StringFormatDate(ByVal a_format As String, ByVal a_value As Date
 
     If Not p_success Then
     
-        UserDefinedErrors.RaiseError UserDefinedErrors.FormatError, _
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormatDate", _
                 " " & p_message
     
@@ -915,7 +915,7 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
     Dim p_valuesCount As Integer
 
     If VBA.vbNullString = a_format Then _
-        UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
                     ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormat", _
                     "Argument name: 'a_format'."
     
@@ -1125,7 +1125,7 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
     Dim p_valuesCount As Integer
 
     If VBA.vbNullString = a_format Then _
-        UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
+        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
                     ThisWorkbook.VBProject.Name & "." & TypeName(Me) & ".StringFormatGoTo", _
                     "Argument name: 'a_format'."
     

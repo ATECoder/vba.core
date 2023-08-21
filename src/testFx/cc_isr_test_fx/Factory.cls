@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   A public creatable singleton class for creating instances of this workbook
 '''             classes to share with external workbooks. </summary>
-''' <remarks>   Dependencies: Assert.cls, MacroInfo.cls, ModuleInfo.cls, Stopwatch.cls. </remarks>
+''' <remarks>   Dependencies: Assert.cls, MacroInfo.cls, ModuleInfo.cls. </remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -39,12 +39,6 @@ End Function
 ''' <returns>   {<see cref="ModuleInfo"/>]. </returns>
 Public Function NewModuleInfo() As ModuleInfo
     Set NewModuleInfo = New ModuleInfo
-End Function
-
-''' <summary>   Instantiates a new <see cref="Stopwatch"/>] object. </summary>
-''' <returns>   {<see cref="Stopwatch"/>]. </returns>
-Public Function NewStopwatch() As StopWatch
-    Set NewStopwatch = New StopWatch
 End Function
 
 ''' <summary>   Instantiates a new temporary test file. </summary>

@@ -101,7 +101,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     Dim p_macros As Collection: Set p_macros = WorkbookUtilities.EnumerateTestMacros(p_moduleInfo, p_moduleTestMethods)
     Dim p_macroInfo As MacroInfo
     
-    Dim p_stopper As StopWatch: Set p_stopper = cc_isr_Test_Fx.Factory.NewStopwatch
+    Dim p_stopper As cc_isr_Core_IO.StopWatch: Set p_stopper = cc_isr_Core_IO.Factory.NewStopwatch
     
     Dim p_macroFullName As String
     

@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "StopWatch"
+Attribute VB_Name = "Stopwatch"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -105,12 +105,12 @@ Public Sub Sleep(ByVal a_duration As Long)
     SleepMilliseconds a_duration
 End Sub
 
-''' <summary>   Loop around <see cref="DoEvents"> for the specified duration. </summary>
+''' <summary>   Loop around <see cref="VBA.DoEvents"> for the specified duration. </summary>
 ''' <param name="a_duration">   [Long] Wait time in milliseconds. </param>
 Public Function Wait(ByVal a_duration As Long) As Long
     Me.Restart
     While Me.ElapsedMilliseconds < a_duration
-        DoEvents
+        VBA.DoEvents
     Wend
     Wait = Me.ElapsedMilliseconds
 End Function

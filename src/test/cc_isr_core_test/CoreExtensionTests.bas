@@ -11,31 +11,31 @@ Public Function TestDefaultValues() As Assert
 
     Dim p_outcome As Assert
     
-    Set p_outcome = Assert.AreEqual(False, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbBoolean), _
+    Set p_outcome = Assert.AreEqual(False, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbBoolean), _
         "The default value of VBA.VbVarType.vbBoolean should equal.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.AreEqual(0, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbByte), _
+        Set p_outcome = Assert.AreEqual(0, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbByte), _
             "The default value of VBA.VbVarType.vbByte should equal.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.AreEqual(Empty, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbArray), _
+        Set p_outcome = Assert.AreEqual(Empty, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbArray), _
             "The default value of VBA.VbVarType.vbArray should equal.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.IsNull(cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
+        Set p_outcome = Assert.IsNull(cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
             "The default value of VBA.VbVarType.vbNull should equal.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.IsNull(cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
+        Set p_outcome = Assert.IsNull(cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbNull), _
             "The default value of VBA.VbVarType.vbNull should be Null.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.IsTrue(cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbObject) Is Nothing, _
+        Set p_outcome = Assert.IsTrue(cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbObject) Is Nothing, _
             "The default value of VBA.VbVarType.vbObject should be nothing.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.AreEqual(0, cc_isr_Core.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbLongLong), _
+        Set p_outcome = Assert.AreEqual(0, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbLongLong), _
             "The default value of VBA.VbVarType.vbLongLong should equal.")
     
     Debug.Print p_outcome.BuildReport("TestDefaultValues")

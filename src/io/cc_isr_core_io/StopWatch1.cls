@@ -2,13 +2,13 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "StopWatch"
+Attribute VB_Name = "StopWatch1"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-''' <summary>   Microseconds resolution stopwatch. </summary>
+''' <summary>   A stopwatch with microseconds resolution. </summary>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -90,37 +90,29 @@ End Property
 ''' <summary>   Returns the elapsed time in seconds. </summary>
 ''' <value>   [Double] Elapsed time in seconds. </value>
 Property Get ElapsedSeconds() As Double
-    
     ElapsedSeconds = Me.ElapsedCounts / This.Frequency
-
 End Property
 
 ''' <summary>   Returns the elapsed time in milliseconds. </summary>
 ''' <value>   [Double] Elapsed time in milliseconds. </value>
 Property Get ElapsedMilliseconds() As Double
-    
     ElapsedMilliseconds = 1000# * Me.ElapsedSeconds
-
 End Property
 
 ''' <summary>   Suspends the thread for the specified duration in milliseconds. </summary>
 ''' <param name="a_duration">   Sleep time in milliseconds. </param>
 Public Sub Sleep(ByVal a_duration As Long)
-    
     SleepMilliseconds a_duration
-
 End Sub
 
 ''' <summary>   Loop around <see cref="VBA.DoEvents"> for the specified duration. </summary>
 ''' <param name="a_duration">   [Long] Wait time in milliseconds. </param>
 Public Function Wait(ByVal a_duration As Long) As Long
-    
     Me.Restart
     While Me.ElapsedMilliseconds < a_duration
         VBA.DoEvents
     Wend
     Wait = Me.ElapsedMilliseconds
-
 End Function
 
 

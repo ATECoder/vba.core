@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   A public creatable singleton class for creating instances of this workbook
 '''             classes to share with external workbooks. </summary>
-''' <remarks>   Dependencies: UserDefinedError.cls. <remarks>
+''' <remarks>   Dependencies: Stopwatch.cls, UserDefinedError.cls. <remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -22,6 +22,12 @@ Option Explicit
 ''' </remarks>
 Private Sub Class_Initialize()
 End Sub
+
+''' <summary>   Instantiates a new <see cref="Stopwatch"/> object. </summary>
+''' <returns>   [<see cref="Stopwatch"/>]. </returns>
+Public Function NewStopwatch() As cc_isr_Core_IO.Stopwatch
+    Set NewStopwatch = New cc_isr_Core_IO.Stopwatch
+End Function
 
 ''' <summary>   Instantiates a new <see cref="UserDefinedError"/> object. </summary>
 ''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
