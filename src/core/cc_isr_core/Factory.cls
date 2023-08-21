@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   A public creatable singleton class for creating instances of this workbook
 '''             classes to share with external workbooks. </summary>
-''' <remarks>   Dependencies: EventTimer.cls, Stopwatch.cls, StringBuilder.cls. <remarks>
+''' <remarks>   Dependencies: EventTimer.cls, StringBuilder.cls. <remarks>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Option Explicit
@@ -33,12 +33,6 @@ End Function
 ''' <returns>   [<see cref="EventTimer"/>]. </returns>
 Public Function NewEventTimer() As EventTimer
   Set NewEventTimer = New EventTimer
-End Function
-
-''' <summary>   Instantiates a new <see cref="Stopwatch"/> object. </summary>
-''' <returns>   [<see cref="Stopwatch"/>]. </returns>
-Public Function NewStopwatch() As StopWatch
-    Set NewStopwatch = New StopWatch
 End Function
 
 ''' <summary>   Instantiates a new <see cref="StringBuilder"/> object. </summary>
