@@ -22,7 +22,7 @@ Public Function FractionalToBinary(ByVal a_value As Double, a_bitCount As Intege
     Const p_procedureName As String = "FractionalToBinary"
     
     If a_value < 0 Then _
-        cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.InvalidArgumentError, _
+        cc_isr_core_IO.UserDefinedErrors.RaiseError cc_isr_core_IO.UserDefinedErrors.InvalidArgumentError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
                 " Argument: a_value = '" & VBA.CStr(a_value) & "' but must be non-negative."
             

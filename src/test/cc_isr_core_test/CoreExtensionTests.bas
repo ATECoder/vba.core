@@ -5,6 +5,20 @@ Attribute VB_Name = "CoreExtensionTests"
 
 Option Explicit
 
+''' <summary>   Unit test. Asserts that a wait time should be longer or equal to the expected duration. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestWaitShouldEqualOrExceedDuration() As Assert
+
+    Dim p_outcome As Assert
+    
+    Dim p_expectedDuration As Double
+    p_expectedDuration = 0.1
+    Dim p_actualDuration As Double: p_actualDuration = cc_isr_Core_IO.CoreExtensions.Wait(p_expectedDuration)
+    Set p_outcome = Assert.IsTrue(p_expectedDuration <= p_actualDuration, _
+        "Wait time " & CStr(p_actualDuration) & " should be equal ot longer than the specified duration of " & CStr(p_expectedDuration) & " .")
+    
+End Function
+
 ''' <summary>   Unit test. Asserts that default values are as expected. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestDefaultValues() As Assert
