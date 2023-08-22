@@ -45,7 +45,7 @@ Public Property Let Deployed(ByVal a_value As Boolean)
 
     ' toggle deploy mode on referenced workbooks.
 
-    cc_isr_core_IO.ThisWorkbook.Deployed = a_value
+    cc_isr_Core_IO.ThisWorkbook.Deployed = a_value
     cc_isr_Core.ThisWorkbook.Deployed = a_value
     
 End Property
@@ -88,10 +88,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    MsgBox cc_isr_core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -110,7 +110,7 @@ Private Sub Workbook_AfterSave(ByVal a_success As Boolean)
     On Error GoTo err_Handler
     
     If a_success And Me.ExportCodeAfterSave Then
-        cc_isr_core_IO.WorkbookExport.ExportProjectCodeFiles ThisWorkbook.VBProject
+        cc_isr_Core_IO.WorkbookExport.ExportProjectCodeFiles ThisWorkbook.VBProject
     End If
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -123,10 +123,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    MsgBox cc_isr_core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -146,7 +146,7 @@ Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
     On Error GoTo err_Handler
     
     ' this disables the save dialog on read only workbooks.
-    Me.MarkAsSaved cc_isr_core_IO.ThisWorkbook, Me.Deployed
+    Me.MarkAsSaved cc_isr_Core_IO.ThisWorkbook, Me.Deployed
     Me.MarkAsSaved cc_isr_Core.ThisWorkbook, Me.Deployed
     Me.MarkAsSaved ThisWorkbook, Me.Deployed
     
@@ -163,10 +163,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    MsgBox cc_isr_core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next
@@ -188,22 +188,22 @@ Private Sub Workbook_Open()
     Me.Deployed = False
     
     ' turn on code exporting if not deploy or read only
-    Me.DisableSavingCode cc_isr_core_IO.ThisWorkbook, Me.Deployed
+    Me.DisableSavingCode cc_isr_Core_IO.ThisWorkbook, Me.Deployed
     Me.DisableSavingCode cc_isr_Core.ThisWorkbook, Me.Deployed
     Me.DisableSavingCode ThisWorkbook, Me.Deployed
 
     ' hide the referenced workbooks
-    Application.Windows(cc_isr_core_IO.ThisWorkbook.Name).Visible = False
+    Application.Windows(cc_isr_Core_IO.ThisWorkbook.Name).Visible = False
     Application.Windows(cc_isr_Core.ThisWorkbook.Name).Visible = False
     
     ' wait a bit for the workbooks to hide.
-    cc_isr_core_IO.CoreExtensions.Wait 0.5
+    cc_isr_Core_IO.CoreExtensions.Wait 0.5
     
     ' show this work book
     Application.Windows(ThisWorkbook.Name).Visible = True
     
     ' init the user defined errors.
-    cc_isr_core_IO.UserDefinedErrors.Initialize
+    cc_isr_Core_IO.UserDefinedErrors.Initialize
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -215,10 +215,10 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
     
     ' display the error message
-    MsgBox cc_isr_core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
     
     ' exit this procedure (not an active handler)
     On Error Resume Next

@@ -187,6 +187,9 @@ Private Sub Workbook_Open()
     ' hide the referenced workbooks
     Application.Windows(cc_isr_Core_IO.ThisWorkbook.Name).Visible = False
     
+    ' wait a second to hide the workbooks.
+    cc_isr_Core_IO.CoreExtensions.Wait 1.1
+   
     ' show this work book
     Application.Windows(ThisWorkbook.Name).Visible = True
     

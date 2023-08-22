@@ -255,7 +255,7 @@ Private Sub Class_Terminate()
         
         ' wait for one timer interval to complete to ensure the timer
         ' events no longer trigger.
-        Dim stopper As cc_isr_core_IO.StopWatch: stopper = cc_isr_core_IO.Factory.NewStopwatch()
+        Dim stopper As cc_isr_Core_IO.StopWatch: stopper = cc_isr_Core_IO.Factory.NewStopwatch()
         Do Until stopper.ElapsedMilliseconds > This.Interval Or This.WorkbookClosing
             VBA.DoEvents
         Loop
