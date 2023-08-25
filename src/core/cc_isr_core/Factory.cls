@@ -35,6 +35,14 @@ Public Function NewEventTimer() As EventTimer
   Set NewEventTimer = New EventTimer
 End Function
 
+''' <summary>   Instantiates a new <see cref="PropertyChangedEventArgs"/> object. </summary>
+''' <param name="a_propertyName">   [String] the property name. </value>
+''' <returns>   [<see cref="PropertyChangedEventArgs"/>]. </returns>
+Public Function NewPropertyChangedEventArgs(ByVal a_propertyName As String) As cc_isr_Core.PropertyChangedEventArgs
+    Dim p_args As New cc_isr_Core.PropertyChangedEventArgs
+    Set NewPropertyChangedEventArgs = p_args.Initialize(a_propertyName)
+End Function
+
 ''' <summary>   Instantiates a new <see cref="StringBuilder"/> object. </summary>
 ''' <returns>   [<see cref="StringBuilder"/>]. </returns>
 Public Function NewStringBuilder() As StringBuilder
