@@ -21,14 +21,6 @@ Option Explicit
 '
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-''' <summary>   Exports all code files of this project to the active workbook path. </summary>
-''' <param name="a_subFolder">   ['code'] Specifies the sub-folder were the files are to be stored. </param>
-Public Sub ExportThisProjectCodeFiles(Optional ByVal a_subFolder As String = "code")
-
-    Me.ExportCodeFiles Excel.ActiveWorkbook.VBProject, a_subFolder
-    
-End Sub
-
 ''' <summary>   Exports code files of the specified project to the active workbook path. </summary>
 ''' <remarks> About logical operations in VBA and MS Extensibility VB Component:
 ''' It's a non standard boolean implementation, where True is not -1. Consequently, logical operation

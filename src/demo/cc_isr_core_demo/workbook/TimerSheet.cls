@@ -9,11 +9,11 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Type ThisData
+Private Type this_
     PauseRequested As Boolean
 End Type
 
-Private This As ThisData
+Private This As this_
 
 Private WithEvents m_eventTimer As cc_isr_Core.EventTimer
 Attribute m_eventTimer.VB_VarHelpID = -1
@@ -41,7 +41,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, Me.Name, ThisWorkbook
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation

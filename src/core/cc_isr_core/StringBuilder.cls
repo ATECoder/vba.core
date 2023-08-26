@@ -15,13 +15,13 @@ Option Explicit
 
 Private Const m_initialSize As Long = 16
 
-Private Type ThisData
+Private Type this_
     Buffer() As String
     CurrentIndex As Long
     MaxIndex As Long
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' < summary>   Initializes this class. </summary>
 ''' <remarks>

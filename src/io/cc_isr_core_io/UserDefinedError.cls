@@ -13,14 +13,14 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type ThisData
+Private Type this_
     Code As Long
     Name As String
     Description As String
     Source As String
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Initializes and return this user defined error. </summary>
 ''' <param name="a_errorCode">     [Long] The error code. </param>

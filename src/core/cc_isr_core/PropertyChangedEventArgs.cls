@@ -9,11 +9,11 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Type ThisData
+Private Type this_
     PropertyName As String
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Initializes and returns the event arguments. </summary>
 ''' <para name="a_propertyName">   [String] The property name. </param>

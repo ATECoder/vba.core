@@ -13,12 +13,12 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type ThisData
+Private Type this_
     FileName As String
     FileStream As TextStream
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Initializes and returns a temporary test file. </summary>
 ''' <returns>   A <see cref="TestFileHandle"/>. <returns>

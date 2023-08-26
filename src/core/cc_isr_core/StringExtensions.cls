@@ -11,12 +11,12 @@ Attribute VB_Exposed = True
 ''' <summary>   String extensions. </summary>
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Private Type ThisData
+Private Type this_
     PaddingCharacter As String
     EscapeSequences As Collection
 End Type
 
-Private This As ThisData
+Private This As this_
 
 Option Explicit
 

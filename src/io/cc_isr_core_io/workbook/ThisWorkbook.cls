@@ -9,13 +9,12 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Type ThisData
-    ExportCodeAfterSave As Boolean
+Private Type this_
     Deployed As Boolean
     AllWorkbooks As Collection
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Returns true if the collection is nothing or empty. </summary>
 ''' <param name="a_collection">   [Collection] the collection. </param>
@@ -42,18 +41,6 @@ Public Property Get AllWorkbooks() As Collection
         End If
     End If
     Set AllWorkbooks = This.AllWorkbooks
-End Property
-
-''' <summary>   Gets the option for exporting code files after save. </summary>
-''' <value>   [Boolean]. </value>
-Public Property Get ExportCodeAfterSave() As Boolean
-    ExportCodeAfterSave = This.ExportCodeAfterSave
-End Property
-
-''' <summary>   Enables or disables exporting code files after save. </summary>
-''' <para name="value">   True to enable exporting code files after save. </param>
-Public Property Let ExportCodeAfterSave(ByVal a_value As Boolean)
-    This.ExportCodeAfterSave = a_value
 End Property
 
 ''' <summary>   Gets the deployed status. </summary>
@@ -89,6 +76,9 @@ Private Sub Workbook_Activate()
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
+    ' show the active workbook
+    cc_isr_Core_IO.WorkbookExtensions.Show ThisWorkbook
+    
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
@@ -99,7 +89,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, Me.Name, ThisWorkbook
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -122,7 +112,7 @@ Private Sub Workbook_AfterSave(ByVal a_success As Boolean)
     
     ' export project files.
     
-    If a_success And Me.ExportCodeAfterSave Then
+    If a_success And Not (This.Deployed Or ThisWorkbook.ReadOnly) Then
         cc_isr_Core_IO.VbProjectExtensions.ExportCodeFiles ThisWorkbook.VBProject
     End If
     
@@ -136,7 +126,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, Me.Name, ThisWorkbook
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -176,7 +166,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, Me.Name, ThisWorkbook
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -196,23 +186,12 @@ Private Sub Workbook_Open()
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
+    ' hide this and all referenced workbooks
     Dim p_workbook As Workbook
     For Each p_workbook In Me.AllWorkbooks
-        
-        ' turn on code exporting if not deploy or read only
-    
-        cc_isr_Core_IO.WorkbookExtensions.DisableSavingCode p_workbook, Me.Deployed
-        DoEvents
-        
-        ' hide the workbook
-        
         cc_isr_Core_IO.WorkbookExtensions.Hide p_workbook
         DoEvents
-    
     Next p_workbook
-    
-    ' show the active workbook
-    cc_isr_Core_IO.WorkbookExtensions.Show ThisWorkbook
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -224,7 +203,7 @@ exit_Handler:
 err_Handler:
   
     ' append the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, Me.Name, ThisWorkbook
     
     ' display the error message
     MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
@@ -234,5 +213,7 @@ err_Handler:
     GoTo exit_Handler
     
 End Sub
+
+
 
 

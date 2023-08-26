@@ -63,6 +63,29 @@ Friend Function BuildErrSource(ByVal a_errProcedureName As String, ByVal a_errMo
  
 End Function
 
+''' <summary>   Builds the error source to append to the <see cref="Err"/>.<see cref="Err.Source"/>
+'''             as project.module.procedure. </summary>
+''' <param name="a_procedureName">   [String] Specifies the name of the procedure. </param>
+''' <param name="a_moduleName">      [String] Specifies the module name. </param>
+''' <param name="a_workbook">        [Excel.Workbook] Specifies the workbook. </param>
+''' <returns>   A Standard error source string to project.module.procedure.  </returns>
+Friend Function BuildErrorSource(ByVal a_procedureName As String, ByVal a_moduleName As String, _
+        ByVal a_workbook As Excel.Workbook) As String
+
+    Dim p_builder As String
+    If a_workbook Is Nothing Then
+        p_builder = "unknown" & "." & a_moduleName & "." & a_procedureName
+    Else
+        p_builder = a_workbook.VBProject.Name & "." & a_moduleName & "." & a_procedureName
+    End If
+    
+    If 1 > VBA.InStr(1, p_builder, Err.Source) Then _
+        p_builder = p_builder & " in " & Err.Source
+    
+    BuildErrorSource = p_builder
+ 
+End Function
+
 ''' <summary>   Sets the Err object source string to project.module.procedure. </summary>
 ''' <param name="a_errProcedureName">   [String] Specifies the name of the procedure. </param>
 ''' <param name="a_errModuleName">      [String] Specifies the module name. </param>
@@ -78,6 +101,26 @@ Public Sub SetErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleNam
     Err.Source = p_errorSource
  
 End Sub
+
+''' <summary>   Appends and apply a source to the <see cref="Err"/>.<see cref="Err.Source"/> if
+'''             nont already specified. </summary>
+''' <param name="a_errProcedureName">   [String] Specifies the name of the procedure. </param>
+''' <param name="a_errModuleName">      [String] Specifies the module name. </param>
+''' <param name="a_errProjectName">     [Optional, String] Specifies the project name; otherwise the project
+'''                                     name of the active workbook is used. </param>
+''' <returns>   [String] The appedned error source.  </returns>
+Public Function AppendErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleName As String, _
+        ByVal a_workbook As Excel.Workbook) As String
+
+    Dim p_errorSource As String
+    p_errorSource = Me.BuildErrorSource(a_errProcedureName, a_errModuleName, a_workbook)
+
+    ' Update the Err.Source for reporting the error.
+    Err.Source = p_errorSource
+    
+    AppendErrSource = p_errorSource
+ 
+End Function
 
 ''' <summary>   Builds a standard error message. </summary>
 ''' <param name="a_displayWarning">         [Boolean, false] True

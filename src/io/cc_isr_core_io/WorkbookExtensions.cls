@@ -21,6 +21,14 @@ Option Explicit
 '
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+''' <summary>   Disables saving code if deployed or read only. </summary>
+''' <param name="a_workbook">   [Excel.Workbook] The workbook. </param>
+''' <param name="a_deployed">   [Boolean] True if the workbook was deployed. </param>
+Public Sub DisableSavingCode(ByVal a_workbook As Excel.Workbook, ByVal a_deployed As Boolean)
+    ' to be removed.
+End Sub
+
+
 ''' <summary>   Marks a workbook as saved if not saved and deployed or read only. </summary>
 ''' <param name="a_workbook">   [Excel.Workbook] The workbook. </param>
 ''' <param name="a_deployed">   [Boolean] True if the workbook was deployed. </param>
@@ -28,15 +36,6 @@ Public Sub MarkAsSaved(ByVal a_workbook As Excel.Workbook, ByVal a_deployed As B
     
     If a_deployed Or a_workbook.ReadOnly Then _
         a_workbook.Saved = True
-
-End Sub
-
-''' <summary>   Disables saving code if deployed or read only. </summary>
-''' <param name="a_workbook">   [Excel.Workbook] The workbook. </param>
-''' <param name="a_deployed">   [Boolean] True if the workbook was deployed. </param>
-Public Sub DisableSavingCode(ByVal a_workbook As Excel.Workbook, ByVal a_deployed As Boolean)
-    
-    a_workbook.ExportCodeAfterSave = Not (a_deployed Or a_workbook.ReadOnly)
 
 End Sub
 

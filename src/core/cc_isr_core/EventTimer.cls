@@ -69,7 +69,7 @@ Public Event Tick()
 Private WithEvents m_remoteWorkbook As Workbook
 Attribute m_remoteWorkbook.VB_VarHelpID = -1
 
-Private Type ThisData
+Private Type this_
     
     Callback As IRunnable
     
@@ -81,7 +81,7 @@ Private Type ThisData
 
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Instantiates and initializes a <see cref="EventTimer"/> object. </summary>
 ''' <remarks>   The frequency isn't guaranteed but it will be as close as humanly possible. </remarks>
@@ -192,12 +192,12 @@ Private Function GetTimerCode(ByVal a_interval As Long) As String
   s = s & vbCrLf & "    Public Declare  Sub Sleep Lib ""kernel32"" Alias ""Sleep"" (ByVal a_milliSecs As Long)"
   s = s & vbCrLf & "  #End If"
   s = s & vbCrLf & "#End If"
-  s = s & vbCrLf & "Private Type ThisData"
+  s = s & vbCrLf & "Private Type this_"
   s = s & vbCrLf & "  Interval as Long"
   s = s & vbCrLf & "  Running as Boolean"
   s = s & vbCrLf & "  Enabled as Boolean"
   s = s & vbCrLf & "End Type"
-  s = s & vbCrLf & "Private This As ThisData"
+  s = s & vbCrLf & "Private This As this_"
   s = s & vbCrLf & "Sub MainLoop()"
   s = s & vbCrLf & "  While This.Running"
   s = s & vbCrLf & "    If This.Enabled Then"

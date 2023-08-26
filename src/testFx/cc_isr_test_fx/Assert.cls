@@ -13,13 +13,13 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type ThisData
+Private Type this_
     AssertSuccessful As Boolean
     AssertInconclusive As Boolean
     AssertMessage As String
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Gets or set the indication of whether the assertion was successful. </summary>
 ''' <value>   [Boolean]. </value>

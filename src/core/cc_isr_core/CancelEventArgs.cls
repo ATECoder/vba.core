@@ -12,11 +12,11 @@ Attribute VB_Exposed = True
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Option Explicit
 
-Private Type ThisData
+Private Type this_
     CancelRequested As Boolean
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Initializes and returns this object. </summary>
 ''' <param name="a_cancelRequested">   [Boolean] true to request the cancellation of the event. </param>

@@ -13,12 +13,12 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-Private Type ThisData
+Private Type this_
     ProjectName As String
     ModuleName As String
 End Type
 
-Private This As ThisData
+Private This As this_
 
 ''' <summary>   Initializes and returns this class. </summary>
 ''' <param name="a_projectName">      [String] The project name. </param>
