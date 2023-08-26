@@ -174,7 +174,7 @@ Function ReplaceEscapeSequences(ByVal a_original As String) As String
         p_regex.Global = True
         Set p_matches = p_regex.Execute(a_original)
     
-        If p_matches.count <> 0 Then
+        If p_matches.Count <> 0 Then
             For Each p_match In p_matches
             
                 p_submatch = p_match.SubMatches(0)
@@ -199,7 +199,7 @@ Function ReplaceEscapeSequences(ByVal a_original As String) As String
         p_regex.Global = True
         Set p_matches = p_regex.Execute(a_original)
         
-        If p_matches.count <> 0 Then
+        If p_matches.Count <> 0 Then
             For Each p_match In p_matches
                 p_submatch = p_match.SubMatches(0)
                 
@@ -967,7 +967,7 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
 
     ' unique indices count must match p_valuesCount:
     
-    If p_matches.count > 0 And p_uniqueCount <> p_valuesCount Then _
+    If p_matches.Count > 0 And p_uniqueCount <> p_valuesCount Then _
         cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName & _
                 " Unique count " & VBA.CStr(p_uniqueCount) & " not equal the number of values of " & _
@@ -985,13 +985,13 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
     If Me.StringContains(a_format, "\\") Then _
         a_format = Replace(a_format, "\\", VBA.Chr$(27))
 
-    If p_matches.count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
+    If p_matches.Count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
         
         ' only a_format was specified: skip to checking escape sequences:
         
         p_returnValue = a_format
         
-    ElseIf UBound(p_values) = -1 And p_matches.count > 0 Then
+    ElseIf UBound(p_values) = -1 And p_matches.Count > 0 Then
        
         cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
@@ -1012,7 +1012,7 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
     
         ' iterate regex matches (each match is a placeholder):
         
-        For i = 0 To p_matches.count - 1
+        For i = 0 To p_matches.Count - 1
     
             ' get the placeholder specified index:
             
@@ -1086,7 +1086,7 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
     
             ' replace all occurrences of placeholder {i} with their formatted p_values:
             
-            p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, count:=1)
+            p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, Count:=1)
     
     
             ' reset before reiterating:
@@ -1179,7 +1179,7 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
 
     ' unique indices count must match p_valuesCount:
     
-    If p_matches.count > 0 And p_uniqueCount <> p_valuesCount Then _
+    If p_matches.Count > 0 And p_uniqueCount <> p_valuesCount Then _
         cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.FormatError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName & _
                 " Unique count " & VBA.CStr(p_uniqueCount) & " not equal the number of values of " & _
@@ -1197,14 +1197,14 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
     If Me.StringContains(a_format, "\\") Then _
         a_format = Replace(a_format, "\\", VBA.Chr$(27))
 
-    If p_matches.count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
+    If p_matches.Count = 0 And a_format <> vbNullString And UBound(p_values) = -1 Then
         
         ' only a_format was specified: skip to checking escape sequences:
         
         p_returnValue = a_format
         GoTo checkEscapes
         
-    ElseIf UBound(p_values) = -1 And p_matches.count > 0 Then
+    ElseIf UBound(p_values) = -1 And p_matches.Count > 0 Then
        
         cc_isr_Core_IO.UserDefinedErrors.RaiseError cc_isr_Core_IO.UserDefinedErrors.NullArgumentError, _
                 ThisWorkbook.VBProject.Name & "." & TypeName(Me) & "." & p_procedureName, _
@@ -1223,7 +1223,7 @@ Public Function StringFormatGoTo(ByVal a_format As String, ParamArray a_values()
 
     ' iterate regex matches (each match is a placeholder):
     
-    For i = 0 To p_matches.count - 1
+    For i = 0 To p_matches.Count - 1
 
         ' get the placeholder specified index:
         
@@ -1667,7 +1667,7 @@ AlignFormattedValue:
 
         ' replace all occurrences of placeholder {i} with their formatted p_values:
         
-        p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, count:=1)
+        p_returnValue = Replace(p_returnValue, p_matchValue, p_formattedValue, Count:=1)
 
         ' reset before reiterating:
         

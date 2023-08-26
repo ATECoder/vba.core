@@ -75,8 +75,9 @@ Public Sub RemoveReference(ByVal a_project As VBIDE.VBProject, ByVal a_reference
      
 End Sub
 
-''' <summary>   Returns true if the reference exists in the specified project. </summary>
-''' <param name="a_project">    [VBIDE.VBProject] The project which references are to be found.  </param>
+''' <summary>   Selects a refence by name in the specified project. </summary>
+''' <param name="a_project">         [VBIDE.VBProject] The project which references are to be found.  </param>
+''' <param name="a_referenceName">   [String] The reference name to find.  </param>
 ''' <returns>   [VBIDE.Reference] or [Nothing]. </returns>
 Public Function FindReferenceByName(ByVal a_project As VBIDE.VBProject, _
         ByVal a_referenceName As String) As VBIDE.Reference
@@ -92,6 +93,42 @@ Public Function FindReferenceByName(ByVal a_project As VBIDE.VBProject, _
         End If
     Next
      
+End Function
+
+''' <summary>   Returns true if the reference exists in the specified project. </summary>
+''' <param name="a_project">         [VBIDE.VBProject] The project which references are to be found.  </param>
+''' <param name="a_referenceName">   [String] The reference name to find.  </param>
+''' <returns>   [Boolean] true if found. </returns>
+Public Function ReferenceExists(ByVal a_project As VBIDE.VBProject, _
+        ByVal a_referenceName As String) As Boolean
+
+    ReferenceExists = False
+    Dim p_reference As VBIDE.Reference
+    For Each p_reference In a_project.References
+        If p_reference.Name = a_referenceName Then
+            ReferenceExists = True
+            Exit For
+        End If
+    Next
+     
+End Function
+
+''' <summary>   Returns the workbooks that are refenced in the specified project. </summary>
+''' <param name="a_project">   [VBIDE.VBProject] The project which references are to be found.  </param>
+''' <returns>   [Collection] of workbooks. </returns>
+Public Function ReferencedWorkbooks(ByVal a_project As VBIDE.VBProject) As Collection
+
+    Dim p_workbooks As Collection
+    Set p_workbooks = New Collection
+    Dim p_workbook As Workbook
+    For Each p_workbook In Excel.Workbooks
+        If Me.ReferenceExists(a_project, p_workbook.VBProject.Name) Then
+            p_workbooks.Add p_workbook
+        End If
+        DoEvents
+    Next p_workbook
+    Set ReferencedWorkbooks = p_workbooks
+
 End Function
 
 ''' <summary>   Add a reference to the project using the GUID for the reference library. </summary>

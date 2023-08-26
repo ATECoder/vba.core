@@ -95,3 +95,42 @@ Public Function RunningInIDE() As Boolean
  
 End Function
 
+''' <summary>   Returns the VBA.Timer resolution. </summary>
+''' <remarks>
+''' To see the SystemClockRate value in clock ticks, use the following formula: (value in seconds) × 1,000 × 10,000 For example, if SystemClockRate is 0.0156250 seconds, the value that the equation uses is 156,250 clock ticks.
+''' <see href="https://answers.microsoft.com/en-us/windows/forum/all/did-default-vba-timer-resolution-system-tick/d5d24e18-3e47-43e0-a4f5-c2791388e5fe"/>
+''' <see href="https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings?tabs=config"/>
+''' </remarks>
+Public Function TimerResolution() As Double
+    TimerResolution = 1# / 64#
+End Function
+
+''' <summary>   Returns the number of seconds per day. </summary>
+Public Function SecondsPerDay() As Double
+
+    SecondsPerDay = 60# * 60# * 24
+    
+End Function
+
+''' <summary>   Returns the date and time with resolution of the VBA.Timer. </summary>
+Public Function DateTimeNow() As Double
+    
+    DateTimeNow = Fix(VBA.Now) + VBA.Timer / Me.SecondsPerDay()
+    
+End Function
+
+''' <summary>   Waits for the specified duration in seconds. </summary>
+''' <param name="a_seconds">   [Double] wait time in seconds. </param>
+''' <returns>   [Double] wait time in seconds. </returns>
+Public Function Wait(ByVal a_seconds As Double) As Double
+
+    Dim p_startTime As Double: p_startTime = Me.DateTimeNow()
+    Dim p_endTime As Double: p_endTime = p_startTime + (a_seconds# / Me.SecondsPerDay)
+    Dim p_now As Double: p_now = Me.DateTimeNow()
+    While p_now < p_endTime
+        DoEvents
+        p_now = Me.DateTimeNow()
+    Wend
+    Wait = Me.SecondsPerDay * (p_now - p_startTime)
+
+End Function

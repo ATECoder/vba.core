@@ -102,5 +102,16 @@ Public Function AddItems(ByVal a_source As VBA.Collection, ByVal a_destination A
     
 End Function
 
-
+''' <summary>   Returns true if the collection is nothing or empty. </summary>
+''' <param name="a_collection">   [Collection] the collection. </param>
+''' <returns>   [Boolean]. </value>
+Public Function CollectionIsNothingOrEmpty(ByVal a_collection As Collection)
+    If a_collection Is Nothing Then
+        CollectionIsNothingOrEmpty = True
+    ElseIf 0 = a_collection.Count Then
+        CollectionIsNothingOrEmpty = True
+    Else
+        CollectionIsNothingOrEmpty = False
+    End If
+End Function
 

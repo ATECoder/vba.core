@@ -12,9 +12,37 @@ Option Explicit
 Private Type ThisData
     ExportCodeAfterSave As Boolean
     Deployed As Boolean
+    AllWorkbooks As Collection
 End Type
 
 Private This As ThisData
+
+''' <summary>   Returns true if the collection is nothing or empty. </summary>
+''' <param name="a_collection">   [Collection] the collection. </param>
+''' <returns>   [Boolean]. </value>
+Public Function CollectionIsNothingOrEmpty(ByVal a_collection As Collection)
+    If a_collection Is Nothing Then
+        CollectionIsNothingOrEmpty = True
+    ElseIf 0 = a_collection.Count Then
+        CollectionIsNothingOrEmpty = True
+    Else
+        CollectionIsNothingOrEmpty = False
+    End If
+End Function
+
+''' <summary>   Gets all referenced workbooks for this workbook including
+'''             itself. </summary>
+''' <value>   [Collection]. </value>
+Public Property Get AllWorkbooks() As Collection
+    If Me.CollectionIsNothingOrEmpty(This.AllWorkbooks) Then
+        If ThisWorkbook Is Nothing Then
+            Set This.AllWorkbooks = New Collection
+        Else
+            Set This.AllWorkbooks = cc_isr_Core_IO.WorkbookExtensions.ReferencedWorkbooks(ThisWorkbook)
+        End If
+    End If
+    Set AllWorkbooks = This.AllWorkbooks
+End Property
 
 ''' <summary>   Gets the option for exporting code files after save. </summary>
 ''' <value>   [Boolean]. </value>
@@ -39,49 +67,63 @@ End Property
 ''' <para name="value">   True to set the deployed status. </param>
 Public Property Let Deployed(ByVal a_value As Boolean)
 
-    This.Deployed = a_value
-
     On Error Resume Next
 
-    ' toggle deploy mode on referenced workbooks.
+    ' toggle deploy mode on all workbooks.
+    This.Deployed = a_value
+    Dim p_workbook As Workbook
+    For Each p_workbook In Me.AllWorkbooks
+        If p_workbook.Name <> ThisWorkbook.Name Then _
+            p_workbook.Deployed = a_value
+        DoEvents
+    Next p_workbook
 
-    cc_isr_Core_IO.ThisWorkbook.Deployed = a_value
-    cc_isr_Core.ThisWorkbook.Deployed = a_value
-    cc_isr_Test_Fx.ThisWorkbook.Deployed = a_value
-    
 End Property
 
-''' <summary>   Marks a workbook as saved if not saved and deployed or read only. </summary>
-''' <param name="a_workbook">   [Excel.Workbook] The workbook. </param>
-''' <param name="a_deployed">   [Boolean] True if the workbook was deployed. </param>
-Public Sub MarkAsSaved(ByVal a_workbook As Excel.Workbook, ByVal a_deployed As Boolean)
+''' <summary>   Handles the Workbook activate event. </summary>
+''' <remarks>   Initializes the user defined errors. </remarks>
+Private Sub Workbook_Activate()
     
-    If a_deployed Or a_workbook.ReadOnly Then _
-        a_workbook.Saved = True
-
-End Sub
-
-''' <summary>   Disables saving code if deployed or read only. </summary>
-''' <param name="a_workbook">   [Excel.Workbook] The workbook. </param>
-''' <param name="a_deployed">   [Boolean] True if the workbook was deployed. </param>
-Public Sub DisableSavingCode(ByVal a_workbook As Excel.Workbook, ByVal a_deployed As Boolean)
-    
-    a_workbook.ExportCodeAfterSave = Not (a_deployed Or a_workbook.ReadOnly)
-
-End Sub
-
-''' <summary>   Handles the workbook after save event. </summary>
-''' <remarks>   Exports source code files. </remarks>
-''' <para name="a_success">   [Boolean] True if saved successfully. </param>
-Private Sub Workbook_AfterSave(ByVal a_success As Boolean)
-    
-    Const p_procedureName As String = "Workbook_AfterSave"
+    Const p_procedureName As String = "Workbook_Activate"
     
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource p_procedureName, Me.Name
+    
+    ' display the error message
+    MsgBox cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(), vbExclamation
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+    
+End Sub
+
+''' <summary>   Handles the workbook after save event. </summary>
+''' <para name="a_success">   [Boolean] True if the save succeeded. </param>
+''' <remarks>   Exports source code files. </remarks>
+Private Sub Workbook_AfterSave(ByVal a_success As Boolean)
+
+    Const p_procedureName As String = "Workbook_AfterSave"
+   
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+    
+    ' export project files.
+    
     If a_success And Me.ExportCodeAfterSave Then
-        cc_isr_Core_IO.WorkbookExport.ExportProjectCodeFiles ThisWorkbook.VBProject
+        cc_isr_Core_IO.VbProjectExtensions.ExportCodeFiles ThisWorkbook.VBProject
     End If
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -102,7 +144,7 @@ err_Handler:
     ' exit this procedure (not an active handler)
     On Error Resume Next
     GoTo exit_Handler
-
+   
 End Sub
 
 ''' <summary>   Handles the workbook before close event. </summary>
@@ -110,19 +152,19 @@ End Sub
 '''             Disposes any disposable worksheets. </remarks>
 ''' <para name="a_cancel">   [Boolean] Set to true to cancel closing. </param>
 Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
-    
+
     Const p_procedureName As String = "Workbook_BeforeClose"
-    
+   
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
-    ' this disables the save dialog on read only workbooks.
-    Me.MarkAsSaved cc_isr_Core_IO.ThisWorkbook, Me.Deployed
-    Me.MarkAsSaved cc_isr_Core.ThisWorkbook, Me.Deployed
-    Me.MarkAsSaved cc_isr_Test_Fx.ThisWorkbook, Me.Deployed
-    Me.MarkAsSaved ThisWorkbook, Me.Deployed
+    ' disable the save dialog on read only workbooks.
     
-    ' dispose the disposable worksheets
+    Dim p_workbook As Workbook
+    For Each p_workbook In Me.AllWorkbooks
+        cc_isr_Core_IO.WorkbookExtensions.MarkAsSaved p_workbook, Me.Deployed
+        DoEvents
+    Next p_workbook
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -148,33 +190,29 @@ End Sub
 ''' <summary>   Handles the workbook open event. </summary>
 ''' <remarks>   Toggles visibility of referenced workbooks. </remarks>
 Private Sub Workbook_Open()
-    
+
     Const p_procedureName As String = "Workbook_Open"
-    
+   
     ' Trap errors to the error handler
-    
     On Error GoTo err_Handler
     
-    ' toggle the deployed state
+    Dim p_workbook As Workbook
+    For Each p_workbook In Me.AllWorkbooks
+        
+        ' turn on code exporting if not deploy or read only
     
-    Me.Deployed = False
+        cc_isr_Core_IO.WorkbookExtensions.DisableSavingCode p_workbook, Me.Deployed
+        DoEvents
+        
+        ' hide the workbook
+        
+        cc_isr_Core_IO.WorkbookExtensions.Hide p_workbook
+        DoEvents
     
-    ' turn on code exporting if not deploy or read only
-    Me.DisableSavingCode cc_isr_Core_IO.ThisWorkbook, Me.Deployed
-    Me.DisableSavingCode cc_isr_Core.ThisWorkbook, Me.Deployed
-    Me.DisableSavingCode cc_isr_Test_Fx.ThisWorkbook, Me.Deployed
-    Me.DisableSavingCode ThisWorkbook, Me.Deployed
-
-    ' hide the referenced workbooks
-    Application.Windows(cc_isr_Core_IO.ThisWorkbook.Name).Visible = False
-    Application.Windows(cc_isr_Core.ThisWorkbook.Name).Visible = False
-    Application.Windows(cc_isr_Test_Fx.ThisWorkbook.Name).Visible = False
+    Next p_workbook
     
-    ' show this work book
-    Application.Windows(ThisWorkbook.Name).Visible = True
-    
-    ' init the user defined errors.
-    cc_isr_Core_IO.UserDefinedErrors.Initialize
+    ' show the active workbook
+    cc_isr_Core_IO.WorkbookExtensions.Show ThisWorkbook
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -196,4 +234,6 @@ err_Handler:
     GoTo exit_Handler
     
 End Sub
+
+
 

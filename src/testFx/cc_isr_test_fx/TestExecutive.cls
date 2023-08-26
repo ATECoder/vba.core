@@ -59,9 +59,9 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     Dim p_rowNo As Integer
     p_rowNo = ModuleFullNameRow
     
-    a_testSheet.Rows(CStr(ModuleFullNameRow + 1) & ":" & a_testSheet.Rows.count).ClearContents
+    a_testSheet.Rows(CStr(ModuleFullNameRow + 1) & ":" & a_testSheet.Rows.Count).ClearContents
     a_testSheet.Range(OutcomeColumn & CStr(ModuleFullNameRow), _
-                      OutcomeColumn & a_testSheet.Rows.count).Interior.ColorIndex = ClearColorIndex
+                      OutcomeColumn & a_testSheet.Rows.Count).Interior.ColorIndex = ClearColorIndex
     
     p_moduleFullName = a_testSheet.Range(ModuleFullNameColumn & ModuleFullNameRow).value
     

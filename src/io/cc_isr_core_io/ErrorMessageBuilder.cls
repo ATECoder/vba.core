@@ -47,14 +47,17 @@ Friend Function BuildErrSource(ByVal a_errProcedureName As String, ByVal a_errMo
     ' thus we assume that this code is robust and will
     ' not cause errors.
     
-    If VBA.vbNullString = a_errProjectName Then a_errProjectName = ActiveWorkbook.VBProject.Name
+    If VBA.vbNullString = a_errProjectName And Not ActiveWorkbook Is Nothing Then
+        If Not ActiveWorkbook.VBProject Is Nothing Then _
+            a_errProjectName = ActiveWorkbook.VBProject.Name
+    End If
     
     Dim p_builder As String
-    p_builder = a_errProjectName & "." & a_errModuleName & "." & a_errProcedureName
+    p_builder = IIf(VBA.vbNullString = a_errProjectName, "unknown", a_errProjectName) _
+        & "." & a_errModuleName & "." & a_errProcedureName
     
-    If 1 > VBA.InStr(1, p_builder, Err.Source) Then
+    If 1 > VBA.InStr(1, p_builder, Err.Source) Then _
         p_builder = p_builder & " in " & Err.Source
-    End If
     
     BuildErrSource = p_builder
  

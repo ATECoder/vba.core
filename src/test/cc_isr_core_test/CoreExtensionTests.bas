@@ -16,6 +16,62 @@ Public Function TestWaitShouldEqualOrExceedDuration() As Assert
     Dim p_actualDuration As Double: p_actualDuration = cc_isr_Core_IO.CoreExtensions.Wait(p_expectedDuration)
     Set p_outcome = Assert.IsTrue(p_expectedDuration <= p_actualDuration, _
         "Wait time " & CStr(p_actualDuration) & " should be equal ot longer than the specified duration of " & CStr(p_expectedDuration) & " .")
+
+    If p_outcome.AssertSuccessful Then
+        p_actualDuration = cc_isr_Core_IO.CoreExtensions.Wait(p_expectedDuration)
+        Set p_outcome = Assert.IsTrue(2 * p_expectedDuration > p_actualDuration, _
+            "Wait time " & CStr(p_actualDuration) & " should be shorter that double the specified duration of " & CStr(2 * p_expectedDuration) & " .")
+    End If
+    
+    Debug.Print p_outcome.BuildReport("TestWaitShouldEqualOrExceedDuration")
+
+    Set TestWaitShouldEqualOrExceedDuration = p_outcome
+    
+End Function
+
+''' <summary>   Unit test. Asserts that the resolution of VBA.Now() should be longer or equal to the expected resolution.
+'''             but smaller than double of that resoltion. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestNowResultion() As Assert
+
+    Dim p_outcome As Assert
+    
+    '  loop until now changes
+    Dim p_startTime As Double: p_startTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    Dim p_endTime As Double: p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    While p_startTime = p_endTime
+        'DoEvents
+        p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    Wend
+    
+    p_startTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    While p_startTime = p_endTime
+        'DoEvents
+        p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    Wend
+    Dim p_resolution As Double
+    p_resolution = cc_isr_Core_IO.CoreExtensions.SecondsPerDay() * (p_endTime - p_startTime)
+    
+    Dim p_expectedResolution As Double: p_expectedResolution = 0.95 * cc_isr_Core_IO.CoreExtensions.TimerResolution
+    Set p_outcome = Assert.IsTrue(p_expectedResolution <= p_resolution, _
+        "Actual resolution " & CStr(p_resolution) & " should be equal ot larger than the adjusted expected resolution of " & CStr(p_expectedResolution) & ".")
+    
+    ' Debug.Print p_resolution, p_expectedResolution
+    
+    If p_outcome.AssertSuccessful Then
+    
+        p_expectedResolution = 2# * cc_isr_Core_IO.CoreExtensions.TimerResolution
+        Set p_outcome = Assert.IsTrue(p_expectedResolution >= p_resolution, _
+            "Actual resolution " & CStr(p_resolution) & " should be equal ot smaller than the twice the expected resolution of " & CStr(p_expectedResolution) & ".")
+    
+        ' Debug.Print p_resolution, p_expectedResolution
+    
+    End If
+    
+    Debug.Print p_outcome.BuildReport("TestNowResultion")
+    
+    Set TestNowResultion = p_outcome
     
 End Function
 

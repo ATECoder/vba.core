@@ -45,7 +45,7 @@ Public Function TestEscapeSequences() As cc_isr_Test_Fx.Assert
             
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(8, p_escapes.count, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(8, p_escapes.Count, _
                 "Number of escape sequences should match")
                 
     End If

@@ -145,9 +145,9 @@ Public Function TestModuleList() As Assert
     Set p_knownTestModules = New VBA.Collection
     AddTestModules p_knownTestModules
     
-    Set p_outcome = Assert.AreEqual(p_knownTestModules.count, p_modules.count, _
-        "Expecting " & CStr(p_knownTestModules.count) & " but found  " & _
-        CStr(p_modules.count) & " test modules")
+    Set p_outcome = Assert.AreEqual(p_knownTestModules.Count, p_modules.Count, _
+        "Expecting " & CStr(p_knownTestModules.Count) & " but found  " & _
+        CStr(p_modules.Count) & " test modules")
     
     Dim p_missingItem As Variant
 
