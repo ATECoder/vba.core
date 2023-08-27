@@ -26,9 +26,9 @@ Option Explicit
 ''' <returns>   [Boolean]. </returns>
 Public Function AreEqualDebug(ByVal a_expected As String, ByVal a_actual As String)
 
-    Dim areEqual As Boolean: areEqual = True
-    areEqual = 1 = VBA.InStr(1, a_expected, a_actual)
-    If Not areEqual Then
+    Dim AreEqual As Boolean: AreEqual = True
+    AreEqual = 1 = VBA.InStr(1, a_expected, a_actual)
+    If Not AreEqual Then
     
         Dim p_expectedLength As Integer: p_expectedLength = VBA.Len(a_expected)
         Dim p_actualLength As Integer: p_actualLength = VBA.Len(a_actual)
@@ -42,7 +42,7 @@ Public Function AreEqualDebug(ByVal a_expected As String, ByVal a_actual As Stri
         Dim i As Integer
         For i = 1 To IIf(p_expectedLength < p_actualLength, p_expectedLength, p_actualLength)
             If VBA.Mid$(a_expected, i, 1) <> VBA.Mid$(a_actual, i, 1) Then
-                areEqual = False
+                AreEqual = False
                 Debug.Print "@" & i & "; Expected=" & VBA.Asc(VBA.Mid$(a_expected, i, 1)) & _
                             "; Actual=" & VBA.Asc(VBA.Mid$(a_actual, i, 1))
                 Exit For
@@ -51,7 +51,7 @@ Public Function AreEqualDebug(ByVal a_expected As String, ByVal a_actual As Stri
 
     End If
     
-    AreEqualDebug = areEqual
+    AreEqualDebug = AreEqual
 
 End Function
 

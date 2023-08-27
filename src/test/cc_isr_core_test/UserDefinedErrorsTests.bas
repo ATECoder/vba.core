@@ -54,7 +54,7 @@ exit_Handler:
 err_Handler:
   
     ' build the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.SetErrSource thisProcedureName, "UserDefinedErrorsTests"
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource thisProcedureName, "UserDefinedErrorsTests", ThisWorkbook
     
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(Err.Source) > 0, _
             "VBA.Err.Source should not be empty")

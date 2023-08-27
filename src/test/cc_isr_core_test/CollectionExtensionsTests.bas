@@ -57,3 +57,55 @@ Public Function TestCollectionShouldContainItself() As Assert
 
 End Function
 
+''' <summary>   Unit test. Asserts that collection are equal. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestCollectionShouldBeEqual() As Assert
+    
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    Dim p_left As VBA.Collection
+    Set p_left = New VBA.Collection
+    Dim p_right As VBA.Collection
+    Set p_right = New VBA.Collection
+    Dim p_item As String
+    p_item = "a": p_left.Add p_item: p_right.Add p_item
+    p_item = "b": p_left.Add p_item: p_right.Add p_item
+    
+    Set p_outcome = Assert.IsTrue(CollectionExtensions.AreEqual(p_left, p_right), _
+        "The collection should be equal")
+
+    Debug.Print p_outcome.BuildReport("TestCollectionShouldBeEqual")
+    
+    Set TestCollectionShouldBeEqual = p_outcome
+
+End Function
+
+''' <summary>   Unit test. Asserts that collection are not equal. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestCollectionShouldNotBeEqual() As Assert
+    
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    Dim p_left As VBA.Collection
+    Set p_left = New VBA.Collection
+    Dim p_right As VBA.Collection
+    Set p_right = New VBA.Collection
+    Dim p_item As String
+    p_item = "a": p_left.Add p_item: p_right.Add p_item
+    p_item = "b": p_left.Add p_item: p_right.Add p_item
+    p_item = "c": p_left.Add p_item
+    
+    Set p_outcome = Assert.IsFalse(CollectionExtensions.AreEqual(p_left, p_right), _
+        "The collection should not be equal because they are of difference length")
+
+    If p_outcome.AssertSuccessful Then
+        p_right.Add p_item & "d"
+        Set p_outcome = Assert.IsFalse(CollectionExtensions.AreEqual(p_left, p_right), _
+            "The collection should not be equal because they have difference items")
+    End If
+    Debug.Print p_outcome.BuildReport("TestCollectionShouldNotBeEqual")
+    
+    Set TestCollectionShouldNotBeEqual = p_outcome
+
+End Function
+
+
+

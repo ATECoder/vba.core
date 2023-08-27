@@ -13,6 +13,38 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
+''' <summary>   Returns true if the collections are equal. </summary>
+''' <param name="a_left">    [Collection] The left hand side collection. </param>
+''' <param name="a_right">   [Collection] The right hand side collection. </param>
+''' <returns>   [Bollean] True if the collections are equal. Requires that the collection items
+'''             implement Equals. </returns>
+Public Function AreEqual(ByVal a_left As VBA.Collection, ByVal a_right As VBA.Collection) As Boolean
+    
+    Dim p_areEqual As Boolean
+    If a_left Is Nothing Then
+        p_areEqual = False
+    ElseIf a_right Is Nothing Then
+        p_areEqual = False
+    ElseIf a_left.Count <> a_right.Count Then
+        p_areEqual = False
+    Else
+        p_areEqual = True
+        Dim p_count As Integer: p_count = a_left.Count
+        Dim i As Integer
+        For i = 1 To p_count
+            If a_left(i) <> a_right(i) Then
+                p_areEqual = False
+                Exit For
+            End If
+        Next i
+    End If
+    
+    AreEqual = p_areEqual
+    
+End Function
+
+
+
 ''' <summary>   Returns true if the collection contains the specified key. </summary>
 ''' <param name="a_col">     [Collection] The subject collection. </param>
 ''' <param name="a_key">     [Variant] The key to check for in the collection. </param>
