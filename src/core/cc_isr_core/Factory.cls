@@ -45,7 +45,7 @@ End Function
 ''' <param name="a_propertyName">   [String] the property name. </value>
 ''' <returns>   [<see cref="PropertyChangedEventArgs"/>]. </returns>
 Public Function CreatePropertyChangedEventArgs(ByVal a_propertyName As String) As cc_isr_Core.PropertyChangedEventArgs
-    Set NewPropertyChangedEventArgs = Me.NewPropertyChangedEventArgs.Initialize(a_propertyName)
+    Set CreatePropertyChangedEventArgs = Me.NewPropertyChangedEventArgs.Initialize(a_propertyName)
 End Function
 
 ''' <summary>   Instantiates a new <see cref="StringBuilder"/> object. </summary>
