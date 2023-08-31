@@ -61,14 +61,32 @@ $Password = $missing
 $WriteReservedPassword = $missing
 $IgnoreReadOnlyDisplay = $true
 
+$ReadOnly = $true
+
 $src = "C:\my\lib\vba\core\core\src\io\cc.isr.core.io.xlsm"
 LogInfo( "opening " + $src)
-$book = $excel.Workbooks.Open($src, $missing, $true, $missing, $missing, $missing, $true)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
 LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
+
+$ReadOnly = $true
+
+$src = "C:\my\lib\vba\core\core\src\testFx\cc.isr.test.fx.xlsm"
+LogInfo( "opening " + $src)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
+LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
+
+$ReadOnly = $false
 
 $src = "C:\my\lib\vba\core\core\src\core\cc.isr.core.xlsm"
 LogInfo( "opening " + $src)
-$book = $excel.Workbooks.Open($src, $missing, $true, $missing, $missing, $missing, $true)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
+LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
+
+$ReadOnly = $false
+
+$src = "C:\my\lib\vba\core\core\src\demo\cc.isr.core.demo.xlsm"
+LogInfo( "opening " + $src)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
 LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
 
 $excel.EnableEvents = $true;
