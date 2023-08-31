@@ -82,13 +82,6 @@ LogInfo( "opening " + $src)
 $book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
 LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
 
-$ReadOnly = $false
-
-$src = "C:\my\lib\vba\core\core\src\demo\cc.isr.core.demo.xlsm"
-LogInfo( "opening " + $src)
-$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
-LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
-
 $excel.EnableEvents = $true;
 
 $src = "C:\my\lib\vba\core\core\src\test\cc.isr.core.test.xlsm"
