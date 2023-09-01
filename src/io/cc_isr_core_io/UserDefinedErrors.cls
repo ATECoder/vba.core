@@ -34,6 +34,7 @@ Private Type this_
     InvalidOperationError As UserDefinedError
     TimeoutError As UserDefinedError
     FormatError As UserDefinedError
+    Ieee488DeviceError As UserDefinedError
     LastErrorCode As Long
     LastError As UserDefinedError
     LastErrorsStack As Stack
@@ -139,6 +140,11 @@ Private Sub Class_Initialize()
     Set This.FormatError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "FormatError", _
         "The number indicating an argument to format is less than zero or greater than or equal to the length of the array of arguments.")
     AddUserDefinedError Me.FormatError
+
+    This.LastErrorCode = This.LastErrorCode + 1
+    Set This.Ieee488DeviceError = Factory.NewUserDefinedError.Initialize(This.LastErrorCode, "Ieee488DeviceError", _
+        "IEEE488 Device error(s) occurred.")
+    AddUserDefinedError Me.Ieee488DeviceError
 
 End Sub
 
@@ -328,6 +334,14 @@ End Property
 Public Property Get FormatError() As UserDefinedError
     
     Set FormatError = This.FormatError
+
+End Property
+
+''' <summary>   Get the error that occurred when a IEEE488 device error(s) occurred. </summary>
+''' <value>   [<see cref="UserDefinedError"/>]. </value>
+Public Property Get Ieee488DeviceError() As UserDefinedError
+    
+    Set Ieee488DeviceError = This.Ieee488DeviceError
 
 End Property
 
