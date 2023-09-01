@@ -112,24 +112,71 @@ Public Function SecondsPerDay() As Double
     
 End Function
 
-''' <summary>   Returns the date and time with resolution of the VBA.Timer. </summary>
-Public Function DateTimeNow() As Double
+''' <summary>   Returns the time since December 30, 1899 in days. </summary>
+''' <returns>   [Double]. Days since December 30, 1899. </returns>
+Public Function DaysNow() As Double
     
-    DateTimeNow = Fix(VBA.Now) + VBA.Timer / Me.SecondsPerDay()
+    DaysNow = Fix(VBA.Now) + VBA.Timer / Me.SecondsPerDay()
     
 End Function
+
+''' <summary>   Parses the days since December 30, 1899. </summary>
+''' <param name="a_days">           [Double] the number of days since December 30, 1899. </param>
+''' <param name="a_day">            [Long] the number of days since December 30, 1899. </param>
+''' <param name="a_seconds">        [Long] the seconds part. </param>
+''' <param name="a_milliseconds">   [Integer] the milliseconds part. </param>
+Public Sub ParseDays(ByVal a_days As Double, ByRef a_day As Long, _
+    ByRef a_seconds As Long, ByRef a_milliseconds As Integer)
+    
+    a_day = Fix(a_days)
+    Dim p_seconds As Double: p_seconds = Me.SecondsPerDay * (a_days - a_day)
+    Me.ParseTime p_seconds, a_seconds, a_milliseconds
+
+End Sub
+
+''' <summary>   Parses the time of dday since midnight. </summary>
+''' <param name="a_time">           [Double] the time since midnight. </param>
+''' <param name="a_seconds">        [Long] the seconds part. </param>
+''' <param name="a_milliseconds">   [Integer] the milliseconds part. </param>
+Public Sub ParseTime(ByVal a_time As Double, ByRef a_seconds As Long, _
+    ByRef a_milliseconds As Integer)
+    
+    a_seconds = Fix(a_time)
+    a_milliseconds = 1000 * (a_time - a_seconds)
+
+End Sub
+
+''' <summary>   Formats the days since December 30, 1899. </summary>
+''' <param name="a_days">                 [Double] the number of days since December 30, 1899. </param>
+''' <param name="a_dateTimeFormat">       [String] the day time format. </param>
+''' <param name="a_millisecondsFormat">   [String] the milliseconds format. </param>
+''' <returns>   [String] such as 20230901113312.700. </returns>
+Public Function FormatDays(ByVal a_days As Double, _
+    Optional ByVal a_dateTimeFormat As String = "YYYYMMDDhhmmss", _
+    Optional ByVal a_millisecondsFormat As String = "0") As String
+
+    Dim p_day As Long
+    Dim p_seconds As Long
+    Dim p_milliseconds As Integer
+    Me.ParseDays a_days, p_day, p_seconds, p_milliseconds
+    
+    FormatDays = VBA.Format(a_days, a_dateTimeFormat) & "." & _
+                 VBA.Format(p_milliseconds, a_millisecondsFormat)
+    
+End Function
+
 
 ''' <summary>   Waits for the specified duration in seconds. </summary>
 ''' <param name="a_seconds">   [Double] wait time in seconds. </param>
 ''' <returns>   [Double] wait time in seconds. </returns>
 Public Function Wait(ByVal a_seconds As Double) As Double
 
-    Dim p_startTime As Double: p_startTime = Me.DateTimeNow()
+    Dim p_startTime As Double: p_startTime = Me.DaysNow()
     Dim p_endTime As Double: p_endTime = p_startTime + (a_seconds# / Me.SecondsPerDay)
-    Dim p_now As Double: p_now = Me.DateTimeNow()
+    Dim p_now As Double: p_now = Me.DaysNow()
     While p_now < p_endTime
         DoEvents
-        p_now = Me.DateTimeNow()
+        p_now = Me.DaysNow()
     Wend
     Wait = Me.SecondsPerDay * (p_now - p_startTime)
 

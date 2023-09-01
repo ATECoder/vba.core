@@ -79,6 +79,12 @@ Public Function Pop() As Variant
             Pop = This.Items(Me.Count)
         End If
         This.Items.Remove Me.Count
+    Else
+        If This.IsObject Then
+            Set Pop = Nothing
+        Else
+            Pop = Nothing
+        End If
     End If
 End Function
 
@@ -91,6 +97,12 @@ Public Function Peek(Optional ByVal a_index As Integer = 1) As Variant
             Set Peek = This.Items(a_index)
         Else
             Peek = This.Items(a_index)
+        End If
+    Else
+        If This.IsObject Then
+            Set Peek = Nothing
+        Else
+            Peek = Nothing
         End If
     End If
 End Function

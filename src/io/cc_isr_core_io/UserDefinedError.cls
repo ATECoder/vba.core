@@ -18,6 +18,7 @@ Private Type this_
     Name As String
     Description As String
     Source As String
+    Timestamp As Double
 End Type
 
 Private This As this_
@@ -33,6 +34,7 @@ Public Function Initialize(ByVal a_errorCode As Long, ByVal a_errorName As Strin
     This.Code = a_errorCode
     This.Description = a_description
     This.Source = VBA.vbNullString
+    This.Timestamp = CoreExtensions.DaysNow()
     Set Initialize = Me
 End Function
 
@@ -44,6 +46,7 @@ Public Function Clone(ByVal a_error As UserDefinedError) As UserDefinedError
     Set p_error = New UserDefinedError
     p_error.Initialize a_error.Code, a_error.Name, a_error.Description
     p_error.Source = a_error.Source
+    p_error.Timestamp = a_error.Timestamp
     Set Clone = p_error
 End Function
 
@@ -90,14 +93,30 @@ Public Property Let Source(ByVal a_value As String)
     This.Source = a_value
 End Property
 
+''' <summary>   Gets the error Timestamp in days since December 30, 1899. </summary>
+''' <value>   [Double]. </value>
+Public Property Get Timestamp() As Double
+    Timestamp = This.Timestamp
+End Property
+
+''' <summary>   Sets the error Timestamp in days since December 30, 1899. </summary>
+''' <param name="a_value">   [Double] The error Timestamp. </param>
+Public Property Let Timestamp(ByVal a_value As Double)
+    This.Timestamp = a_value
+End Property
+
+
 ''' <summary>   Returns a string representation of the error. </summary>
 ''' <param name="additionalInfo">   [Optional, empty] additional information to append to the error message. </param>
-''' <returns>   A String representation of the error. </returns>
+''' <returns>   [String] A representation of the error. </returns>
 Public Function ToString(Optional ByVal a_additionalInfo As String = vbNullString) As String
-    ToString = "User Error " & Me.Name & " " & _
-                VBA.Str$(Me.Code) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Code)) & _
-                " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ")" & _
-                IIf(VBA.vbNullString = Me.Source, ": ", " in " & Me.Source & ": ") & _
-                Me.Description & a_additionalInfo
+    
+    ToString = Me.Name & " " & _
+               VBA.Str$(Me.Code) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Code)) & _
+               " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ")" & _
+               Me.Description & a_additionalInfo & _
+               " occured in " & _
+               IIf(VBA.vbNullString = Me.Source, " unknown", Me.Source) & _
+               " at " & CoreExtensions.FormatDays(Me.Timestamp) & "."
 End Function
 

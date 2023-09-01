@@ -126,15 +126,12 @@ End Function
 ''' <param name="a_displayWarning">         [Boolean, false] True
 '''                                         to display a warning rather than
 '''                                         an error message. </param>
-''' <param name="a_descriptionDelimiter">   [String, ': '] Specify
-'''                                         the delimiter preceding the description. </param>
 ''' <returns>   A Standard error message string in the form: <para>
-''' Error 0x# (Last DLL Error 0x#) occurred in <c>Source</c>: Description </para><para>
+''' Error 0x# (Last DLL Error 0x#) Description occurred in <c>Source</c> at 20230901113506.123. </para><para>
 ''' or  </para><para>
-''' Warning 0x#  (Last DLL Error 0x#) occurred in <c>Source</c>: Description  </para>
+''' Warning 0x# (Last DLL Error 0x#) Description occurred in <c>Source</c> at 20230901113506.123. </para>
 ''' </returns>
-Friend Function BuildErrorMessage(Optional ByVal a_displayWarning As Boolean = False, _
-                Optional a_descriptionDelimiter As String = ": ") As String
+Friend Function BuildErrorMessage(Optional ByVal a_displayWarning As Boolean = False) As String
 
     Dim p_builder As String: p_builder = VBA.vbNullString
   
@@ -158,10 +155,12 @@ Friend Function BuildErrorMessage(Optional ByVal a_displayWarning As Boolean = F
             p_builder = p_builder & " Last DLL Error 0x"
             p_builder = p_builder & VBA.LCase$(VBA.Hex$(Err.LastDllError)) & ")"
         End If
+        p_builder = p_builder & VBA.Err.Description
         p_builder = p_builder & " occurred in "
         p_builder = p_builder & VBA.Err.Source
-        p_builder = p_builder & a_descriptionDelimiter
-        p_builder = p_builder & VBA.Err.Description
+        p_builder = p_builder & " at "
+        p_builder = p_builder & CoreExtensions.FormatDays(CoreExtensions.DaysNow())
+        p_builder = p_builder & "."
         
     End If
 
@@ -178,34 +177,39 @@ End Function
 ''' After being appended, the last error must be, and is, cleared and pushed to the
 ''' top of the error stack, which top now holds the most recent error.
 ''' </remarks>
-''' <param name="a_displayWarning">         [Boolean, false] True
-'''                                         to display a warning rather than
-'''                                         an error message. </param>
-''' <param name="a_descriptionDelimiter">   [String, ': '] Specify
-'''                                         the delimiter preceding the description. </param>
+''' <param name="a_displayWarning">   [Boolean, false] True to prefix the error with
+'''                                   'Warning' rather 'Error'. </param>
 ''' <returns>   A Standard error message string in the form: <para>
 ''' Error 0x# (Last DLL Error 0x#) occurred in <c>Source</c>: Description </para><para>
 ''' or  </para><para>
 ''' Warning 0x#  (Last DLL Error 0x#) occurred in <c>Source</c>: Description  </para>
 ''' </returns>
-Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boolean = False, _
-                Optional a_descriptionDelimiter As String = ": ") As String
+Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boolean = False) As String
 
     Dim p_builder As String: p_builder = VBA.vbNullString
     Dim p_errorNumber As Long: p_errorNumber = VBA.Err.Number
     If p_errorNumber <> 0 Then
-        p_builder = Me.BuildErrorMessage(a_displayWarning, a_descriptionDelimiter)
+        p_builder = Me.BuildErrorMessage(a_displayWarning)
     End If
     
-    If Not cc_isr_Core_IO.UserDefinedErrors.LastError Is Nothing Then
-        If p_errorNumber <> cc_isr_Core_IO.UserDefinedErrors.LastError.Code Then
+    While cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0
+        
+        DoEvents
+        
+        ' dequeue errors from the queue to the report and move them to the archive.
+        Dim p_error As UserDefinedError
+        Set p_error = cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue
+        
+        ' ignore the last error if it has the same code as the Err object.
+        If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0 Or p_errorNumber <> p_error.Code Then
             If VBA.Len(p_builder) > 0 Then p_builder = p_builder & vbCrLf
-            p_builder = p_builder & cc_isr_Core_IO.UserDefinedErrors.LastError.ToString()
+            p_builder = p_builder & p_error.ToString()
         End If
-        cc_isr_Core_IO.UserDefinedErrors.LastErrorsStack.Push _
-                Factory.NewUserDefinedError().Clone(cc_isr_Core_IO.UserDefinedErrors.LastError)
-        Set cc_isr_Core_IO.UserDefinedErrors.LastError = Nothing
-    End If
+        
+        ' push the error to the archive, which is circular.
+        cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Push p_error
+        
+    Wend
     
     BuildStandardErrorMessage = p_builder
 

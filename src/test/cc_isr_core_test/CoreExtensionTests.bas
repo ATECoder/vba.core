@@ -29,26 +29,26 @@ Public Function TestWaitShouldEqualOrExceedDuration() As Assert
     
 End Function
 
-''' <summary>   Unit test. Asserts that the resolution of VBA.Now() should be longer or equal to the expected resolution.
-'''             but smaller than double of that resoltion. </summary>
+''' <summary>   Unit test. Asserts that the resolution of VBA.Now() should be longer or equal
+'''             to the expected resolution but smaller than double of that resoltion. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestNowResultion() As Assert
 
     Dim p_outcome As Assert
     
     '  loop until now changes
-    Dim p_startTime As Double: p_startTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
-    Dim p_endTime As Double: p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    Dim p_startTime As Double: p_startTime = cc_isr_Core_IO.CoreExtensions.DaysNow()
+    Dim p_endTime As Double: p_endTime = cc_isr_Core_IO.CoreExtensions.DaysNow()
     While p_startTime = p_endTime
         'DoEvents
-        p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+        p_endTime = cc_isr_Core_IO.CoreExtensions.DaysNow()
     Wend
     
-    p_startTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
-    p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+    p_startTime = cc_isr_Core_IO.CoreExtensions.DaysNow()
+    p_endTime = cc_isr_Core_IO.CoreExtensions.DaysNow()
     While p_startTime = p_endTime
         'DoEvents
-        p_endTime = cc_isr_Core_IO.CoreExtensions.DateTimeNow()
+        p_endTime = cc_isr_Core_IO.CoreExtensions.DaysNow()
     Wend
     Dim p_resolution As Double
     p_resolution = cc_isr_Core_IO.CoreExtensions.SecondsPerDay() * (p_endTime - p_startTime)
