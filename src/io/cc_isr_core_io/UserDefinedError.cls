@@ -36,6 +36,17 @@ Public Function Initialize(ByVal a_errorCode As Long, ByVal a_errorName As Strin
     Set Initialize = Me
 End Function
 
+''' <summary>   Clones a user defined error. </summary>
+''' <param name="a_error">     [[<see cref="UserDefinedError"/>] The error to clone. </param>
+''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
+Public Function Clone(ByVal a_error As UserDefinedError) As UserDefinedError
+    Dim p_error As UserDefinedError
+    Set p_error = New UserDefinedError
+    p_error.Initialize a_error.Code, a_error.Name, a_error.Description
+    p_error.Source = a_error.Source
+    Set Clone = p_error
+End Function
+
 ''' <summary>   Gets the error code. </summary>
 ''' <value>   [Long] error code. </value>
 Public Property Get Code() As Long

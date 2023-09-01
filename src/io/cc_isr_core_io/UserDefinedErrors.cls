@@ -36,6 +36,7 @@ Private Type this_
     FormatError As UserDefinedError
     LastErrorCode As Long
     LastError As UserDefinedError
+    LastErrorsStack As Stack
 End Type
 
 Private This As this_
@@ -43,6 +44,7 @@ Private This As this_
 ''' <summary>   Initializes the user defined errors. </summary>
 Private Sub Class_Initialize()
 
+    Set This.LastErrorsStack = Factory.CreateStack(100)
     Set This.ErrorsDix = New Dictionary
     Dim p_dummyError As UserDefinedError
     Set p_dummyError = New UserDefinedError
@@ -355,6 +357,12 @@ Public Property Set LastError(ByVal a_value As UserDefinedError)
     
     Set This.LastError = a_value
 
+End Property
+
+''' <summary>   Gets the stack of last errors. </summary>
+''' <value>   [<see cref="cc_isr_Core_IO.Stack"/>]. </value>
+Public Property Get LastErrorsStack() As Stack
+    Set LastErrorsStack = This.LastErrorsStack
 End Property
 
 ''' <summary>   Raises a user defined error. </summary>

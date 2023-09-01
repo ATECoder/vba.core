@@ -11,7 +11,7 @@ Option Explicit
 
 Private Type this_
     Deployed As Boolean
-    AllWorkbooks As Collection
+    ProjectWorkbooks As Collection
 End Type
 
 Private This As this_
@@ -32,15 +32,15 @@ End Function
 ''' <summary>   Gets all referenced workbooks for this workbook including
 '''             itself. </summary>
 ''' <value>   [Collection]. </value>
-Public Property Get AllWorkbooks() As Collection
-    If Me.CollectionIsNothingOrEmpty(This.AllWorkbooks) Then
+Public Property Get ProjectWorkbooks() As Collection
+    If Me.CollectionIsNothingOrEmpty(This.ProjectWorkbooks) Then
         If ThisWorkbook Is Nothing Then
-            Set This.AllWorkbooks = New Collection
+            Set This.ProjectWorkbooks = New Collection
         Else
-            Set This.AllWorkbooks = cc_isr_Core_IO.WorkbookExtensions.ReferencedWorkbooks(ThisWorkbook)
+            Set This.ProjectWorkbooks = cc_isr_Core_IO.WorkbookExtensions.ReferencedWorkbooks(ThisWorkbook)
         End If
     End If
-    Set AllWorkbooks = This.AllWorkbooks
+    Set ProjectWorkbooks = This.ProjectWorkbooks
 End Property
 
 ''' <summary>   Gets the deployed status. </summary>
@@ -59,7 +59,7 @@ Public Property Let Deployed(ByVal a_value As Boolean)
     ' toggle deploy mode on all workbooks.
     This.Deployed = a_value
     Dim p_workbook As Workbook
-    For Each p_workbook In Me.AllWorkbooks
+    For Each p_workbook In Me.ProjectWorkbooks
         If p_workbook.Name <> ThisWorkbook.Name Then _
             p_workbook.Deployed = a_value
         DoEvents
@@ -151,7 +151,7 @@ Private Sub Workbook_BeforeClose(ByRef a_cancel As Boolean)
     ' disable the save dialog on read only workbooks.
     
     Dim p_workbook As Workbook
-    For Each p_workbook In Me.AllWorkbooks
+    For Each p_workbook In Me.ProjectWorkbooks
         cc_isr_Core_IO.WorkbookExtensions.MarkAsSaved p_workbook, Me.Deployed
         DoEvents
     Next p_workbook
@@ -188,7 +188,7 @@ Private Sub Workbook_Open()
     
     ' hide this and all referenced workbooks
     Dim p_workbook As Workbook
-    For Each p_workbook In Me.AllWorkbooks
+    For Each p_workbook In Me.ProjectWorkbooks
         cc_isr_Core_IO.WorkbookExtensions.Hide p_workbook
         DoEvents
     Next p_workbook

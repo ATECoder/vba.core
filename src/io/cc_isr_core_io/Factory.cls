@@ -35,5 +35,31 @@ Public Function NewUserDefinedError() As UserDefinedError
     Set NewUserDefinedError = New UserDefinedError
 End Function
 
+''' <summary>   Instantiates a new <see cref="Queue"/> object. </summary>
+''' <returns>   [<see cref="Queue"/>]. </returns>
+Public Function NewQueue() As Queue
+    Set NewQueue = New Queue
+End Function
+
+''' <summary>   Instantiates a new <see cref="Queue"/> object with the specified capacity. </summary>
+''' <param name="a_capacity">   [Integer] The capacity of the queue. </param>
+''' <returns>   [<see cref="Queue"/>]. </returns>
+Public Function CreateQueue(ByVal a_capacity As Integer) As Queue
+    Set CreateQueue = Me.NewQueue.Initialize(a_capacity)
+End Function
+
+''' <summary>   Instantiates a new <see cref="Stack"/> object. </summary>
+''' <returns>   [<see cref="Stack"/>]. </returns>
+Public Function NewStack() As Stack
+    Set NewStack = New Stack
+End Function
+
+''' <summary>   Instantiates a new <see cref="Stack"/> object with the specified capacity. </summary>
+''' <param name="a_capacity">   [Integer] The capacity of the Stack. </param>
+''' <returns>   [<see cref="Stack"/>]. </returns>
+Public Function CreateStack(ByVal a_capacity As Integer) As Stack
+    Set CreateStack = Me.NewStack.Initialize(a_capacity)
+End Function
+
 
 

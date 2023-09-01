@@ -61,7 +61,7 @@ $Password = $missing
 $WriteReservedPassword = $missing
 $IgnoreReadOnlyDisplay = $true
 
-$ReadOnly = $true
+$ReadOnly = $false
 
 $src = "C:\my\lib\vba\core\core\src\io\cc.isr.core.io.xlsm"
 LogInfo( "opening " + $src)

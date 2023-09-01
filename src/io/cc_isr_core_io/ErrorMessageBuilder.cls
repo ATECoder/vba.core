@@ -170,6 +170,14 @@ Friend Function BuildErrorMessage(Optional ByVal a_displayWarning As Boolean = F
 End Function
 
 ''' <summary>   Builds a standard error message. </summary>
+''' <remarks>   This method appends the <see cref="UserDefinedErrors.LastError"/>
+''' to the <see cref="VBA.Err"/> object if the former is not nothing.
+''' The last error is appended in order to address automation errors where the
+''' reporting workbook has no access to the error object of the error source, which
+''' might reside in a workbook that is not referenced by the reporting workbook.
+''' After being appended, the last error must be, and is, cleared and pushed to the
+''' top of the error stack, which top now holds the most recent error.
+''' </remarks>
 ''' <param name="a_displayWarning">         [Boolean, false] True
 '''                                         to display a warning rather than
 '''                                         an error message. </param>
@@ -194,6 +202,9 @@ Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boo
             If VBA.Len(p_builder) > 0 Then p_builder = p_builder & vbCrLf
             p_builder = p_builder & cc_isr_Core_IO.UserDefinedErrors.LastError.ToString()
         End If
+        cc_isr_Core_IO.UserDefinedErrors.LastErrorsStack.Push _
+                Factory.NewUserDefinedError().Clone(cc_isr_Core_IO.UserDefinedErrors.LastError)
+        Set cc_isr_Core_IO.UserDefinedErrors.LastError = Nothing
     End If
     
     BuildStandardErrorMessage = p_builder

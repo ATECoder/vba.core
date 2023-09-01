@@ -1,28 +1,24 @@
 # ----------------------------------------------------------------------
-# Open workbook
+# Localize
 #
-# PURPOSE: Opens a workbook with little flickers.
+# PURPOSE: open and save all workbooks from the bin folder thus localizing their references.
 #
 # CALLING SCRIPT:
 #
-# PowerShell.EXE -file <script> -RelativePath <relative-path> -BookName <excel-file-name>
-#
-# EXAMPLE:
-#
-# PowerShell.EXE -file open.workbook.ps1 -RelativePath ".\" -BookName "cc.isr.core.xlsm"
+#  ."open.workbook.ps1"
 #
 # ----------------------------------------------------------------------
 
-# Must be the first statement in your script (not counting comments)
-# 
-param(
+# ----------------------------------------------------------------------
+# VARIABLES
 
-    # relative path
-    [string]$RelativePath = ".\",
+$CWD = (Resolve-Path .\).Path
+$Bdir = $CWD
+$Bdir = (Resolve-Path $Bdir).Path
+$XL_FILE_FORMAT_MACRO_ENABLED = 52
 
-    [string]$BookName = "cc.isr.test.fx.xlsm"
-) 
-
+# END VARIABLES
+# ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
 # FUNCTIONS
@@ -32,14 +28,14 @@ Function LogInfo($message)
     Write-Host $message -ForegroundColor Gray
 }
 
+Function LogError($message)
+{
+    Write-Host $message -ForegroundColor Red
+}
+
 Function LogEmptyLine()
 {
     echo ""
-}
-
-Function HasSuiteFlag($flags, $flag)
-{
-    Return ($flags -band $flag) -eq $flag
 }
 
 # END FUNCTIONS
@@ -49,51 +45,39 @@ Function HasSuiteFlag($flags, $flag)
 # ----------------------------------------------------------------------
 # SCRIPT ENTRY POINT
 
-
 $DEBUG = $true
 
-if ( $DEBUG ) { LogInfo ( "Relative Path: '" + $RelativePath + "', Book Name: '" + $BookName + "'"  ) }
-
-# Build paths
-
-Try {
-
-    $CWD = (Resolve-Path .\).Path
-
-    $BUILD_DIRECTORY = [IO.Path]::Combine($CWD, $RelativePath)
-    # $BUILD_DIRECTORY = $CWD
-    $BUILD_DIRECTORY = (Resolve-Path $BUILD_DIRECTORY).Path
-
-    $FILENAME = [IO.Path]::Combine($BUILD_DIRECTORY, $BookName)
-
-} Catch {
-
-    echo $_.Exception.Message
-    LogEmptyLine
-    $z = Read-Host "Press enter to exit"
-    exit -1
-    return
-}
-
-LogInfo ( "Collecting tests " + $FILENAME )
+# declare Excel
+$excel = New-Object -ComObject Excel.Application
+$excel.DisplayAlerts = $false;
+$excel.EnableEvents = $false;
 
 $missing = [System.Reflection.Missing]::Value
 
-# start Excel
-$excel = New-Object -ComObject Excel.Application
+$UpdateLinks = $missing
+$ReadOnly = $true
+$Format = $missing
+$Password = $missing
+$WriteReservedPassword = $missing
+$IgnoreReadOnlyDisplay = $true
 
-$book = $excel.Workbooks.Open($FILENAME, $missing, $true)
+$ReadOnly = $false
 
-IF ( $DEBUG ) { LogInfo ( "Opened " + $book.Name ) }  
+$src = "C:\my\lib\vba\core\core\src\io\cc.isr.core.io.xlsm"
+LogInfo( "opening " + $src)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
+LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
 
-# select the active workbook
-$book = $excel.ActiveWorkbook
+$ReadOnly = $false
+$excel.EnableEvents = $true;
 
-IF ( $DEBUG ) { LogInfo ( "Active workbook " + $book.Name ) }  
+$src = "C:\my\lib\vba\core\core\src\testFx\cc.isr.test.fx.xlsm"
+LogInfo( "opening " + $src)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
+LogInfo ( "Opened " + $excel.ActiveWorkbook.Name )
 
 LogInfo( "project loaded. Script will close in 5 seconds" )
 Start-Sleep -Seconds 5
 # $z = Read-Host "Press enter to exit"
 
 exit 0
-
