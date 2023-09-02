@@ -77,7 +77,7 @@ Private Sub Workbook_Activate()
     On Error GoTo err_Handler
     
     ' show the active workbook
-    cc_isr_Core_IO.WorkbookExtensions.Show ThisWorkbook
+    Application.Windows(ThisWorkbook.Name).Visible = True
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:

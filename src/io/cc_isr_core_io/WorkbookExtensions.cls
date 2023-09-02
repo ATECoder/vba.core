@@ -43,7 +43,7 @@ End Sub
 ''' <param name="a_workbook">   [Excel.Workbook] The workbook. </param>
 Public Sub Hide(ByVal a_workbook As Excel.Workbook)
     
-        Application.Windows(a_workbook.Name).Visible = False
+    Application.Windows(a_workbook.Name).Visible = False
 
 End Sub
 
@@ -51,7 +51,7 @@ End Sub
 ''' <param name="a_workbook">   [Excel.Workbook] The workbook. </param>
 Public Sub Show(ByVal a_workbook As Excel.Workbook)
     
-        Application.Windows(a_workbook.Name).Visible = True
+    Application.Windows(a_workbook.Name).Visible = True
 
 End Sub
 

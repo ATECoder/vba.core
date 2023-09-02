@@ -14,7 +14,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Private Type this_
-    Code As Long
+    Number As Long
     Name As String
     Description As String
     Source As String
@@ -24,14 +24,14 @@ End Type
 Private This As this_
 
 ''' <summary>   Initializes and return this user defined error. </summary>
-''' <param name="a_errorCode">     [Long] The error code. </param>
+''' <param name="a_errorNumber">   [Long] The error Number. </param>
 ''' <param name="a_errorName">     [String] The error name. </param>
 ''' <param name="a_description">   [String] The error description. </param>
 ''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
-Public Function Initialize(ByVal a_errorCode As Long, ByVal a_errorName As String, _
+Public Function Initialize(ByVal a_errorNumber As Long, ByVal a_errorName As String, _
         ByVal a_description As String) As UserDefinedError
     This.Name = a_errorName
-    This.Code = a_errorCode
+    This.Number = a_errorNumber
     This.Description = a_description
     This.Source = VBA.vbNullString
     This.Timestamp = CoreExtensions.DaysNow()
@@ -44,16 +44,16 @@ End Function
 Public Function Clone(ByVal a_error As UserDefinedError) As UserDefinedError
     Dim p_error As UserDefinedError
     Set p_error = New UserDefinedError
-    p_error.Initialize a_error.Code, a_error.Name, a_error.Description
+    p_error.Initialize a_error.Number, a_error.Name, a_error.Description
     p_error.Source = a_error.Source
     p_error.Timestamp = a_error.Timestamp
     Set Clone = p_error
 End Function
 
-''' <summary>   Gets the error code. </summary>
-''' <value>   [Long] error code. </value>
-Public Property Get Code() As Long
-    Code = This.Code
+''' <summary>   Gets the error Number. </summary>
+''' <value>   [Long] error Number. </value>
+Public Property Get Number() As Long
+    Number = This.Number
 End Property
 
 ''' <summary>   Gets the error number base. Defaults to 512. </summary>
@@ -66,7 +66,7 @@ End Property
 ''' and error number base. </summary>
 ''' <value>   The user error number of Long type. </value>
 Public Property Get UserErrorNumber() As Long
-    UserErrorNumber = Me.Code - (VBA.vbObjectError + Me.UserErrorNumberBase)
+    UserErrorNumber = Me.Number - (VBA.vbObjectError + Me.UserErrorNumberBase)
 End Property
 
 ''' <summary>   Gets the error name. </summary>
@@ -112,7 +112,7 @@ End Property
 Public Function ToString(Optional ByVal a_additionalInfo As String = vbNullString) As String
     
     ToString = Me.Name & " " & _
-               VBA.Str$(Me.Code) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Code)) & _
+               VBA.Str$(Me.Number) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Number)) & _
                " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ")" & _
                Me.Description & a_additionalInfo & _
                " occured in " & _

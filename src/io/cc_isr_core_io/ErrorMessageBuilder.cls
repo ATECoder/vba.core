@@ -198,10 +198,10 @@ Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boo
         
         ' dequeue errors from the queue to the report and move them to the archive.
         Dim p_error As UserDefinedError
-        Set p_error = cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue
+        Set p_error = cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Dequeue
         
         ' ignore the last error if it has the same code as the Err object.
-        If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0 Or p_errorNumber <> p_error.Code Then
+        If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0 Or p_errorNumber <> p_error.Number Then
             If VBA.Len(p_builder) > 0 Then p_builder = p_builder & vbCrLf
             p_builder = p_builder & p_error.ToString()
         End If

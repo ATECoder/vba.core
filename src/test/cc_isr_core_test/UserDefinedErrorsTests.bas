@@ -66,7 +66,17 @@ Public Sub BeforeEach()
         Set This.BeforeEachAssert = Assert.Inconclusive(This.BeforeAllAssert.AssertMessage)
     
     End If
+
+    ' clear the error state.
+    cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
     
+    If This.BeforeEachAssert.AssertSuccessful Then
+    
+        Set This.BeforeEachAssert = Assert.AreEqual(0, Err.Number, _
+            "Error Number should be 0.")
+            
+    End If
+   
     This.TestNumber = This.TestNumber + 1
     
 End Sub
@@ -293,8 +303,8 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_lastError.Code, p_stackError.Code, _
-                "User defined errors stack should have the same error code as the last error.")
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_lastError.Number, p_stackError.Number, _
+                "User defined errors stack should have the same error Number as the last error.")
     End If
    
     
@@ -311,8 +321,5 @@ Public Sub RunTests()
     AfterEach
     AfterAll
 End Sub
-
-
-
 
 

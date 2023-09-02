@@ -79,7 +79,7 @@ End Sub
 '''                            error description. </param>
 Public Sub GuardDoubleInitialization(ByVal a_value As Variant, _
         ByVal a_source As String, _
-        Optional ByVal a_message As String = "Value is already initialized.")
+        Optional ByVal a_message As String = " Value is already initialized.")
     
     Dim p_throw As Boolean
     If IsObject(a_value) Then
