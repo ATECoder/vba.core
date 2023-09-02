@@ -16,8 +16,14 @@ Private This As this_
 Public Sub RunTests()
     BeforeAll
     BeforeEach
-    ' TestErrorMessageShouldBuild
-    TestRaisedErrorShouldBeReported
+    Dim a_testNumber As Integer: a_testNumber = 1
+    Select Case a_testNumber
+        Case 1
+            TestErrorMessageShouldBuild
+        Case 2
+            TestRaisedErrorShouldBeReported
+        Case Else
+    End Select
     AfterEach
     AfterAll
 End Sub
