@@ -13,6 +13,15 @@ End Type
 
 Private This As this_
 
+Public Sub RunTests()
+    BeforeAll
+    BeforeEach
+    ' TestErrorMessageShouldBuild
+    TestRaisedErrorShouldBeReported
+    AfterEach
+    AfterAll
+End Sub
+
 Public Sub BeforeAll()
 
     This.TestNumber = 0
@@ -120,6 +129,7 @@ Public Function TestErrorMessageShouldBuild() As cc_isr_Test_Fx.Assert
     
     ' Trap errors to the error handler
     On Error GoTo err_Handler
+    Dim p_errorNumber As Long
     
     Dim p_outcome As Assert: Set p_outcome = This.BeforeEachAssert
     
@@ -141,6 +151,8 @@ exit_Handler:
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 err_Handler:
   
+    p_errorNumber = VBA.Err.Number
+    
     ' build the error source
     cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource thisProcedureName, "UserDefinedErrorsTests", ThisWorkbook
     
@@ -159,13 +171,31 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Dim p_errorMessage As String: p_errorMessage = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage()
+        Dim p_errorMessage As String
+        p_errorMessage = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage()
         
         Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(p_errorMessage) > 0, _
                 "error message should build.")
     
     End If
    
+    If p_outcome.AssertSuccessful Then
+    
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(1, _
+            cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Count, _
+            "VBA Error should be added to the error archive.")
+    
+    End If
+    
+    Dim p_error As cc_isr_Core_IO.UserDefinedError
+    
+    If p_outcome.AssertSuccessful Then
+    
+        Set p_error = cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Pop
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_errorNumber, p_error.Number, _
+            "VBA Error should be the same as the error from the top of the stack.")
+    
+    End If
     
     On Error Resume Next
     
@@ -261,9 +291,9 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_lastError = cc_isr_Core_IO.Factory.NewUserDefinedError.Clone(cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Peek())
+        Set p_lastError = cc_isr_Core_IO.Factory.NewUserDefinedError.FromUserDefinedError(cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Peek())
         Set p_outcome = cc_isr_Test_Fx.Assert.IsNotNothing(p_lastError, _
-                "User defined errors should clone the last error.")
+                "User defined errors should initialize from the last queued error.")
     End If
     
     If p_outcome.AssertSuccessful Then
@@ -313,13 +343,4 @@ err_Handler:
     GoTo exit_Handler
 
 End Function
-
-Public Sub RunTests()
-    BeforeAll
-    BeforeEach
-    TestRaisedErrorShouldBeReported
-    AfterEach
-    AfterAll
-End Sub
-
 

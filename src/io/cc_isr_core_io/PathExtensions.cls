@@ -156,7 +156,8 @@ End Function
 ''' <param name="a_subFolder">   [String] The sub folder to join to the path. </param>
 ''' <param name="a_create">      [Boolean, False] If true, creates the folder for the path. </param>
 ''' <returns>   [String]. </returns>
-Public Function Join(ByVal a_path As String, ByVal a_subFolder As String, Optional ByVal a_create As Boolean = False) As String
+Public Function Join(ByVal a_path As String, ByVal a_subFolder As String, _
+        Optional ByVal a_create As Boolean = False) As String
 
     a_path = Me.JoinFile(a_path, a_subFolder)
     If a_create Then

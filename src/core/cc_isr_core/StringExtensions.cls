@@ -56,7 +56,6 @@ Public Function AreEqualDebug(ByVal a_expected As String, ByVal a_actual As Stri
 End Function
 
 ''' <summary>   Gets the character at the given index from the given string. </summary>
-''' <remarks>   </remarks>
 ''' <param name="a_text">    [String] The text to get the character from. </param>
 ''' <param name="a_index">   [Integer] The index of the character to get. </param>
 ''' <returns>   [String]. <returns>
@@ -67,7 +66,6 @@ Public Function CharAt(ByVal a_text As String, ByVal a_index As Integer) As Stri
 End Function
 
 ''' <summary>   Checks whether the given text ends with the given sequence. </summary>
-''' <remarks>   </remarks>
 ''' <param name="a_text">            [String] The text to check for the sequence. </param>
 ''' <param name="a_endText">         [String] The text to be located at the end. </param>
 ''' <param name="a_compareMethod">   [Optional, VbCompareMethod, vbBinaryCompare] The compare method. </param>
@@ -118,7 +116,7 @@ Public Function EscapeSequences() As Collection
     
 End Function
 
-''' <remarks>   Inserts escape sequences in place of their literal representation. </remarks>
+''' <summary>   Inserts escape sequences in place of their literal representation. </summary>
 ''' <param name="a_original">   [String] The original string. </param>
 ''' <returns>   [String]. <returns>
 Function InsertEscapeSequences(ByVal a_original As String) As String
@@ -137,7 +135,21 @@ Function InsertEscapeSequences(ByVal a_original As String) As String
     
 End Function
 
-''' <remarks>   Replace escape sequences with their literal representation. </remarks>
+''' <summary>   Replace white space with empty spaces. </summary>
+''' <remarks>   <see href="https://stackoverflow.com/questions/42306358/removing-all-spaces-in-string"/>
+''' </remarks>
+''' <param name="a_original">   [String] The original string. </param>
+''' <returns>   [String]. <returns>
+Public Function RemoveWhiteSpace(a_original As String) As String
+    With New RegExp
+        .Pattern = "\s"
+        .MultiLine = True
+        .Global = True
+        RemoveWhiteSpace = .Replace(a_original, vbNullString)
+    End With
+End Function
+
+''' <summary>   Replace escape sequences with their literal representation. </summary>
 ''' <param name="a_original">   [String] The original string. </param>
 ''' <returns>   [String]. <returns>
 Function ReplaceEscapeSequences(ByVal a_original As String) As String
@@ -218,7 +230,7 @@ Function ReplaceEscapeSequences(ByVal a_original As String) As String
 
 End Function
 
-''' <remarks>   Inserts or adds a string to an existing string at the specified position. </remarks>
+''' <summary>   Inserts or adds a string to an existing string at the specified position. </summary>
 ''' <param name="a_original">   [String] The original string. </param>
 ''' <param name="a_added">      [String] The string to insert or add. </param>
 ''' <param name="a_position">   [Long] The location for inserting the added string. </param>
@@ -242,8 +254,7 @@ Public Function IsNullOrEmpty(ByVal a_text As String) As Boolean
 End Function
 
 ''' <summary>   Pops an element from a delimited string. </summary>
-''' <remarks>
-''' Use this function to extract a substring from a string up to but not including the delimiter.
+''' <remarks>   Use this function to extract a substring from a string up to but not including the delimiter.
 ''' </remarks>
 ''' <param name="a_delimitedString">   [String] A series of tokens where a remainder string is returned. </param>
 ''' <param name="a_delimiter">         [String] Specifies the delimiter to use for returning the token. </param>
@@ -278,7 +289,6 @@ Public Function Pop(ByRef a_delimitedString As String, ByVal a_delimiter As Stri
 End Function
 
 ''' <summary>   Repeats the given string the given amount of times. </summary>
-''' <remarks>   </remarks>
 ''' <param name="a_text">    [String] The text to repeat. </param>
 ''' <param name="a_count">   [Integer] The amount of times to repeat the given string. </param>
 ''' <returns>   [String]. <returns>
@@ -294,7 +304,6 @@ End Function
 
 
 ''' <summary>   Checks whether a candidate is located in the given text. </summary>
-''' <remarks>   </remarks>
 ''' <param name="a_text">            [String] The text to check for containment. </param>
 ''' <param name="a_candidate">       [String] The text to locate within the string. </param>
 ''' <param name="a_compareMethod">   [Optional, VbCompareMethod, vbBinaryCompare] The compare method. </param>
@@ -1109,9 +1118,6 @@ Public Function StringFormat(ByVal a_format As String, ParamArray a_values() As 
         
 End Function
 
-
-
-
 ''' <summary>   Implements the .NET String.Format(). </summary>
 ''' <remarks>   <see href="https://stackoverflow.com/questions/14534360/implementing-string-format-in-vb6"/></remarks>
 ''' <param name="a_format">   [String] The format string. </param>
@@ -1705,7 +1711,6 @@ Public Function StringToWideString(ByVal a_text As String) As String
 End Function
 
 ''' <summary>   Checks whether the given text starts with the given sequence. </summary>
-''' <remarks>   </remarks>
 ''' <param name="a_text">            [String] The text to check for the start. </param>
 ''' <param name="a_startText">       [String] The text to be located at the start. </param>
 ''' <param name="a_compareMethod">   [Optional, VbCompareMethod, vbBinaryCompare] The compare method. </param>
@@ -1718,7 +1723,6 @@ Public Function StartsWith(ByVal a_text As String, ByVal a_startText As String, 
 End Function
 
 ''' <summary>   Gets the substring from the given text. </summary>
-''' <remarks>   </remarks>
 ''' <param name="a_text">         [String] The text to get the substring from. </param>
 ''' <param name="a_startIndex">   [Integer] The index of the first character of the substring. </param>
 ''' <param name="a_length">       [Optional, null] The number of characters to take from the original string. </param>

@@ -106,7 +106,7 @@ End Sub
 '''             nont already specified. </summary>
 ''' <param name="a_errProcedureName">   [String] Specifies the name of the procedure. </param>
 ''' <param name="a_errModuleName">      [String] Specifies the module name. </param>
-''' <param name="a_errProjectName">     [Optional, String] Specifies the project name; otherwise the project
+''' <param name="a_workbook">           [<] Specifies the project name; otherwise the project
 '''                                     name of the active workbook is used. </param>
 ''' <returns>   [String] The appedned error source.  </returns>
 Public Function AppendErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleName As String, _
@@ -169,42 +169,44 @@ Friend Function BuildErrorMessage(Optional ByVal a_displayWarning As Boolean = F
 End Function
 
 ''' <summary>   Builds a standard error message. </summary>
-''' <remarks>   This method appends the <see cref="UserDefinedErrors.LastError"/>
-''' to the <see cref="VBA.Err"/> object if the former is not nothing.
-''' The last error is appended in order to address automation errors where the
+''' <remarks>   This method enqueues the VBA Error object if the error is not
+''' a <see cref="UserDefinedError"/>. It then concatenates all the errors from the
+''' <see cref="UserDefinedErrors.ErrorQueue"/>, which are moved to the
+''' <see cref="UserDefinedErrors.ErrorArchveStack"/>. <para>
+''' Having an error queue also addresses automation errors where the
 ''' reporting workbook has no access to the error object of the error source, which
-''' might reside in a workbook that is not referenced by the reporting workbook.
-''' After being appended, the last error must be, and is, cleared and pushed to the
-''' top of the error stack, which top now holds the most recent error.
+''' might reside in a workbook that is not referenced by the reporting workbook.</para>
 ''' </remarks>
-''' <param name="a_displayWarning">   [Boolean, false] True to prefix the error with
-'''                                   'Warning' rather 'Error'. </param>
-''' <returns>   A Standard error message string in the form: <para>
-''' Error 0x# (Last DLL Error 0x#) occurred in <c>Source</c>: Description </para><para>
-''' or  </para><para>
-''' Warning 0x#  (Last DLL Error 0x#) occurred in <c>Source</c>: Description  </para>
-''' </returns>
-Public Function BuildStandardErrorMessage(Optional ByVal a_displayWarning As Boolean = False) As String
+''' <param name="a_delimited">   [String, VBCrLf] delimiter between errors. </param>
+''' <returns>   [String]. </returns>
+Public Function BuildStandardErrorMessage(Optional ByVal a_delimiter As String = VBA.vbCrLf) As String
 
     Dim p_builder As String: p_builder = VBA.vbNullString
     Dim p_errorNumber As Long: p_errorNumber = VBA.Err.Number
-    If p_errorNumber <> 0 Then
-        p_builder = Me.BuildErrorMessage(a_displayWarning)
+    
+    If UserDefinedErrors.IsUserDefinedError(p_errorNumber) Then
+        
+        ' if the error is user defined error, assume that the error is already enqued and can be
+        ' ignored when building the standard error message.
+    
+    Else
+        
+        ' if the error is not a user defined error, enqueue the error.
+        
+        UserDefinedErrors.EnqueueErrorObject
+    
     End If
     
+    Dim p_error As UserDefinedError
     While cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0
         
         DoEvents
         
         ' dequeue errors from the queue to the report and move them to the archive.
-        Dim p_error As UserDefinedError
         Set p_error = cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Dequeue
         
-        ' ignore the last error if it has the same code as the Err object.
-        If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0 Or p_errorNumber <> p_error.Number Then
-            If VBA.Len(p_builder) > 0 Then p_builder = p_builder & vbCrLf
-            p_builder = p_builder & p_error.ToString()
-        End If
+        If VBA.Len(p_builder) > 0 Then p_builder = p_builder & a_delimiter
+        p_builder = p_builder & p_error.ToString()
         
         ' push the error to the archive, which is circular.
         cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Push p_error

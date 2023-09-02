@@ -35,6 +35,7 @@ Private Type this_
     TimeoutError As UserDefinedError
     FormatError As UserDefinedError
     Ieee488DeviceError As UserDefinedError
+    FirstUserDefinedErrorNumber As Long
     NextUserDefinedErrorNumber As Long
     ErrorsQueue As Queue
     ErrorsArchiveStack As Stack
@@ -50,102 +51,84 @@ Private Sub Class_Initialize()
     Set This.ErrorsDix = New Dictionary
     Dim p_dummyError As UserDefinedError
     Set p_dummyError = New UserDefinedError
-    This.NextUserDefinedErrorNumber = VBA.vbObjectError + p_dummyError.UserErrorNumberBase + 1
+    This.FirstUserDefinedErrorNumber = VBA.vbObjectError + p_dummyError.UserErrorNumberBase + 1
+    This.NextUserDefinedErrorNumber = This.FirstUserDefinedErrorNumber
     
     Set This.WinsockStartingError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "WinsockStartingError", _
                                         "Failed starting Winsock using Winsock WSAStartup(). ")
     AddUserDefinedError Me.WinsockStartingError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
     
     Set This.WinsockCleanupError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "WinsockCleanupError", _
                                         "Failed disposing Winsock using Winsock WSACleanup(). ")
     AddUserDefinedError Me.WinsockCleanupError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
     
     Set This.SocketCreationError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketCreationError", _
                                         "Failed creating socket using Winsock socket(). ")
     AddUserDefinedError Me.SocketCreationError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
     
     Set This.SocketConnectionError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketConnectionError", _
                                         "Failed connecting socket using Winsock connect(). ")
     AddUserDefinedError Me.SocketConnectionError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
     
     Set This.SocketDisconnectionError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketDisconnectionError", _
                                             "Failed disconnecting socket using Winsock closesocket(). ")
     AddUserDefinedError Me.SocketDisconnectionError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
     
     Set This.SocketOptionSettingError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketOptionSettingError", _
                                             "Failed setting socket options using Winsock setsockopt(). ")
     AddUserDefinedError Me.SocketOptionSettingError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
     
     Set This.SocketSendError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketSendError", _
                                     "Failed send a socket message using Winsock send(). ")
     AddUserDefinedError Me.SocketSendError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.SocketReceiveError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketReceiveError", _
                                     "Failed receiving a socket message using Winsock recv(). ")
     AddUserDefinedError Me.SocketReceiveError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.SocketBindError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketBindError", _
                                     "Failed binding a socket using Winsock bind(). ")
     AddUserDefinedError Me.SocketBindError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.SocketListenError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketListenError", _
                                     "Failed stating a socket listening using Winsock listen(). ")
     AddUserDefinedError Me.SocketListenError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.SocketAcceptError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketAcceptError", _
                                     "Failed permitting an incoming connection attempt on a socket using Winsock accept(). ")
     AddUserDefinedError Me.SocketAcceptError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.SocketSetStatusError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketSetStatusError", _
                                         "Failed determining the socket status using Winsock select(). ")
     AddUserDefinedError Me.SocketSetStatusError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.NullArgumentError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "nullArgumentError", _
                                     "Null argument error. ")
     AddUserDefinedError Me.NullArgumentError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.InvalidArgumentError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "InvalidArgumentError", _
                                         "Invalid argument error. ")
     AddUserDefinedError Me.InvalidArgumentError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.InvalidFormatStringError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "InvalidFormatStringError", _
                                             "Invalid format string. ")
     AddUserDefinedError Me.InvalidFormatStringError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.InvalidOperationError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "InvalidOperationError", _
                                         "Invalid operation error. ")
     AddUserDefinedError Me.InvalidOperationError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
     
     Set This.TimeoutError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "TimeoutError", _
                                 "Timeout error. ")
     AddUserDefinedError Me.TimeoutError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.FormatError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "FormatError", _
         "The number indicating an argument to format is less than zero or greater than or equal to the length of the array of arguments. ")
     AddUserDefinedError Me.FormatError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
     Set This.Ieee488DeviceError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "Ieee488DeviceError", _
         "IEEE488 Device error(s) occurred. ")
     AddUserDefinedError Me.Ieee488DeviceError
-    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
 End Sub
 
@@ -156,7 +139,8 @@ Public Function Initialize() As UserDefinedErrors
     Set Initialize = Me
 End Function
 
-''' <summary>   Adds a user defined error to the error dictionary. </summary>
+''' <summary>   Adds a user defined error to the error dictionary and increments the
+''' <see cref="NextUserDefinedErrorNumber"/>. </summary>
 ''' <para name"a_userError">   The error of type <see cref="UserDefinedError"/>   </param>
 Private Sub AddUserDefinedError(ByVal a_userError As UserDefinedError)
     
@@ -166,11 +150,26 @@ Private Sub AddUserDefinedError(ByVal a_userError As UserDefinedError)
     a_userError.Timestamp = 0
     
     This.ErrorsDix.Add a_userError.Number, a_userError
+    
+    ' set the next error number.
+    This.NextUserDefinedErrorNumber = This.NextUserDefinedErrorNumber + 1
 
 End Sub
 
+''' <summary>   Returns true if the specified error number is a user defined error. </summary>
+''' <para name"a_errorNumber">   [Long] The error number.  </param>
+''' <returns>   [Boolean]. </returns>
+Public Function IsUserDefinedError(ByVal a_errorNumber As Long) As Boolean
+    
+    IsUserDefinedError = This.FirstUserDefinedErrorNumber <= a_errorNumber And _
+                         This.NextUserDefinedErrorNumber > a_errorNumber
+
+End Function
+
+
 ''' <summary>   Returns true if the specified error exists. </summary>
-''' <para name"a_userError">   The error of type <see cref="UserDefinedError"/>   </param>
+''' <para name"a_userError">   [<see cref="UserDefinedError"/>] The error. </param>
+''' <returns>   [Boolean]. </returns>
 Public Function UserDefinedErrorExists(ByVal a_userError As UserDefinedError) As Boolean
     
     UserDefinedErrorExists = This.ErrorsDix.Exists(a_userError.Number)
@@ -179,6 +178,7 @@ End Function
 
 ''' <summary>   Returns true if the specified error exists. </summary>
 ''' <para name"a_userErrorNumber">   [Long] The error Number </param>
+''' <returns>   [Boolean]. </returns>
 Public Function UserDefinedErrorNumberExists(ByVal a_userErrorNumber As Long) As Boolean
     
     UserDefinedErrorNumberExists = This.ErrorsDix.Exists(a_userErrorNumber)
@@ -187,7 +187,7 @@ End Function
 
 ''' <summary>   Returns a user defined error. </summary>
 ''' <param name="a_key">   [Long] The user defined error Number. </param>
-''' <returns>   An existing or a new 'unknown' <see cref="UserDefinedError"/>. </returns>
+''' <returns>   [<see cref="UserDefinedError"/>] An existing or a new 'unknown' user defined error.. </returns>
 Public Function GetUserDefinedError(ByVal a_key As Long) As UserDefinedError
     
     If This.ErrorsDix.Exists(a_key) Then
@@ -377,78 +377,42 @@ Public Property Get ErrorsArchiveStack() As Stack
     Set ErrorsArchiveStack = This.ErrorsArchiveStack
 End Property
 
-''' <summary>   Clones a user defined error optionally updating the error source and timeout
-''' and adding a suffix to the description. </summary>
-''' <param name="a_error">       [<see cref="UserDefinedError"/>]. </param>
-''' <param name="a_source">      [String] The error source. </param>
-''' <param name="a_suffix">      [String, Optional, Null] A suffix to append to the message description. </param>
-''' <param name="a_timestamp">   [Variant double] The error timestamp. </param>
-''' <returns>    [<see cref="UserDefinedError"/>]. </returns>
-Public Function CloneError(ByVal a_error As UserDefinedError, _
-        Optional ByVal a_source As String, _
-        Optional ByVal a_suffix As String, _
-        Optional ByVal a_timestamp As Variant) As UserDefinedError
-
-    ' Append new information tot he standard user defined error
-    
-    Dim p_description As String
-    p_description = a_error.Description
-    If Not VBA.IsMissing(a_suffix) Then _
-        If a_suffix <> VBA.vbNullString Then _
-            p_description = p_description & a_suffix
-    
-    Dim p_error As UserDefinedError
-    Set p_error = Factory.NewUserDefinedError.Initialize(a_error.Number, a_error.Name, _
-        p_description)
-    
-    If Not VBA.IsMissing(a_source) Then _
-        If a_source <> VBA.vbNullString Then _
-            p_error.Source = a_source
-    
-    If Not VBA.IsMissing(a_timestamp) Then _
-        p_error.Timestamp = a_timestamp
-    
-    Set CloneError = p_error
-
-End Function
-
-
 ''' <summary>   Enqueues a user defined error optionally updating the error source and timeout
 ''' and adding a suffix to the description. </summary>
 ''' <param name="a_error">       [<see cref="UserDefinedError"/>]. </param>
-''' <param name="a_source">      [String] The error source. </param>
-''' <param name="a_suffix">      [String, Optional, Null] A suffix to append to the message description. </param>
-''' <param name="a_timestamp">   [Variant double] The error timestamp. </param>
+''' <param name="a_source">      [Optional, Variant, String] The error source. </param>
+''' <param name="a_suffix">      [Optional, Variant, String] A suffix to append to the message description. </param>
+''' <param name="a_timestamp">   [Optional, Variant, Double] The error timestamp. </param>
 ''' <returns>    [<see cref="UserDefinedError"/>]. </returns>
 Public Function EnqueueError(ByVal a_error As UserDefinedError, _
-        Optional ByVal a_source As String, _
-        Optional ByVal a_suffix As String, _
+        Optional ByVal a_source As Variant, _
+        Optional ByVal a_suffix As Variant, _
         Optional ByVal a_timestamp As Variant) As UserDefinedError
 
-    Dim p_error As UserDefinedError
+    Dim p_error As New UserDefinedError
     
     If VBA.IsMissing(a_timestamp) Then
         If VBA.IsMissing(a_suffix) Then
             If VBA.IsMissing(a_source) Then
-                Set p_error = Me.CloneError(a_error)
+                p_error.FromAppendedUserDefinedError a_error
             Else
-                Set p_error = Me.CloneError(a_error, a_source)
+                p_error.FromAppendedUserDefinedError a_error, a_source
             End If
         ElseIf VBA.IsMissing(a_source) Then
-            Set p_error = Me.CloneError(a_error, a_suffix:=a_suffix)
+            p_error.FromAppendedUserDefinedError a_error, a_suffix:=a_suffix
         Else
-            Set p_error = Me.CloneError(a_error, a_source, a_suffix)
+            p_error.FromAppendedUserDefinedError a_error, a_source, a_suffix
         End If
     ElseIf VBA.IsMissing(a_suffix) Then
         If VBA.IsMissing(a_source) Then
-            Set p_error = Me.CloneError(a_error, a_timestamp:=a_timestamp)
+            p_error.FromAppendedUserDefinedError a_error, a_timestamp:=a_timestamp
         Else
-            Set p_error = Me.CloneError(a_error, a_source:=a_source, a_timestamp:=a_timestamp)
+            p_error.FromAppendedUserDefinedError a_error, a_source:=a_source, a_timestamp:=a_timestamp
         End If
     ElseIf VBA.IsMissing(a_source) Then
-        Set p_error = Me.CloneError(a_error, a_suffix:=a_suffix, a_timestamp:=a_timestamp)
+        p_error.FromAppendedUserDefinedError a_error, a_suffix:=a_suffix, a_timestamp:=a_timestamp
     Else
-        Set p_error = Me.CloneError(a_error, a_source, a_suffix, a_timestamp)
+        p_error.FromAppendedUserDefinedError a_error, a_source, a_suffix, a_timestamp
     End If
     
     This.ErrorsQueue.Enqueue p_error
@@ -457,14 +421,61 @@ Public Function EnqueueError(ByVal a_error As UserDefinedError, _
 
 End Function
 
+''' <summary>   Enqueues a VBA Error object optionally updating the error source and timeout
+''' and adding a suffix to the description. </summary>
+''' <param name="a_source">      [Optional, Variant, String] The error source. </param>
+''' <param name="a_suffix">      [Optional, Variant, String] A suffix to append to the message description. </param>
+''' <param name="a_timestamp">   [Optional, Variant, double] The error timestamp. </param>
+''' <returns>    [<see cref="UserDefinedError"/>]. </returns>
+Public Function EnqueueErrorObject( _
+        Optional ByVal a_source As Variant, _
+        Optional ByVal a_suffix As Variant, _
+        Optional ByVal a_timestamp As Variant) As UserDefinedError
+
+    Dim p_error As New UserDefinedError
+    
+    If 0 <> Err.Number Then
+    
+        If VBA.IsMissing(a_timestamp) Then
+            If VBA.IsMissing(a_suffix) Then
+                If VBA.IsMissing(a_source) Then
+                    p_error.FromAppendedErrorObject
+                Else
+                    p_error.FromAppendedErrorObject a_source
+                End If
+            ElseIf VBA.IsMissing(a_source) Then
+                p_error.FromAppendedErrorObject a_suffix:=a_suffix
+            Else
+                p_error.FromAppendedErrorObject a_source, a_suffix
+            End If
+        ElseIf VBA.IsMissing(a_suffix) Then
+            If VBA.IsMissing(a_source) Then
+                p_error.FromAppendedErrorObject a_timestamp:=a_timestamp
+            Else
+                p_error.FromAppendedErrorObject a_source:=a_source, a_timestamp:=a_timestamp
+            End If
+        ElseIf VBA.IsMissing(a_source) Then
+            p_error.FromAppendedErrorObject a_suffix:=a_suffix, a_timestamp:=a_timestamp
+        Else
+            p_error.FromAppendedErrorObject a_source, a_suffix, a_timestamp
+        End If
+        
+        This.ErrorsQueue.Enqueue p_error
+    
+    End If
+
+    Set EnqueueErrorObject = p_error
+
+End Function
+
 ''' <summary>   Raises a user defined error optionally updating the error source and timeout
 ''' and adding a suffix to the description. </summary>
 ''' <param name="a_error">       [<see cref="UserDefinedError"/>]. </param>
 ''' <param name="a_source">      [String] The error source. </param>
-''' <param name="a_suffix">      [String, Optional, Null] A suffix to append to the message description. </param>
-''' <param name="a_timestamp">   [Variant double] The error timestamp. </param>
+''' <param name="a_suffix">      [Optional, Variant, String] A suffix to append to the message description. </param>
+''' <param name="a_timestamp">   [Optional, Variant, Double] The error timestamp. </param>
 Public Sub RaiseError(ByVal a_error As UserDefinedError, ByVal a_source As String, _
-        Optional ByVal a_suffix As String, _
+        Optional ByVal a_suffix As Variant, _
         Optional ByVal a_timestamp As Variant)
 
     Dim p_error As UserDefinedError

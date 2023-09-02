@@ -211,6 +211,29 @@ Public Function TestPop() As cc_isr_Test_Fx.Assert
 
 End Function
 
+''' <summary>   Unit test. Asserts removing white spaces. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestRemoveWhiteSpaces() As cc_isr_Test_Fx.Assert
+    
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    
+    Dim p_original As String
+    Dim p_expected As String
+    Dim p_actual As String
+    
+    p_original = "Hello world!"
+    p_expected = "Helloworld!"
+    p_actual = cc_isr_Core.StringExtensions.RemoveWhiteSpace(p_original)
+    
+    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_actual, _
+            "Should remove all white spaces from '" & p_original & "'.")
+            
+    Debug.Print p_outcome.BuildReport("TestRemoveWhiteSpaces")
+    
+    Set TestRemoveWhiteSpaces = p_outcome
+
+End Function
+
 ''' <summary>   Unit test. Asserts creating a repeated string. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestRepeat() As cc_isr_Test_Fx.Assert

@@ -38,16 +38,111 @@ Public Function Initialize(ByVal a_errorNumber As Long, ByVal a_errorName As Str
     Set Initialize = Me
 End Function
 
-''' <summary>   Clones a user defined error. </summary>
-''' <param name="a_error">     [[<see cref="UserDefinedError"/>] The error to clone. </param>
+''' <summary>   Clones this user defined error and return a new user defined error. </summary>
 ''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
-Public Function Clone(ByVal a_error As UserDefinedError) As UserDefinedError
+Public Function Clone() As UserDefinedError
     Dim p_error As UserDefinedError
     Set p_error = New UserDefinedError
-    p_error.Initialize a_error.Number, a_error.Name, a_error.Description
-    p_error.Source = a_error.Source
-    p_error.Timestamp = a_error.Timestamp
+    p_error.Initialize Me.Number, Me.Name, Me.Description
+    p_error.Source = Me.Source
+    p_error.Timestamp = Me.Timestamp
     Set Clone = p_error
+End Function
+
+''' <summary>   Initialize this error from the given error. </summary>
+''' <param name="a_error">     [[<see cref="UserDefinedError"/>] The error to initialize from. </param>
+''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
+Public Function FromUserDefinedError(ByVal a_error As UserDefinedError) As UserDefinedError
+    This.Name = a_error.Name
+    This.Number = a_error.Number
+    This.Description = a_error.Description
+    This.Source = a_error.Source
+    This.Timestamp = a_error.Timestamp
+    Set FromUserDefinedError = Me
+End Function
+
+''' <summary>   Initialize a user defined error from a user defined error appended with
+''' source, description and timestamp. </summary>
+''' <param name="a_error">       [<see cref="UserDefinedError"/>]. </param>
+''' <param name="a_source">      [String] The error source. </param>
+''' <param name="a_suffix">      [String, Optional, Null] A suffix to append to the message description. </param>
+''' <param name="a_timestamp">   [Variant double] The error timestamp. </param>
+''' <returns>    [<see cref="UserDefinedError"/>]. </returns>
+Public Function FromAppendedUserDefinedError(ByVal a_error As UserDefinedError, _
+        Optional ByVal a_source As String, _
+        Optional ByVal a_suffix As String, _
+        Optional ByVal a_timestamp As Variant) As UserDefinedError
+
+    This.Name = a_error.Name
+    This.Number = a_error.Number
+    This.Description = a_error.Description & a_suffix
+     
+    If Not VBA.IsMissing(a_source) Then _
+        If VBA.vbNullString <> a_source Then _
+            This.Source = a_source
+    
+    If Not VBA.IsMissing(a_timestamp) Then _
+        This.Timestamp = a_timestamp
+    
+    If 0# = CDbl(a_timestamp) Then _
+        This.Timestamp = CoreExtensions.DaysNow()
+    
+    Set FromAppendedUserDefinedError = Me
+
+End Function
+
+''' <summary>   Replace white spaces with empty spaces. </summary>
+''' <remarks>   <see href="https://stackoverflow.com/questions/42306358/removing-all-spaces-in-string"/>
+''' </remarks>
+''' <param name="a_original">   [String] The original string. </param>
+''' <returns>   [String]. <returns>
+Public Function RemoveWhiteSpace(a_original As String) As String
+    With New RegExp
+        .Pattern = "\s"
+        .MultiLine = True
+        .Global = True
+        RemoveWhiteSpace = .Replace(a_original, vbNullString)
+    End With
+End Function
+
+''' <summary>   Initialize the used defined error from the VBA Error object. </summary>
+''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
+Public Function FromErrorObject() As UserDefinedError
+    This.Name = Me.RemoveWhiteSpace(VBA.Err.Description)
+    This.Number = VBA.Err.Number
+    This.Description = VBA.Err.Description
+    This.Source = Err.Source
+    This.Timestamp = CoreExtensions.DaysNow()
+    Set FromErrorObject = Me
+End Function
+
+''' <summary>   Initialize a user defined error from a user defined error appended with
+''' source, description and timestamp. </summary>
+''' <param name="a_error">       [<see cref="UserDefinedError"/>]. </param>
+''' <param name="a_source">      [String] The error source. </param>
+''' <param name="a_suffix">      [String, Optional, Null] A suffix to append to the message description. </param>
+''' <param name="a_timestamp">   [Variant double] The error timestamp. </param>
+''' <returns>    [<see cref="UserDefinedError"/>]. </returns>
+Public Function FromAppendedErrorObject( _
+        Optional ByVal a_source As String, _
+        Optional ByVal a_suffix As String, _
+        Optional ByVal a_timestamp As Variant) As UserDefinedError
+
+    Me.FromErrorObject
+    This.Description = Err.Description & a_suffix
+    
+    If Not VBA.IsMissing(a_source) Then _
+        If VBA.vbNullString <> a_source Then _
+            This.Source = a_source
+    
+    If Not VBA.IsMissing(a_timestamp) Then _
+        This.Timestamp = a_timestamp
+    
+    If 0# = CDbl(a_timestamp) Then _
+        This.Timestamp = CoreExtensions.DaysNow()
+    
+    Set FromAppendedErrorObject = Me
+
 End Function
 
 ''' <summary>   Gets the error Number. </summary>
