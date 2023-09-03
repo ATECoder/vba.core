@@ -53,21 +53,27 @@ $excel.DisplayAlerts = $false;
 
 $missing = [System.Reflection.Missing]::Value
 
+$ReadOnly = $false
+
 $src = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.core.io.xlsm")
 LogInfo( "opening " + $src)
-$book = $excel.Workbooks.Open($src, $missing, $false, $missing, $missing, $missing, $true)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
 $io_book = $excel.ActiveWorkbook
 LogInfo ( "Opened " + $io_book.Name )
 
+$ReadOnly = $false
+
 $src = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.core.xlsm") 
 LogInfo( "opening " + $src)
-$book = $excel.Workbooks.Open($src, $missing, $false, $missing, $missing, $missing, $true)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
 $core_book = $excel.ActiveWorkbook
 LogInfo ( "Opened " + $core_book.Name )
 
+$ReadOnly = $false
+
 $src = [IO.Path]::Combine($BUILD_DIRECTORY, "cc.isr.core.demo.xlsm") 
 LogInfo( "opening " + $src)
-$book = $excel.Workbooks.Open($src, $missing, $false, $missing, $missing, $missing, $true)
+$book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
 $demo_book = $excel.ActiveWorkbook
 LogInfo ( "Opened " + $demo_book.Name )
 
