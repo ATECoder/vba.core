@@ -1,4 +1,4 @@
-Attribute VB_Name = "AssetTests"
+Attribute VB_Name = "AssertTests"
 ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ''' <summary>   Test assertion tests.  </summary>
 ''' <remarks>   Dependencies: Assert.cls.
