@@ -133,6 +133,46 @@ Public Function AreNotEqual(ByVal a_expected As Variant, ByVal a_actual As Varia
     End If
 End Function
 
+''' <summary>   Asserts that string values are equal. If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [String] The value the caller expects to have. </param
+''' <param name="a_actual">     [String] The actual value. </param
+''' <param name="a_compare">    [VBA.VbCompareMethod] The compare method. </param
+''' <param name=a_"message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if values
+'''             are equal; otherwise, False. </returns>
+Public Function AreEqualString(ByVal a_expected As String, ByVal a_actual As String, _
+    ByVal a_compare As VBA.VbCompareMethod, _
+    ByVal a_message As String) As Assert
+
+    Set AreEqualString = Me.IsTrue(1 = VBA.InStr(1, a_expected, a_actual, a_compare), a_message)
+    
+    If Not AreEqualString.AssertSuccessful Then
+        AreEqualString.AssertMessage = AreEqualString.AssertMessage & vbCrLf & _
+                "    Expected: " & a_expected & vbCrLf & _
+                "    Actual:   " & a_actual
+    End If
+End Function
+
+''' <summary>   Asserts that string values are not equal. If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [Variant] The value the caller expects to have. </param
+''' <param name="a_actual">     [Variant] The actual value. </param
+''' <param name="a_compare">    [VBA.VbCompareMethod] The compare method. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             values are not equal; otherwise, false. </returns>
+Public Function AreNotEqualString(ByVal a_expected As String, ByVal a_actual As String, _
+    ByVal a_compare As VBA.VbCompareMethod, _
+    ByVal a_message As String) As Assert
+    
+    Set AreNotEqualString = Me.IsTrue(1 <> VBA.InStr(1, a_expected, a_actual, a_compare), a_message)
+    
+    If Not AreNotEqualString.AssertSuccessful Then
+        AreNotEqualString.AssertMessage = AreNotEqualString.AssertMessage & vbCrLf & _
+                "    Expected: " & a_expected & vbCrLf & _
+                "    Actual:   " & a_actual
+    End If
+End Function
+
 ''' <summary>   Asserts that the given value is Nothing. </summary>
 ''' <param name="a_actual">    [Variant] The actual value. </param
 ''' <param name="a_message">   [String] A message to show in case the assertion failed. </param

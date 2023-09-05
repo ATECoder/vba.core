@@ -268,7 +268,43 @@ Public Function TestAssertingNonSamenessShouldReportNonSameness() As Assert
     
 End Function
 
+''' <summary>   Unit test. String equality should work. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
+Public Function TestStringEqualityShouldWork() As Assert
 
+    Dim p_outcome As Assert
+    
+    Dim p_expected As String
+    Dim p_actual As String
+    
+    p_expected = "ALL CAPS"
+    p_actual = "ALL CAPS"
+    Set p_outcome = Assert.AreEqualString(p_expected, p_actual, VBA.VbCompareMethod.vbBinaryCompare, _
+        "The two strings should equal using binary compare.")
+        
+    If p_outcome.AssertSuccessful Then
+    
+        p_expected = "ALL CAPS"
+        p_actual = "all caps"
+        Set p_outcome = Assert.AreNotEqualString(p_expected, p_actual, VBA.VbCompareMethod.vbBinaryCompare, _
+            "The two string should not equal using binary compare.")
+    
+    End If
+   
+    If p_outcome.AssertSuccessful Then
+    
+        p_expected = "ALL CAPS"
+        p_actual = "all caps"
+        Set p_outcome = Assert.AreEqualString(p_expected, p_actual, VBA.VbCompareMethod.vbTextCompare, _
+            "The two string should equal using text compare.")
+    
+    End If
+   
+    Debug.Print p_outcome.BuildReport("TestStringEqualityShouldWork")
+    
+    Set TestStringEqualityShouldWork = p_outcome
+    
+End Function
 
 
 
