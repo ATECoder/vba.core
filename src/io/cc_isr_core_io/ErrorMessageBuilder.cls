@@ -20,8 +20,9 @@ Option Explicit
 Public Function FormattedErr() As String
     
     Dim p_errNoDetails As String
-    p_errNoDetails = "(" & (VBA.Err.Number - VBA.vbObjectError) & "/0x" & _
-                     VBA.LCase$(VBA.Hex$(VBA.Err.Number))
+    p_errNoDetails = "(" & _
+        VBA.CStr(VBA.Err.Number - VBA.vbObjectError) & _
+        " 0x" & VBA.LCase$(VBA.Hex$(VBA.Err.Number))
     If Err.LastDllError <> 0 Then
         p_errNoDetails = p_errNoDetails & " (Last DLL Error 0x"
         p_errNoDetails = p_errNoDetails & VBA.LCase$(VBA.Hex$(Err.LastDllError)) & ")"
@@ -139,11 +140,16 @@ Friend Function BuildErrorMessage(Optional ByVal a_displayWarning As Boolean = F
     If VBA.Err.Number <> 0 Then
     
         p_builder = p_builder & IIf(a_displayWarning, "Warning ", "Error ")
-        p_builder = p_builder & Format$(VBA.Err.Number)
+        p_builder = p_builder & VBA.CStr(VBA.Err.Number)
         
-        Dim p_errNumber As Long: p_errNumber = VBA.Err.Number - vbObjectError
+        Dim p_errNumber As Long: p_errNumber = VBA.Err.Number
+        If VBA.Err.Number < 0 Then
+            p_errNumber = VBA.Err.Number - VBA.vbObjectError
+        Else
+            p_errNumber = VBA.Err.Number
+        End If
         
-        If Abs(p_errNumber) < &HFFFF& Then
+        If Abs(p_errNumber) > &H200 Then
             p_errNumber = p_errNumber - &H200
             p_builder = p_builder & "(+0x"
         Else

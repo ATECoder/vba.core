@@ -157,11 +157,23 @@ Public Property Get UserErrorNumberBase() As Long
     UserErrorNumberBase = 512
 End Property
 
+''' <summary>   Gets the iondication that this error came from a <see cref="VBA.Err"/> object. </summary>
+''' <value>   [Boolean]. </value>
+Public Property Get IsFromErrorObject() As Boolean
+    IsFromErrorObject = 0 <= Me.Number And 512 >= Me.Number
+End Property
+
 ''' <summary>   Gets the user defined error number after removing the vbObjectError
 ''' and error number base. </summary>
-''' <value>   The user error number of Long type. </value>
+''' <value>   [Long]. </value>
 Public Property Get UserErrorNumber() As Long
-    UserErrorNumber = Me.Number - (VBA.vbObjectError + Me.UserErrorNumberBase)
+    If Me.IsFromErrorObject Then
+        ' if this error was traced from a VBA error object, leave the error
+        ' unchanged.
+        UserErrorNumber = Me.Number
+    Else
+        UserErrorNumber = Me.Number - (VBA.vbObjectError + Me.UserErrorNumberBase)
+    End If
 End Property
 
 ''' <summary>   Gets the error name. </summary>
@@ -208,7 +220,7 @@ Public Function ToString(Optional ByVal a_additionalInfo As String = vbNullStrin
     
     ToString = Me.Name & " " & _
                VBA.Str$(Me.Number) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Number)) & _
-               " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ")" & _
+               " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ") " & _
                Me.Description & a_additionalInfo & _
                " occured in " & _
                IIf(VBA.vbNullString = Me.Source, " unknown", Me.Source) & _
