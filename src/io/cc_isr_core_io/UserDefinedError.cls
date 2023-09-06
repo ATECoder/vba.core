@@ -222,8 +222,33 @@ Public Function ToString(Optional ByVal a_additionalInfo As String = vbNullStrin
                VBA.Str$(Me.Number) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Number)) & _
                " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ") " & _
                Me.Description & a_additionalInfo & _
-               " occured in " & _
+               " occurred in " & _
                IIf(VBA.vbNullString = Me.Source, " unknown", Me.Source) & _
                " at " & CoreExtensions.FormatDays(Me.Timestamp) & "."
 End Function
+
+''' <summary>   Checks if the two user defined errors are equal. </summary>
+''' <param name="a_error">           [<See cref="UserDefinedError"/>] The error to check for equality. </param>
+''' <param name="a_compareMethod">   [Optional, <See cref="VBA.VbCompareMethod"/>, VBA.VbCompareMethod.vbTextCompare ]
+'''                                  the comparison method. </param>
+''' <param name="a_timespan">        [Optional, Double, 0.01] The timespan in seconds between the two
+'''                                  timestamps. </param>
+''' <returns>   [Boolean]. </returns>
+Public Function Equals(ByVal a_error As UserDefinedError, _
+    Optional ByVal a_timespan As Double = 0.01, _
+    Optional ByVal a_compareMethod As VBA.VbCompareMethod = VBA.VbCompareMethod.vbTextCompare) As Boolean
+    If IsObject(a_error) Then
+        Equals = True And Me.Number = a_error.Number And _
+                 (0 = VBA.StrComp(Me.Name, a_error.Name, a_compareMethod)) And _
+                 (0 = VBA.StrComp(Me.Description, a_error.Description, a_compareMethod)) And _
+                 (0 = VBA.StrComp(Me.Source, a_error.Source, a_compareMethod)) And _
+                 ((a_timespan / cc_isr_Core_IO.CoreExtensions.SecondsPerDay) >= _
+                        VBA.Abs(Me.Timestamp - a_error.Timestamp))
+    Else
+        Equals = False
+    End If
+End Function
+
+
+
 

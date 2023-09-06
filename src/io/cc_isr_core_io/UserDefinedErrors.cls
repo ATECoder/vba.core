@@ -39,6 +39,7 @@ Private Type this_
     NextUserDefinedErrorNumber As Long
     ErrorsQueue As Queue
     ErrorsArchiveStack As Stack
+    LastQueuedError As UserDefinedError
 End Type
 
 Private This As this_
@@ -165,7 +166,6 @@ Public Function IsUserDefinedError(ByVal a_errorNumber As Long) As Boolean
                          This.NextUserDefinedErrorNumber > a_errorNumber
 
 End Function
-
 
 ''' <summary>   Returns true if the specified error exists. </summary>
 ''' <para name"a_userError">   [<see cref="UserDefinedError"/>] The error. </param>
@@ -366,16 +366,133 @@ Public Property Let NextUserDefinedErrorNumber(ByVal a_value As Long)
 End Property
 
 ''' <summary>   Gets the stack of enqueued errors. </summary>
+''' <remarks>   Pending removal. </remarks>
 ''' <value>   [<see cref="cc_isr_Core_IO.Queue"/>]. </value>
-Public Property Get ErrorsQueue() As Queue
+Private Property Get ErrorsQueue() As Queue
     Set ErrorsQueue = This.ErrorsQueue
 End Property
 
+''' <summary>   Dequeue an error from the queue. </summary>
+''' <returns>   [<see cref="cc_isr_Core_IO.Stack"/>]. </value>
+Public Function Dequeue() As UserDefinedError
+
+    If Me.QueuedErrorCount = 0 Then
+        Set Dequeue = Nothing
+    Else
+        Set Dequeue = This.ErrorsQueue.Dequeue()
+    End If
+    
+    If Me.QueuedErrorCount = 0 Then
+        Set This.LastQueuedError = Nothing
+    End If
+    
+End Function
+
+''' <summary>   Gets the number of queued errors. </summary>
+''' <value>   [Integer]. </value>
+Public Property Get QueuedErrorCount() As Integer
+    QueuedErrorCount = This.ErrorsQueue.Count
+End Property
+
 ''' <summary>   Gets the stack of archived errors. </summary>
+''' <remarks>   Pending removal. </remarks>
 ''' <value>   [<see cref="cc_isr_Core_IO.Stack"/>]. </value>
-Public Property Get ErrorsArchiveStack() As Stack
+Private Property Get ErrorsArchiveStack() As Stack
     Set ErrorsArchiveStack = This.ErrorsArchiveStack
 End Property
+
+''' <summary>   Push an error onto the error archive. </summary>
+''' <returns>   [<see cref="cc_isr_Core_IO.UserDefinedError"/>]. </value>
+Public Function Push(ByVal a_error As UserDefinedError) As UserDefinedError
+
+    This.ErrorsArchiveStack.Push a_error
+    Set Push = a_error
+    
+End Function
+
+''' <summary>   Gets the number of archived errors. </summary>
+''' <value>   [Integer]. </value>
+Public Property Get ArchivedErrorCount() As Integer
+    ArchivedErrorCount = This.ErrorsQueue.Count
+End Property
+
+''' <summary>   Archives the queued errors and returns the errors as a delimited string. </summary>
+''' <param name="a_delimiter">   [String, VBCrLf] delimiter between errors. </param>
+''' <returns>   [String]. </returns>
+Public Function ArchiveQueuedErrors(Optional ByVal a_delimiter As String = VBA.vbCrLf) As String
+
+    Dim p_builder As String: p_builder = VBA.vbNullString
+    
+    Dim p_error As UserDefinedError
+    While This.ErrorsQueue.Count > 0
+        
+        DoEvents
+        
+        ' dequeue errors from the queue to the string builder and move them to the archive.
+        Set p_error = This.ErrorsQueue.Dequeue
+        
+        If VBA.Len(p_builder) > 0 Then p_builder = p_builder & a_delimiter
+        p_builder = p_builder & p_error.ToString()
+        
+        ' push the error to the archive, which is circular.
+        This.ErrorsArchiveStack.Push p_error
+        
+    Wend
+    
+    ' clear the last error
+    Set This.LastQueuedError = Nothing
+    
+    ArchiveQueuedErrors = p_builder
+
+End Function
+
+''' <summary>   Move all archived errors to a delimited string. </summary>
+''' <param name="a_delimiter">   [String, VBCrLf] delimiter between errors. </param>
+''' <returns>   [String]. </returns>
+Public Function PopArchivedErrors(Optional ByVal a_delimiter As String = VBA.vbCrLf) As String
+
+    Dim p_builder As String: p_builder = VBA.vbNullString
+    
+    Dim p_error As UserDefinedError
+    While This.ErrorsArchiveStack.Count > 0
+        
+        DoEvents
+        
+        ' pop errors from the archive to the string builder.
+        Set p_error = This.ErrorsArchiveStack.Pop
+        
+        If VBA.Len(p_builder) > 0 Then p_builder = p_builder & a_delimiter
+        p_builder = p_builder & p_error.ToString()
+        
+    Wend
+    
+    PopArchivedErrors = p_builder
+
+End Function
+
+
+''' <summary>   Enqueues a new user defined error or append the source to the last user defined error. </summary>
+''' <param name="a_error">       [<see cref="UserDefinedError"/>]. </param>
+''' <returns>    [<see cref="UserDefinedError"/>]. </returns>
+Public Function EnqueueUserDefinedError(ByVal a_error As UserDefinedError) As UserDefinedError
+
+    If This.LastQueuedError Is Nothing Then
+        ' if no last error, make this the last error and enqueue it.
+        Set This.LastQueuedError = a_error
+        This.ErrorsQueue.Enqueue This.LastQueuedError
+    ElseIf This.LastQueuedError.Equals(a_error) Then
+        ' append the error source if the error is the same as the last error.
+        This.LastQueuedError.Source = This.LastQueuedError.Source & " in " & a_error.Source
+    Else
+        ' if this is a new error, make this the last error and enqueue it.
+        Set This.LastQueuedError = a_error
+        This.ErrorsQueue.Enqueue This.LastQueuedError
+    End If
+    
+    ' return the last error.
+    Set EnqueueUserDefinedError = This.LastQueuedError
+    
+End Function
 
 ''' <summary>   Enqueues a user defined error optionally updating the error source and timeout
 ''' and adding a suffix to the description. </summary>
@@ -415,14 +532,12 @@ Public Function EnqueueError(ByVal a_error As UserDefinedError, _
         p_error.FromAppendedUserDefinedError a_error, a_source, a_suffix, a_timestamp
     End If
     
-    This.ErrorsQueue.Enqueue p_error
-    
-    Set EnqueueError = p_error
+    Set EnqueueError = Me.EnqueueUserDefinedError(p_error)
 
 End Function
 
 ''' <summary>   Enqueues a VBA Error object optionally updating the error source and timeout
-''' and adding a suffix to the description. </summary>
+''' and adding a suffix to the description. . </summary>
 ''' <param name="a_source">      [Optional, Variant, String] The error source. </param>
 ''' <param name="a_suffix">      [Optional, Variant, String] A suffix to append to the message description. </param>
 ''' <param name="a_timestamp">   [Optional, Variant, double] The error timestamp. </param>
@@ -460,11 +575,13 @@ Public Function EnqueueErrorObject( _
             p_error.FromAppendedErrorObject a_source, a_suffix, a_timestamp
         End If
         
-        This.ErrorsQueue.Enqueue p_error
+        Set EnqueueErrorObject = Me.EnqueueUserDefinedError(p_error)
+
+    Else
+    
+        Set EnqueueErrorObject = p_error
     
     End If
-
-    Set EnqueueErrorObject = p_error
 
 End Function
 
@@ -499,11 +616,14 @@ End Sub
 ''' <summary>   Clears the VBA Error object, and user defined error archive and queue. </summary>
 Public Sub ClearErrorState()
 
+    ' remove the last queued error.
+    This.LastQueuedError = Nothing
+
     ' clear the error archive.
-    Me.ErrorsArchiveStack.Clear
+    This.ErrorsArchiveStack.Clear
 
     ' clear the error queue.
-    Me.ErrorsQueue.Clear
+    This.ErrorsQueue.Clear
 
     ' clear the error object
     Err.Clear

@@ -183,43 +183,25 @@ End Function
 ''' reporting workbook has no access to the error object of the error source, which
 ''' might reside in a workbook that is not referenced by the reporting workbook.</para>
 ''' </remarks>
-''' <param name="a_delimited">   [String, VBCrLf] delimiter between errors. </param>
+''' <param name="a_delimiter">   [String, VBCrLf] delimiter between errors. </param>
 ''' <returns>   [String]. </returns>
 Public Function BuildStandardErrorMessage(Optional ByVal a_delimiter As String = VBA.vbCrLf) As String
 
-    Dim p_builder As String: p_builder = VBA.vbNullString
-    Dim p_errorNumber As Long: p_errorNumber = VBA.Err.Number
+    ' enqueue the error object or append its source to the last error.
+    UserDefinedErrors.EnqueueErrorObject
     
-    If UserDefinedErrors.IsUserDefinedError(p_errorNumber) Then
-        
-        ' if the error is user defined error, assume that the error is already enqued and can be
-        ' ignored when building the standard error message.
-    
-    Else
-        
-        ' if the error is not a user defined error, enqueue the error.
-        
-        UserDefinedErrors.EnqueueErrorObject
-    
-    End If
-    
-    Dim p_error As UserDefinedError
-    While cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0
-        
-        DoEvents
-        
-        ' dequeue errors from the queue to the report and move them to the archive.
-        Set p_error = cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Dequeue
-        
-        If VBA.Len(p_builder) > 0 Then p_builder = p_builder & a_delimiter
-        p_builder = p_builder & p_error.ToString()
-        
-        ' push the error to the archive, which is circular.
-        cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Push p_error
-        
-    Wend
-    
-    BuildStandardErrorMessage = p_builder
+    ' return the queued errors as a delimited string.
+    BuildStandardErrorMessage = cc_isr_Core_IO.UserDefinedErrors.ArchiveQueuedErrors(a_delimiter)
+
+End Function
+
+''' <summary>   Builds a delimited string of the archived messages clearing teh archive. </summary>
+''' <param name="a_delimiter">   [String, VBCrLf] delimiter between errors. </param>
+''' <returns>   [String]. </returns>
+Public Function BuildArchivedErrorsMessage(Optional ByVal a_delimiter As String = VBA.vbCrLf) As String
+
+    ' return the archived errors as a delimited string.
+    BuildArchivedErrorsMessage = cc_isr_Core_IO.UserDefinedErrors.PopArchivedErrors(a_delimiter)
 
 End Function
 
