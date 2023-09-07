@@ -84,7 +84,7 @@ Public Function FromAppendedUserDefinedError(ByVal a_error As UserDefinedError, 
     If Not VBA.IsMissing(a_timestamp) Then _
         This.Timestamp = a_timestamp
     
-    If 0# = CDbl(a_timestamp) Then _
+    If 0# = CDbl(This.Timestamp) Then _
         This.Timestamp = CoreExtensions.DaysNow()
     
     Set FromAppendedUserDefinedError = Me
@@ -108,7 +108,7 @@ End Function
 ''' <summary>   Initialize the used defined error from the VBA Error object. </summary>
 ''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
 Public Function FromErrorObject() As UserDefinedError
-    This.Name = Me.RemoveWhiteSpace(VBA.Err.Description)
+    This.Name = Me.RemoveWhiteSpace(VBA.StrConv(VBA.Err.Description, VBA.VbStrConv.vbProperCase))
     This.Number = VBA.Err.Number
     This.Description = VBA.Err.Description
     This.Source = Err.Source
@@ -138,7 +138,7 @@ Public Function FromAppendedErrorObject( _
     If Not VBA.IsMissing(a_timestamp) Then _
         This.Timestamp = a_timestamp
     
-    If 0# = CDbl(a_timestamp) Then _
+    If 0# = CDbl(This.Timestamp) Then _
         This.Timestamp = CoreExtensions.DaysNow()
     
     Set FromAppendedErrorObject = Me
@@ -222,7 +222,7 @@ Public Function ToString(Optional ByVal a_additionalInfo As String = vbNullStrin
                VBA.Str$(Me.Number) & " (0x" & VBA.LCase$(VBA.Hex$(Me.Number)) & _
                " 0x" & VBA.LCase$(VBA.Hex$(Me.UserErrorNumber)) & ") " & _
                Me.Description & a_additionalInfo & _
-               " occurred in " & _
+               " In " & _
                IIf(VBA.vbNullString = Me.Source, " unknown", Me.Source) & _
                " at " & CoreExtensions.FormatDays(Me.Timestamp) & "."
 End Function
@@ -246,6 +246,29 @@ Public Function Equals(ByVal a_error As UserDefinedError, _
                         VBA.Abs(Me.Timestamp - a_error.Timestamp))
     Else
         Equals = False
+    End If
+End Function
+
+''' <summary>   Checks if the two user defined errors are the same. </summary>
+''' <remarks>   This method is aimed at comparing with a user defiend error that might be
+''' derived from the VBA error object and, as such, does not have the same name and might have a
+''' new source but still could be aised in proximity to the user defined error.  </remarks>
+''' <param name="a_error">           [<See cref="UserDefinedError"/>] The error to check for equality. </param>
+''' <param name="a_compareMethod">   [Optional, <See cref="VBA.VbCompareMethod"/>, VBA.VbCompareMethod.vbTextCompare ]
+'''                                  the comparison method. </param>
+''' <param name="a_timespan">        [Optional, Double, 0.01] The timespan in seconds between the two
+'''                                  timestamps. </param>
+''' <returns>   [Boolean]. </returns>
+Public Function Same(ByVal a_error As UserDefinedError, _
+    Optional ByVal a_timespan As Double = 0.01, _
+    Optional ByVal a_compareMethod As VBA.VbCompareMethod = VBA.VbCompareMethod.vbTextCompare) As Boolean
+    If IsObject(a_error) Then
+        Same = True And Me.Number = a_error.Number And _
+               (0 = VBA.StrComp(Me.Description, a_error.Description, a_compareMethod)) And _
+               ((a_timespan / cc_isr_Core_IO.CoreExtensions.SecondsPerDay) >= _
+                   VBA.Abs(Me.Timestamp - a_error.Timestamp))
+    Else
+        Same = False
     End If
 End Function
 

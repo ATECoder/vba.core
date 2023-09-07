@@ -162,7 +162,7 @@ Friend Function BuildErrorMessage(Optional ByVal a_displayWarning As Boolean = F
             p_builder = p_builder & VBA.LCase$(VBA.Hex$(Err.LastDllError)) & ")"
         End If
         p_builder = p_builder & VBA.Err.Description
-        p_builder = p_builder & " occurred in "
+        p_builder = p_builder & " In "
         p_builder = p_builder & VBA.Err.Source
         p_builder = p_builder & " at "
         p_builder = p_builder & CoreExtensions.FormatDays(CoreExtensions.DaysNow())

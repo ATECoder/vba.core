@@ -56,79 +56,79 @@ Private Sub Class_Initialize()
     This.NextUserDefinedErrorNumber = This.FirstUserDefinedErrorNumber
     
     Set This.WinsockStartingError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "WinsockStartingError", _
-                                        "Failed starting Winsock using Winsock WSAStartup(). ")
+                                        "Failed starting Winsock using Winsock WSAStartup().")
     AddUserDefinedError Me.WinsockStartingError
     
     Set This.WinsockCleanupError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "WinsockCleanupError", _
-                                        "Failed disposing Winsock using Winsock WSACleanup(). ")
+                                        "Failed disposing Winsock using Winsock WSACleanup().")
     AddUserDefinedError Me.WinsockCleanupError
     
     Set This.SocketCreationError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketCreationError", _
-                                        "Failed creating socket using Winsock socket(). ")
+                                        "Failed creating socket using Winsock socket().")
     AddUserDefinedError Me.SocketCreationError
     
     Set This.SocketConnectionError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketConnectionError", _
-                                        "Failed connecting socket using Winsock connect(). ")
+                                        "Failed connecting socket using Winsock connect().")
     AddUserDefinedError Me.SocketConnectionError
     
     Set This.SocketDisconnectionError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketDisconnectionError", _
-                                            "Failed disconnecting socket using Winsock closesocket(). ")
+                                            "Failed disconnecting socket using Winsock closesocket().")
     AddUserDefinedError Me.SocketDisconnectionError
     
     Set This.SocketOptionSettingError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketOptionSettingError", _
-                                            "Failed setting socket options using Winsock setsockopt(). ")
+                                            "Failed setting socket options using Winsock setsockopt().")
     AddUserDefinedError Me.SocketOptionSettingError
     
     Set This.SocketSendError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketSendError", _
-                                    "Failed send a socket message using Winsock send(). ")
+                                    "Failed send a socket message using Winsock send().")
     AddUserDefinedError Me.SocketSendError
 
     Set This.SocketReceiveError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketReceiveError", _
-                                    "Failed receiving a socket message using Winsock recv(). ")
+                                    "Failed receiving a socket message using Winsock recv().")
     AddUserDefinedError Me.SocketReceiveError
 
     Set This.SocketBindError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketBindError", _
-                                    "Failed binding a socket using Winsock bind(). ")
+                                    "Failed binding a socket using Winsock bind().")
     AddUserDefinedError Me.SocketBindError
 
     Set This.SocketListenError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketListenError", _
-                                    "Failed stating a socket listening using Winsock listen(). ")
+                                    "Failed stating a socket listening using Winsock listen().")
     AddUserDefinedError Me.SocketListenError
 
     Set This.SocketAcceptError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketAcceptError", _
-                                    "Failed permitting an incoming connection attempt on a socket using Winsock accept(). ")
+                                    "Failed permitting an incoming connection attempt on a socket using Winsock accept().")
     AddUserDefinedError Me.SocketAcceptError
 
     Set This.SocketSetStatusError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "SocketSetStatusError", _
-                                        "Failed determining the socket status using Winsock select(). ")
+                                        "Failed determining the socket status using Winsock select().")
     AddUserDefinedError Me.SocketSetStatusError
 
     Set This.NullArgumentError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "nullArgumentError", _
-                                    "Null argument error. ")
+                                    "Null argument error.")
     AddUserDefinedError Me.NullArgumentError
 
     Set This.InvalidArgumentError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "InvalidArgumentError", _
-                                        "Invalid argument error. ")
+                                        "Invalid argument error.")
     AddUserDefinedError Me.InvalidArgumentError
 
     Set This.InvalidFormatStringError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "InvalidFormatStringError", _
-                                            "Invalid format string. ")
+                                            "Invalid format string.")
     AddUserDefinedError Me.InvalidFormatStringError
 
     Set This.InvalidOperationError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "InvalidOperationError", _
-                                        "Invalid operation error. ")
+                                        "Invalid operation error.")
     AddUserDefinedError Me.InvalidOperationError
     
     Set This.TimeoutError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "TimeoutError", _
-                                "Timeout error. ")
+                                "Timeout error.")
     AddUserDefinedError Me.TimeoutError
 
     Set This.FormatError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "FormatError", _
-        "The number indicating an argument to format is less than zero or greater than or equal to the length of the array of arguments. ")
+        "The number indicating an argument to format is less than zero or greater than or equal to the length of the array of arguments.")
     AddUserDefinedError Me.FormatError
 
     Set This.Ieee488DeviceError = Factory.NewUserDefinedError.Initialize(This.NextUserDefinedErrorNumber, "Ieee488DeviceError", _
-        "IEEE488 Device error(s) occurred. ")
+        "IEEE488 Device error(s) occurred.")
     AddUserDefinedError Me.Ieee488DeviceError
 
 End Sub
@@ -194,7 +194,7 @@ Public Function GetUserDefinedError(ByVal a_key As Long) As UserDefinedError
         Set GetUserDefinedError = This.ErrorsDix.Item(a_key)
     Else
         Set GetUserDefinedError = Factory.NewUserDefinedError.Initialize(a_key, _
-                                        "UnknownUserDefinedError", "Unknown error. ")
+                                        "UnknownUserDefinedError", "Unknown error.")
     End If
 
 End Function
@@ -413,7 +413,7 @@ End Function
 ''' <summary>   Gets the number of archived errors. </summary>
 ''' <value>   [Integer]. </value>
 Public Property Get ArchivedErrorCount() As Integer
-    ArchivedErrorCount = This.ErrorsQueue.Count
+    ArchivedErrorCount = This.ErrorsArchiveStack.Count
 End Property
 
 ''' <summary>   Archives the queued errors and returns the errors as a delimited string. </summary>
@@ -480,7 +480,7 @@ Public Function EnqueueUserDefinedError(ByVal a_error As UserDefinedError) As Us
         ' if no last error, make this the last error and enqueue it.
         Set This.LastQueuedError = a_error
         This.ErrorsQueue.Enqueue This.LastQueuedError
-    ElseIf This.LastQueuedError.Equals(a_error) Then
+    ElseIf This.LastQueuedError.Same(a_error) Then
         ' append the error source if the error is the same as the last error.
         This.LastQueuedError.Source = This.LastQueuedError.Source & " in " & a_error.Source
     Else
@@ -617,7 +617,7 @@ End Sub
 Public Sub ClearErrorState()
 
     ' remove the last queued error.
-    This.LastQueuedError = Nothing
+    Set This.LastQueuedError = Nothing
 
     ' clear the error archive.
     This.ErrorsArchiveStack.Clear
