@@ -166,7 +166,7 @@ Public Function AddReferenceByName(ByVal a_project As VBIDE.VBProject, _
     If Not p_reference Is Nothing Then
         ' if the existing reference has a different path than the requested path then force
         ' removal.
-        a_force = 0 >= InStr(1, p_reference.FullPath, a_referencePath, vbTextCompare)
+        a_force = 1 <> VBA.InStr(1, p_reference.FullPath, a_referencePath, vbTextCompare)
     End If
     
     If p_exists And a_force Then

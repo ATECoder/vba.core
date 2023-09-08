@@ -7,6 +7,285 @@ Attribute VB_Name = "WorkbookUtilitiesTests"
 
 Option Explicit
 
+Private Type this_
+    Name As String
+    TestNumber As Integer
+    BeforeAllAssert As Assert
+    BeforeEachAssert As Assert
+    ErrTracer As IErrTracer
+End Type
+
+Private This As this_
+
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Test runners
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+''' <summary>   Runs the specified test. </summary>
+Public Sub RunTest(ByVal a_testNumber As Integer)
+    BeforeEach
+    Select Case a_testNumber
+        Case 1
+            TestModuleList
+        Case Else
+    End Select
+    AfterEach
+End Sub
+
+''' <summary>   Runs a single test. </summary>
+Public Sub RunOneTest()
+    BeforeAll
+    RunTest 1
+    AfterAll
+End Sub
+
+''' <summary>   Runs all tests. </summary>
+Public Sub RunAllTests()
+    BeforeAll
+    Dim p_testNumber As Integer
+    For p_testNumber = 1 To 1
+        RunTest p_testNumber
+        DoEvents
+    Next p_testNumber
+    AfterAll
+End Sub
+
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Tests initialize and cleanup.
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+''' <summary>   Prepares all tests. </summary>
+''' <remarks>   This method sets up the 'Before All' <see cref="cc_isr_Test_Fx.Assert"/>
+''' which serves to set the 'Before Each' <see cref="cc_isr_Test_Fx.Assert"/>.
+''' The error object and user defined errors state are left clear after this method. </remarks>
+Public Sub BeforeAll()
+
+    Const p_procedureName As String = "BeforeAll"
+    
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = Assert.Pass("Primed to run all tests.")
+
+    This.Name = "WorkbookUtilitiesTests"
+    
+    Set This.ErrTracer = New ErrTracer
+    
+    ' clear the error state.
+    cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
+
+    ' Prime all tests
+
+    This.TestNumber = 0
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then
+        ' report any leftover errors.
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If p_outcome.AssertSuccessful Then
+            Set p_outcome = Assert.Pass("Primed to run all tests.")
+        Else
+            Set p_outcome = Assert.Inconclusive("Failed priming all tests;" & _
+                VBA.vbCrLf & p_outcome.AssertMessage)
+        End If
+    End If
+    
+    Set This.BeforeAllAssert = p_outcome
+    
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+
+End Sub
+
+''' <summary>   Prepares each test before it is run. </summary>
+''' <remarks>   This method sets up the 'Before Each' <see cref="cc_isr_Test_Fx.Assert"/>
+''' which serves to initialize the <see cref="cc_isr_Test_Fx.Assert"/> of each test.
+''' The error object and user defined errors state are left clear after this method. </remarks>
+Public Sub BeforeEach()
+
+    Const p_procedureName As String = "BeforeEach"
+    
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
+    This.TestNumber = This.TestNumber + 1
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+
+    If This.BeforeAllAssert.AssertSuccessful Then
+        Set p_outcome = Assert.Pass("Primed pre-test #" & VBA.CStr(This.TestNumber) & ".")
+    Else
+        Set p_outcome = Assert.Inconclusive("Unable to prime pre-test #" & VBA.CStr(This.TestNumber) & _
+            ";" & VBA.vbCrLf & This.BeforeAllAssert.AssertMessage)
+    End If
+    
+    ' clear the error state.
+    cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
+   
+    ' Prepare the next test
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then
+        ' report any leftover errors.
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If p_outcome.AssertSuccessful Then
+             Set p_outcome = Assert.Pass("Primed pre-test #" & VBA.CStr(This.TestNumber))
+        Else
+            Set p_outcome = Assert.Inconclusive("Failed priming pre-test #" & VBA.CStr(This.TestNumber) & _
+                ";" & VBA.vbCrLf & p_outcome.AssertMessage)
+        End If
+    End If
+    
+    Set This.BeforeEachAssert = p_outcome
+
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+                       
+End Sub
+
+''' <summary>   Releases test elements after each tests is run. </summary>
+''' <remarks>   This method uses the <see cref="ErrTracer"/> to report any leftover errors
+''' in the user defined errors queue and stack. The error object and user defined errors
+''' state are left clear after this method. </remarks>
+Public Sub AfterEach()
+    
+    Const p_procedureName As String = "AfterEach"
+    
+    ' Trap errors to the error handler.
+    On Error GoTo err_Handler
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
+
+    ' cleanup after each test.
+    If This.BeforeEachAssert.AssertSuccessful Then
+    End If
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    ' release the 'Before Each' assert.
+    Set This.BeforeEachAssert = Nothing
+
+    ' report any leftover errors.
+    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
+    Else
+        Set p_outcome = Assert.Inconclusive("Errors reported cleaning up test #" & VBA.CStr(This.TestNumber) & _
+            ";" & VBA.vbCrLf & p_outcome.AssertMessage)
+    End If
+    
+    If Not p_outcome.AssertSuccessful Then _
+        This.ErrTracer.TraceError p_outcome.AssertMessage
+    
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+
+End Sub
+
+''' <summary>   Releases the test class after all tests run. </summary>
+''' <remarks>   This method uses the <see cref="ErrTracer"/> to report any leftover errors
+''' in the user defined errors queue and stack. The error object and user defined errors
+''' state are left clear after this method. </remarks>
+Public Sub AfterAll()
+    
+    Const p_procedureName As String = "AfterAll"
+    
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+    
+    Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = Assert.Pass("All tests cleaned up.")
+    
+    ' cleanup after all tests.
+    
+    If This.BeforeAllAssert.AssertSuccessful Then
+    End If
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    ' release the 'Before All' assert.
+    Set This.BeforeAllAssert = Nothing
+
+    ' report any leftover errors.
+    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
+    Else
+        Set p_outcome = Assert.Inconclusive("Errors reported cleaning up all tests;" & _
+            VBA.vbCrLf & p_outcome.AssertMessage)
+    End If
+    
+    If Not p_outcome.AssertSuccessful Then _
+        This.ErrTracer.TraceError p_outcome.AssertMessage
+    
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+
+End Sub
+
+
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Support methods
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
 ''' <summary>   Returns true if the collection contains the specified key. </summary>
 ''' <param name="a_col">     [Collection] The subject collection. </param>
 ''' <param name="a_key">     [Variant] The key to check for in the collection. </param>
@@ -35,7 +314,7 @@ End Function
 Public Function ContainsAll(ByVal a_col As VBA.Collection, ByVal a_contained As VBA.Collection) As Boolean
     
     Dim p_result As Boolean: p_result = True
-    Dim p_key As Variant
+    Dim p_key As ModuleInfo
     For Each p_key In a_contained
         VBA.DoEvents
         If Not ContainsKey(a_col, p_key) Then
@@ -52,18 +331,18 @@ End Function
 ''' <param name="a_col">         [Collection] The subject collection. </param>
 ''' <param name="a_contained">   [Collection] The collection which to check for being contained in the
 '''                              subject collection. </param>
-Public Function FindMissingItem(ByVal a_col As VBA.Collection, ByVal a_contained As VBA.Collection) As Variant
+Public Function FindMissingModule(ByVal a_col As VBA.Collection, ByVal a_contained As VBA.Collection) As ModuleInfo
     
-    Dim p_result As Variant: Set p_result = Nothing
-    Dim p_key As Variant
+    Dim p_result As ModuleInfo: Set p_result = Nothing
+    Dim p_key As ModuleInfo
     For Each p_key In a_contained
         VBA.DoEvents
         If Not ContainsKey(a_col, p_key) Then
-            p_result = p_key
+            Set p_result = p_key
             Exit For
         End If
     Next p_key
-    Set FindMissingItem = p_result
+    Set FindMissingModule = p_result
     
 End Function
 
@@ -114,25 +393,18 @@ Private Sub AddTestModules(ByVal a_knownTestModules As VBA.Collection)
 
 End Sub
 
-Public Sub BeforeAll()
-    Debug.Print "@ Before All macro"
-End Sub
-
-Public Sub BeforeEach()
-    Debug.Print "@ Before Each macro"
-End Sub
-
-Public Sub AfterEach()
-    Debug.Print "@ After Each macro"
-End Sub
-
-Public Sub AfterAll()
-    Debug.Print "@ After All macro"
-End Sub
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Tests
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
 ''' <summary>   Unit test. Asserts creating a list of test modules. </summary>
 ''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
 Public Function TestModuleList() As Assert
+
+    Const p_procedureName As String = "TestModuleList"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
 
     Dim p_outcome As Assert
     Dim p_isDone As Boolean: p_isDone = False
@@ -154,10 +426,10 @@ Public Function TestModuleList() As Assert
     If Not p_isDone And p_outcome.AssertSuccessful Then
     
         Set p_missingItem = Nothing
-        Set p_missingItem = FindMissingItem(p_modules, p_knownTestModules)
+        Set p_missingItem = FindMissingModule(p_modules, p_knownTestModules)
     
         If Not p_missingItem Is Nothing Then
-            Set p_outcome = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
+            Set p_outcome = Assert.IsTrue(ContainsAllModules(p_modules, p_knownTestModules), _
                 "item " & CStr(p_missingItem) & " from the expected test module is not found in the actual collection of test modules")
             p_isDone = True
         End If
@@ -166,10 +438,10 @@ Public Function TestModuleList() As Assert
     
     If Not p_isDone And p_outcome.AssertSuccessful Then
     
-        Set p_missingItem = FindMissingItem(p_knownTestModules, p_modules)
+        Set p_missingItem = FindMissingModule(p_knownTestModules, p_modules)
         
         If Not p_missingItem Is Nothing Then
-            Set TestModuleList = Assert.IsTrue(ContainsAll(p_modules, p_knownTestModules), _
+            Set TestModuleList = Assert.IsTrue(ContainsAllModules(p_modules, p_knownTestModules), _
                 "item " & CStr(p_missingItem) & _
                 " from the actual test module is not found in the expected collection of test modules")
             p_isDone = True
@@ -177,9 +449,31 @@ Public Function TestModuleList() As Assert
     
     End If
     
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
+    
     Debug.Print p_outcome.BuildReport("TestModuleList")
     
     Set TestModuleList = p_outcome
+    
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
   
 End Function
 

@@ -57,7 +57,9 @@ Friend Function BuildErrSource(ByVal a_errProcedureName As String, ByVal a_errMo
     p_builder = IIf(VBA.vbNullString = a_errProjectName, "unknown", a_errProjectName) _
         & "." & a_errModuleName & "." & a_errProcedureName
     
-    If 1 > VBA.InStr(1, p_builder, Err.Source) Then _
+    ' if the built source does not start with the Err.Source, this must be a new
+    ' source, so append it to the built source.
+    If 1 <> VBA.InStr(1, p_builder, Err.Source, VBA.VbCompareMethod.vbTextCompare) Then _
         p_builder = p_builder & " in " & Err.Source
     
     BuildErrSource = p_builder
@@ -80,7 +82,8 @@ Friend Function BuildErrorSource(ByVal a_procedureName As String, ByVal a_module
         p_builder = a_workbook.VBProject.Name & "." & a_moduleName & "." & a_procedureName
     End If
     
-    If 1 > VBA.InStr(1, p_builder, Err.Source) Then _
+    ' append the Err.Source if it does not equal or is not contained in the built source
+    If 1 <> VBA.InStr(1, p_builder, Err.Source) Then _
         p_builder = p_builder & " in " & Err.Source
     
     BuildErrorSource = p_builder

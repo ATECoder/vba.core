@@ -481,7 +481,7 @@ Public Function EnqueueUserDefinedError(ByVal a_error As UserDefinedError) As Us
         Set This.LastQueuedError = a_error
         This.ErrorsQueue.Enqueue This.LastQueuedError
     ElseIf This.LastQueuedError.Same(a_error) Then
-        If 0 <> VBA.InStr(This.LastQueuedError.Source, a_error.Source, VBA.VbCompareMethod.vbTextCompare) Then
+        If 1 <> VBA.InStr(1, This.LastQueuedError.Source, a_error.Source, VBA.VbCompareMethod.vbTextCompare) Then
             ' append the error source if the error is the same as the last error.
             ' but has a different error source as it is possible to trape an error from the
             ' same procedure that raised that error.
