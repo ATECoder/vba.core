@@ -9,6 +9,10 @@ End Type
 
 Private This As this_
 
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Test runners
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
 ''' <summary>   Runs the specified test. </summary>
 Public Sub RunTest(ByVal a_testNumber As Integer)
     BeforeEach
@@ -39,6 +43,10 @@ Public Sub RunAllTests()
     Next p_testNumber
     AfterAll
 End Sub
+
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Tests initialize and cleanup.
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
 ''' <summary>   Prepares all tests. </summary>
 ''' <remarks>   This method sets up the 'Before All' <see cref="cc_isr_Test_Fx.Assert"/>
@@ -95,7 +103,7 @@ err_Handler:
     ' exit this procedure (not an active handler)
     On Error Resume Next
     GoTo exit_Handler
-    
+
 End Sub
 
 ''' <summary>   Prepares each test before it is run. </summary>
@@ -175,6 +183,9 @@ Public Sub AfterEach()
     Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
 
 	' cleanup after each test.
+    If This.BeforeEachAssert.AssertSuccessful Then
+    
+    End If
 	
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -226,6 +237,9 @@ Public Sub AfterAll()
     Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = Assert.Pass("All tests cleaned up.")
     
 	' cleanup after all tests.
+    If This.BeforeAllAsset.AssertSuccessful Then
+    
+    End If
 	
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -263,6 +277,10 @@ err_Handler:
 
 End Sub
 
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Tests
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
 
 ''' <summary>   Unit test. Asserts priming and cleaning up a test. </summary>
 ''' <returns>   [<see cref="cc_isr_Test_Fx.Assert"/>] instance where
@@ -279,6 +297,8 @@ Public Function TestPrimeAndCleanup() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
         Set p_outcome = Assert.Pass("Entered the " & p_procedureName & " test.")
     End If
+	
+	' proceed with test assertions.
 	
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -307,7 +327,3 @@ err_Handler:
     GoTo exit_Handler
     
 End Function
-
-
-
-
