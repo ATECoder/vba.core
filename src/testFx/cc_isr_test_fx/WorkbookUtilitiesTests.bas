@@ -281,9 +281,8 @@ err_Handler:
 
 End Sub
 
-
 ' + + + + + + + + + + + + + + + + + + + + + + + + + + +
-'  Support methods
+'  Generic collection methods
 ' + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
 ''' <summary>   Returns true if the collection contains the specified key. </summary>
@@ -326,11 +325,16 @@ Public Function ContainsAll(ByVal a_col As VBA.Collection, ByVal a_contained As 
     
 End Function
 
-''' <summary>   Returns the first item that exists in <paramref name="a_contained"/>
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Module Info collection methods
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+''' <summary>   Returns the first module that exists in <paramref name="a_contained"/> but is
 ''' not existing in <paramref name="a_col"/>. </summary>
 ''' <param name="a_col">         [Collection] The subject collection. </param>
 ''' <param name="a_contained">   [Collection] The collection which to check for being contained in the
 '''                              subject collection. </param>
+''' <returns>   [ModuleInfo] The missing module. </returns>
 Public Function FindMissingModule(ByVal a_col As VBA.Collection, ByVal a_contained As VBA.Collection) As ModuleInfo
     
     Dim p_result As ModuleInfo: Set p_result = Nothing
@@ -346,12 +350,19 @@ Public Function FindMissingModule(ByVal a_col As VBA.Collection, ByVal a_contain
     
 End Function
 
+''' <summary>   Adds a module to the collectioon. </summary>
+''' <param name="a_col">              [Collection] The module collection. </param>
+''' <param name="a_moduleFullName">   [String] the module to add. </param>
 Private Sub AddModule(ByVal a_col As VBA.Collection, ByVal a_moduleFullName As String)
     
     a_col.Add Factory.NewModuleInfo.FromModuleFullName(a_moduleFullName)
 
 End Sub
 
+''' <summary>   Returns true if the collection contains the specified module. </summary>
+''' <param name="a_col">          [Collection] The subject collection. </param>
+''' <param name="a_findModule">   [ModuleInfo] The module to find in the collection. </param>
+''' <returns>   [Boolean] True if the module is contained in the collection. </returns>
 Public Function ContainsModule(ByVal a_col As VBA.Collection, ByVal a_findModule As ModuleInfo) As Boolean
     
     Dim p_found As Boolean
@@ -368,15 +379,20 @@ Public Function ContainsModule(ByVal a_col As VBA.Collection, ByVal a_findModule
 
 End Function
 
+''' <summary>   Returns true if the left collection contains all the modules of the right collection. </summary>
+''' <param name="a_leftCol">    [Collection] the containing collection. </param>
+''' <param name="a_rightCol">   [Collection] The collection which to check for being contained in the
+'''                              containing collection. </param>
+''' <returns>   [Boolean] True if the contained collection is fully contained in the collection. </returns>
 Private Function ContainsAllModules(ByVal a_leftCol As VBA.Collection, ByVal a_rightCol As VBA.Collection)
 
-    Dim p_result As Boolean: p_result = False
+    Dim p_result As Boolean: p_result = True
     Dim p_rightModuleInfo As cc_isr_Test_Fx.ModuleInfo
     For Each p_rightModuleInfo In a_rightCol
         VBA.DoEvents
         If Not ContainsModule(a_leftCol, p_rightModuleInfo) Then
             p_result = False
-            Exit Function
+            Exit For
         End If
     Next p_rightModuleInfo
     ContainsAllModules = p_result
@@ -389,7 +405,7 @@ Private Sub AddTestModules(ByVal a_knownTestModules As VBA.Collection)
     
     Dim p_projectName As String: p_projectName = Excel.Application.ActiveWorkbook.VBProject.Name
     AddModule a_knownTestModules, p_projectName & ".WorkbookUtilitiesTests"
-    AddModule a_knownTestModules, p_projectName & ".AssetTests"
+    AddModule a_knownTestModules, p_projectName & ".AssertTests"
 
 End Sub
 
@@ -421,16 +437,16 @@ Public Function TestModuleList() As Assert
         "Expecting " & CStr(p_knownTestModules.Count) & " but found  " & _
         CStr(p_modules.Count) & " test modules")
     
-    Dim p_missingItem As Variant
+    Dim p_missingModule As ModuleInfo
 
     If Not p_isDone And p_outcome.AssertSuccessful Then
     
-        Set p_missingItem = Nothing
-        Set p_missingItem = FindMissingModule(p_modules, p_knownTestModules)
+        Set p_missingModule = FindMissingModule(p_modules, p_knownTestModules)
     
-        If Not p_missingItem Is Nothing Then
+        If Not p_missingModule Is Nothing Then
             Set p_outcome = Assert.IsTrue(ContainsAllModules(p_modules, p_knownTestModules), _
-                "item " & CStr(p_missingItem) & " from the expected test module is not found in the actual collection of test modules")
+                "Module " & p_missingModule.ModuleName & _
+                " from the expected test modules is not found in the actual collection of test modules")
             p_isDone = True
         End If
     
@@ -438,11 +454,11 @@ Public Function TestModuleList() As Assert
     
     If Not p_isDone And p_outcome.AssertSuccessful Then
     
-        Set p_missingItem = FindMissingModule(p_knownTestModules, p_modules)
+        Set p_missingModule = FindMissingModule(p_knownTestModules, p_modules)
         
-        If Not p_missingItem Is Nothing Then
+        If Not p_missingModule Is Nothing Then
             Set TestModuleList = Assert.IsTrue(ContainsAllModules(p_modules, p_knownTestModules), _
-                "item " & CStr(p_missingItem) & _
+                "Module " & p_missingModule.ModuleName & _
                 " from the actual test module is not found in the expected collection of test modules")
             p_isDone = True
         End If
