@@ -2,9 +2,9 @@
 Private Type this_
     Name As String
     TestNumber As Integer
-    BeforeAllAssert As Assert
-    BeforeEachAssert As Assert
-    ErrTracer As IErrTracer
+    BeforeAllAssert As cc_isr_Test_FX.Assert
+    BeforeEachAssert As cc_isr_Test_FX.Assert
+    ErrTracer As cc_isr_Test_FX.IErrTracer
     TestCount As Integer
     RunCount As Integer
     PassedCount As Integer
@@ -29,8 +29,8 @@ Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
             Set p_outcome = TestPrimeAndCleanup
         Case Else
     End Select
-    Set RunTest = p_outcome
     AfterEach
+    Set RunTest = p_outcome
 End Sub
 
 ''' <summary>   Runs a single test. </summary>
@@ -43,7 +43,6 @@ End Sub
 ''' <summary>   Runs all tests. </summary>
 Public Sub RunAllTests()
     BeforeAll
-    Dim p_outcome As cc_isr_Test_Fx.Assert
     Dim p_outcome As cc_isr_Test_Fx.Assert
     This.RunCount = 0
     This.PassedCount = 0
@@ -319,7 +318,7 @@ Public Function TestPrimeAndCleanup() As cc_isr_Test_Fx.Assert
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
-    Dim p_outcome As Assert: Set p_outcome = This.BeforeEachAssert
+    Dim p_outcome As cc_isr_Test_FX.Assert: Set p_outcome = This.BeforeEachAssert
     
     If p_outcome.AssertSuccessful Then
         Set p_outcome = Assert.Pass("Entered the " & p_procedureName & " test.")
