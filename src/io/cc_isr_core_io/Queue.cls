@@ -89,14 +89,15 @@ Public Function Dequeue() As Variant
 End Function
 
 ''' <summary>   Returns the indexed item in the queue. </summary>
-''' <param name="a_index">   [Optional, Integer, 1] the index to peek at. </param>
+''' <param name="a_position">   [Optional, Integer, 1] the position of the item
+'''                             where the first queued item is at 1. </param>
 ''' <value>   [Variant]. </value>
-Public Function Peek(Optional ByVal a_index As Integer = 1) As Variant
-    If Me.Count > 0 And a_index > 0 And a_index <= Me.Count Then
+Public Function Peek(Optional ByVal a_position As Integer = 1) As Variant
+    If Me.Count > 0 And a_position > 0 And a_position <= Me.Count Then
         If This.IsObject Then
-            Set Peek = This.Items(a_index)
+            Set Peek = This.Items(a_position)
         Else
-            Peek = This.Items(a_index)
+            Peek = This.Items(a_position)
         End If
     Else
         If This.IsObject Then

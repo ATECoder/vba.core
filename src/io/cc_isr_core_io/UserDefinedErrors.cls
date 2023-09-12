@@ -372,8 +372,22 @@ Private Property Get ErrorsQueue() As Queue
     Set ErrorsQueue = This.ErrorsQueue
 End Property
 
+''' <summary>   Peeks at an error from the queue. </summary>
+''' <param name="a_position">   [Optional, Integer, 1] the position of the item
+'''                             where the first queued item is at 1. </param>
+''' <returns>   [<see cref="cc_isr_Core_IO.UserDefinedError"/>]. </value>
+Public Function PeekQueue(Optional ByVal a_position As Integer = 1) As UserDefinedError
+
+    If Me.QueuedErrorCount = 0 Then
+        Set PeekQueue = Nothing
+    Else
+        Set PeekQueue = This.ErrorsQueue.Peek(a_position)
+    End If
+    
+End Function
+
 ''' <summary>   Dequeue an error from the queue. </summary>
-''' <returns>   [<see cref="cc_isr_Core_IO.Stack"/>]. </value>
+''' <returns>   [<see cref="cc_isr_Core_IO.UserDefinedError"/>]. </value>
 Public Function Dequeue() As UserDefinedError
 
     If Me.QueuedErrorCount = 0 Then
@@ -407,6 +421,20 @@ Public Function Push(ByVal a_error As UserDefinedError) As UserDefinedError
 
     This.ErrorsArchiveStack.Push a_error
     Set Push = a_error
+    
+End Function
+
+''' <summary>   Peeks at an error from the archive stack. </summary>
+''' <param name="a_position">   [Optional, Integer, 1] the position of the item
+'''                             where the top of the stack is at 1. </param>
+''' <returns>   [<see cref="cc_isr_Core_IO.UserDefinedError"/>]. </value>
+Public Function PeekArchive(Optional ByVal a_position As Integer = 1) As UserDefinedError
+
+    If Me.ArchivedErrorCount = 0 Then
+        Set PeekArchive = Nothing
+    Else
+        Set PeekArchive = This.ErrorsArchiveStack.Peek(a_position)
+    End If
     
 End Function
 

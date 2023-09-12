@@ -6,27 +6,74 @@ Attribute VB_Name = "UserDefinedErrorsTests"
 Option Explicit
 
 Private Type this_
+    Name As String
     TestNumber As Integer
-    BeforeAllAssert As Assert
-    BeforeEachAssert As Assert
+    BeforeAllAssert As cc_isr_Test_Fx.Assert
+    BeforeEachAssert As cc_isr_Test_Fx.Assert
+    ErrTracer As IErrTracer
+    TestCount As Integer
+    RunCount As Integer
+    PassedCount As Integer
+    FailedCount As Integer
+    InconclusiveCount As Integer
 End Type
 
 Private This As this_
 
-Public Sub RunTests()
-    BeforeAll
+''' <summary>   Runs the specified test. </summary>
+Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
     BeforeEach
-    Dim a_testNumber As Integer: a_testNumber = 1
     Select Case a_testNumber
         Case 1
-            TestErrorMessageShouldBuild
+            Set p_outcome = TestErrorMessageShouldBuild
         Case 2
-            TestRaisedErrorShouldBeReported
+            Set p_outcome = TestRaisedErrorShouldBeReported
+        Case 3
+            Set p_outcome = TestUserDefinedErrorShouldExist
         Case Else
     End Select
+    Set RunTest = p_outcome
     AfterEach
+End Function
+
+''' <summary>   Runs a single test. </summary>
+Public Sub RunOneTest()
+    BeforeAll
+    RunTest 1
     AfterAll
 End Sub
+
+''' <summary>   Runs all tests. </summary>
+Public Sub RunAllTests()
+    BeforeAll
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    This.RunCount = 0
+    This.PassedCount = 0
+    This.FailedCount = 0
+    This.InconclusiveCount = 0
+    This.TestCount = 3
+    Dim p_testNumber As Integer
+    For p_testNumber = 1 To This.TestCount
+        Set p_outcome = RunTest(p_testNumber)
+        If Not p_outcome Is Nothing Then
+            This.RunCount = This.RunCount + 1
+            If p_outcome.AssertInconclusive Then
+                This.InconclusiveCount = This.InconclusiveCount + 1
+            ElseIf p_outcome.AssertSuccessful Then
+                This.PassedCount = This.PassedCount + 1
+            Else
+                This.FailedCount = This.FailedCount + 1
+            End If
+        End If
+        DoEvents
+    Next p_testNumber
+    AfterAll
+    Debug.Print "Ran " & VBA.CStr(This.RunCount) & " out of " & VBA.CStr(This.TestCount) & " tests."
+    Debug.Print "Passed: " & VBA.CStr(This.PassedCount) & "; Failed: " & VBA.CStr(This.FailedCount) & _
+                "; Inconclusive: " & VBA.CStr(This.InconclusiveCount) & "."
+End Sub
+
 
 Public Sub BeforeAll()
 
@@ -34,16 +81,12 @@ Public Sub BeforeAll()
     
     Set This.BeforeAllAssert = Assert.IsTrue(True, "initialize the overall assert.")
     
-    If cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack Is Nothing Then
-        Set This.BeforeAllAssert = Assert.Inconclusive("User defined errors should have an error archive.")
-    End If
-    
     If This.BeforeAllAssert.AssertSuccessful Then
     
-        ' clear the error archive
-        cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Clear
+        ' clear the error state
+        cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
     
-        If cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Count <> 0 Then
+        If cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount <> 0 Then
             Set This.BeforeAllAssert = Assert.Inconclusive("User defined errors error archive should be empty.")
         End If
     
@@ -51,18 +94,7 @@ Public Sub BeforeAll()
     
     If This.BeforeAllAssert.AssertSuccessful Then
     
-        If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue Is Nothing Then
-            Set This.BeforeAllAssert = Assert.Inconclusive("User defined errors should have an error queue")
-        End If
-        
-    End If
-    
-    If This.BeforeAllAssert.AssertSuccessful Then
-    
-        ' clear the error queue
-        cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Clear
-        
-        If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count <> 0 Then
+        If cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount <> 0 Then
             Set This.BeforeAllAssert = Assert.Inconclusive("User defined errors error queue should be empty.")
         End If
         
@@ -137,7 +169,7 @@ Public Function TestErrorMessageShouldBuild() As cc_isr_Test_Fx.Assert
     On Error GoTo err_Handler
     Dim p_errorNumber As Long
     
-    Dim p_outcome As Assert: Set p_outcome = This.BeforeEachAssert
+    Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = This.BeforeEachAssert
     
     If Not p_outcome.AssertSuccessful Then GoTo exit_Handler
     
@@ -188,7 +220,7 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(1, _
-            cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Count, _
+            cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "VBA Error should be added to the error archive.")
     
     End If
@@ -197,7 +229,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_error = cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Pop
+        Set p_error = cc_isr_Core_IO.UserDefinedErrors.PeekArchive
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_errorNumber, p_error.Number, _
             "VBA Error should be the same as the error from the top of the stack.")
     
@@ -218,7 +250,7 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     ' Trap errors to the error handler
     On Error GoTo err_Handler
     
-    Dim p_outcome As Assert: Set p_outcome = This.BeforeEachAssert
+    Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = This.BeforeEachAssert
     
     If Not p_outcome.AssertSuccessful Then GoTo exit_Handler
     
@@ -227,7 +259,7 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedArchivedErrorsCount, _
-            cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Count, _
+            cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "User defined errors error archive should be empty before buidlding the first standard error message.")
     End If
     
@@ -236,7 +268,7 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
-            cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count, _
+            cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should be empty before enqueueing the first error.")
     End If
     
@@ -244,11 +276,11 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     
     ' save the current error counts
     Dim p_queuedErrorsCount As Integer
-    p_queuedErrorsCount = cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count
+    p_queuedErrorsCount = cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount
     p_expectedArchivedErrorsCount = p_queuedErrorsCount
     
     Dim p_archivedErrorsCount As Integer
-    p_archivedErrorsCount = cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Count
+    p_archivedErrorsCount = cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount
     p_expectedQueuedErrorsCount = p_archivedErrorsCount
     
     ' raise a user defined error
@@ -288,7 +320,7 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
-            cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count, _
+            cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should increment by one after raising an error.")
     End If
     
@@ -297,7 +329,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_lastError = cc_isr_Core_IO.Factory.NewUserDefinedError.FromUserDefinedError(cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Peek())
+        Set p_lastError = cc_isr_Core_IO.Factory.NewUserDefinedError.FromUserDefinedError(cc_isr_Core_IO.UserDefinedErrors.PeekQueue())
         Set p_outcome = cc_isr_Test_Fx.Assert.IsNotNothing(p_lastError, _
                 "User defined errors should initialize from the last queued error.")
     End If
@@ -315,7 +347,7 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedArchivedErrorsCount, _
-            cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Count, _
+            cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "User defined errors error archive stack should have a single error after buidlding the standard error message.")
     End If
    
@@ -324,7 +356,7 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
-            cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count, _
+            cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should be empty after buidlding the standard error message.")
     End If
    
@@ -332,9 +364,9 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-    Set p_stackError = cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Pop
+    Set p_stackError = cc_isr_Core_IO.UserDefinedErrors.PeekArchive
         Set p_outcome = cc_isr_Test_Fx.Assert.IsNotNothing(p_stackError, _
-                "Last archived error should pop from the User defined errors error archive.")
+                "Last archived error should get peeked from the User defined errors error archive.")
     End If
     
     If p_outcome.AssertSuccessful Then

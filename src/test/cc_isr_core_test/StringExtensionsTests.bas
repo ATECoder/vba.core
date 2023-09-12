@@ -5,6 +5,109 @@ Attribute VB_Name = "StringExtensionsTests"
 
 Option Explicit
 
+Private Type this_
+    Name As String
+    TestNumber As Integer
+    BeforeAllAssert As cc_isr_Test_Fx.Assert
+    BeforeEachAssert As cc_isr_Test_Fx.Assert
+    ErrTracer As IErrTracer
+    TestCount As Integer
+    RunCount As Integer
+    PassedCount As Integer
+    FailedCount As Integer
+    InconclusiveCount As Integer
+End Type
+
+Private This As this_
+
+''' <summary>   Runs the specified test. </summary>
+Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    'BeforeEach
+    Select Case a_testNumber
+        Case 1
+            Set p_outcome = TestCharAt
+        Case 2
+            Set p_outcome = TestEndsWith
+        Case 3
+            Set p_outcome = TestEscapeSequences
+        Case 4
+            Set p_outcome = TestInsertRepelaceEscapeSequences
+        Case 5
+            Set p_outcome = TestInsert
+        Case 6
+            Set p_outcome = TestPop
+        Case 7
+            Set p_outcome = TestRemoveWhiteSpaces
+        Case 8
+            Set p_outcome = TestRepeat
+        Case 9
+            Set p_outcome = TestStartsWith
+        Case 10
+            Set p_outcome = TestFormatStringParser
+        Case 11
+            Set p_outcome = TestDateStringFormat
+        Case 12
+            Set p_outcome = TestStringFormat
+        Case 13
+            Set p_outcome = TestStringFormatReplace
+        Case 14
+            Set p_outcome = TestStringContains
+        Case 15
+            Set p_outcome = TestStringContainsAny
+        Case 16
+            Set p_outcome = TestSubstring
+        Case 17
+            Set p_outcome = TestToBinary
+        Case 18
+            Set p_outcome = TestTrimLeft
+        Case 19
+            Set p_outcome = TestTrimRight
+        Case Else
+    End Select
+    Set RunTest = p_outcome
+    'AfterEach
+End Function
+
+''' <summary>   Runs a single test. </summary>
+Public Sub RunOneTest()
+    'BeforeAll
+    RunTest 1
+    'AfterAll
+End Sub
+
+''' <summary>   Runs all tests. </summary>
+Public Sub RunAllTests()
+    This.Name = "BinaryExtensionTests"
+    'BeforeAll
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    This.RunCount = 0
+    This.PassedCount = 0
+    This.FailedCount = 0
+    This.InconclusiveCount = 0
+    This.TestCount = 19
+    Dim p_testNumber As Integer
+    For p_testNumber = 1 To This.TestCount
+        Set p_outcome = RunTest(p_testNumber)
+        If Not p_outcome Is Nothing Then
+            This.RunCount = This.RunCount + 1
+            If p_outcome.AssertInconclusive Then
+                This.InconclusiveCount = This.InconclusiveCount + 1
+            ElseIf p_outcome.AssertSuccessful Then
+                This.PassedCount = This.PassedCount + 1
+            Else
+                This.FailedCount = This.FailedCount + 1
+            End If
+        End If
+        DoEvents
+    Next p_testNumber
+    'AfterAll
+    Debug.Print "Ran " & VBA.CStr(This.RunCount) & " out of " & VBA.CStr(This.TestCount) & " tests."
+    Debug.Print "Passed: " & VBA.CStr(This.PassedCount) & "; Failed: " & VBA.CStr(This.FailedCount) & _
+                "; Inconclusive: " & VBA.CStr(This.InconclusiveCount) & "."
+End Sub
+
+
 ''' <summary>   Unit test. Asserts character at an index position. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestCharAt() As cc_isr_Test_Fx.Assert
@@ -179,13 +282,13 @@ Public Function TestPop() As cc_isr_Test_Fx.Assert
     Dim p_delimitedString As String: p_delimitedString = "a,b,c"
     
     Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("a", _
-            StringExtensions.Pop(p_delimitedString, ","), _
+            StringExtensions.pop(p_delimitedString, ","), _
             "First element in " & p_delimitedString & " should pop")
             
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("b", _
-            StringExtensions.Pop(p_delimitedString, ","), _
+            StringExtensions.pop(p_delimitedString, ","), _
             "Second element in " & p_delimitedString & " should pop")
     
     End If
@@ -193,14 +296,14 @@ Public Function TestPop() As cc_isr_Test_Fx.Assert
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("c", _
-            StringExtensions.Pop(p_delimitedString, ","), _
+            StringExtensions.pop(p_delimitedString, ","), _
             "Third element in " & p_delimitedString & " should pop")
     End If
     
     If p_outcome.AssertSuccessful Then
     
         Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(VBA.vbNullString, _
-            StringExtensions.Pop(p_delimitedString, ","), _
+            StringExtensions.pop(p_delimitedString, ","), _
             "No element in " & p_delimitedString & " should pop")
             
     End If

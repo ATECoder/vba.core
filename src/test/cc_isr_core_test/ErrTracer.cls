@@ -20,15 +20,15 @@ Implements cc_isr_Test_Fx.IErrTracer
 '''                             from the error queue. </param>
 Private Function IErrTracer_AssertLeftoverErrors(Optional ByVal a_delimiter As String = VBA.vbCrLf) As cc_isr_Test_Fx.Assert
 
-    Dim p_outcome As Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
     
     Set p_outcome = Assert.AreEqual(0, _
-        cc_isr_Core_IO.UserDefinedErrors.ErrorsArchiveStack.Count, _
+        cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
         "Error stack should be empty upon completion this test.")
 
     If p_outcome.AssertSuccessful Then
         Dim p_leftoverErrorMessage As String
-        If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0 Then
+        If cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount > 0 Then
             p_leftoverErrorMessage = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(a_delimiter)
             IErrTracer_TraceError p_leftoverErrorMessage
             Set p_outcome = Assert.Fail("Found errors in the error queue: " & VBA.vbCrLf & _

@@ -5,11 +5,84 @@ Attribute VB_Name = "CoreExtensionTests"
 
 Option Explicit
 
+Private Type this_
+    Name As String
+    TestNumber As Integer
+    BeforeAllAssert As cc_isr_Test_Fx.Assert
+    BeforeEachAssert As cc_isr_Test_Fx.Assert
+    ErrTracer As IErrTracer
+    TestCount As Integer
+    RunCount As Integer
+    PassedCount As Integer
+    FailedCount As Integer
+    InconclusiveCount As Integer
+End Type
+
+Private This As this_
+
+''' <summary>   Runs the specified test. </summary>
+Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    'BeforeEach
+    Select Case a_testNumber
+        Case 1
+            Set p_outcome = TestWaitShouldEqualOrExceedDuration
+        Case 2
+            Set p_outcome = TestNowResolution
+        Case 3
+            Set p_outcome = TestDefaultValues
+        Case 4
+            Set p_outcome = TestParameterArrayPropagated
+        Case Else
+    End Select
+    Set RunTest = p_outcome
+    'AfterEach
+End Function
+
+''' <summary>   Runs a single test. </summary>
+Public Sub RunOneTest()
+    'BeforeAll
+    RunTest 2
+    'AfterAll
+End Sub
+
+''' <summary>   Runs all tests. </summary>
+Public Sub RunAllTests()
+    This.Name = "CoreExtensionTests"
+    'BeforeAll
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    This.RunCount = 0
+    This.PassedCount = 0
+    This.FailedCount = 0
+    This.InconclusiveCount = 0
+    This.TestCount = 4
+    Dim p_testNumber As Integer
+    For p_testNumber = 1 To This.TestCount
+        Set p_outcome = RunTest(p_testNumber)
+        If Not p_outcome Is Nothing Then
+            This.RunCount = This.RunCount + 1
+            If p_outcome.AssertInconclusive Then
+                This.InconclusiveCount = This.InconclusiveCount + 1
+            ElseIf p_outcome.AssertSuccessful Then
+                This.PassedCount = This.PassedCount + 1
+            Else
+                This.FailedCount = This.FailedCount + 1
+            End If
+        End If
+        DoEvents
+    Next p_testNumber
+    'AfterAll
+    Debug.Print "Ran " & VBA.CStr(This.RunCount) & " out of " & VBA.CStr(This.TestCount) & " tests."
+    Debug.Print "Passed: " & VBA.CStr(This.PassedCount) & "; Failed: " & VBA.CStr(This.FailedCount) & _
+                "; Inconclusive: " & VBA.CStr(This.InconclusiveCount) & "."
+End Sub
+
+
 ''' <summary>   Unit test. Asserts that a wait time should be longer or equal to the expected duration. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
-Public Function TestWaitShouldEqualOrExceedDuration() As Assert
+Public Function TestWaitShouldEqualOrExceedDuration() As cc_isr_Test_Fx.Assert
 
-    Dim p_outcome As Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
     
     Dim p_expectedDuration As Double
     p_expectedDuration = 0.1
@@ -32,9 +105,9 @@ End Function
 ''' <summary>   Unit test. Asserts that the resolution of VBA.Now() should be longer or equal
 '''             to the expected resolution but smaller than double of that resoltion. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
-Public Function TestNowResultion() As Assert
+Public Function TestNowResolution() As cc_isr_Test_Fx.Assert
 
-    Dim p_outcome As Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
     
     '  loop until now changes
     Dim p_startTime As Double: p_startTime = cc_isr_Core_IO.CoreExtensions.DaysNow()
@@ -69,17 +142,17 @@ Public Function TestNowResultion() As Assert
     
     End If
     
-    Debug.Print p_outcome.BuildReport("TestNowResultion")
+    Debug.Print p_outcome.BuildReport("TestNowResolution")
     
-    Set TestNowResultion = p_outcome
+    Set TestNowResolution = p_outcome
     
 End Function
 
 ''' <summary>   Unit test. Asserts that default values are as expected. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
-Public Function TestDefaultValues() As Assert
+Public Function TestDefaultValues() As cc_isr_Test_Fx.Assert
 
-    Dim p_outcome As Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
     
     Set p_outcome = Assert.AreEqual(False, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbBoolean), _
         "The default value of VBA.VbVarType.vbBoolean should equal.")
@@ -117,11 +190,11 @@ End Function
 ''' <summary>   Unit test. Asserts that the paramter array propagated through nested methods
 ''' without errors. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
-Public Function TestParameterArrayPropagated() As Assert
+Public Function TestParameterArrayPropagated() As cc_isr_Test_Fx.Assert
     
     On Error Resume Next
     
-    Dim p_outcome As Assert
+    Dim p_outcome As cc_isr_Test_Fx.Assert
     
     Dim p_dummyVariant As Variant
     p_dummyVariant = "a"

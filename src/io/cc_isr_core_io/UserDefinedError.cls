@@ -91,24 +91,10 @@ Public Function FromAppendedUserDefinedError(ByVal a_error As UserDefinedError, 
 
 End Function
 
-''' <summary>   Replace white spaces with empty spaces. </summary>
-''' <remarks>   <see href="https://stackoverflow.com/questions/42306358/removing-all-spaces-in-string"/>
-''' </remarks>
-''' <param name="a_original">   [String] The original string. </param>
-''' <returns>   [String]. <returns>
-Public Function RemoveWhiteSpace(a_original As String) As String
-    With New RegExp
-        .Pattern = "\s"
-        .MultiLine = True
-        .Global = True
-        RemoveWhiteSpace = .Replace(a_original, vbNullString)
-    End With
-End Function
-
 ''' <summary>   Initialize the used defined error from the VBA Error object. </summary>
 ''' <returns>   [<see cref="UserDefinedError"/>]. </returns>
 Public Function FromErrorObject() As UserDefinedError
-    This.Name = Me.RemoveWhiteSpace(VBA.StrConv(VBA.Err.Description, VBA.VbStrConv.vbProperCase))
+    This.Name = "Error-" & VBA.CStr(Err.Number)
     This.Number = VBA.Err.Number
     This.Description = VBA.Err.Description
     This.Source = Err.Source
