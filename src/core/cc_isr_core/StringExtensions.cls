@@ -1831,3 +1831,186 @@ Public Function TrimRight(ByVal a_text As String, ByVal a_char As String) As Str
     TrimRight = a_text
 End Function
 
+''' + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+''' Parse values
+''' + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+''' <summary>   Tries to parse a number to Boolean. </summary>
+''' <remnarks>   Note that this parsing converts 0 to false and any number to true
+''' whereas in VBA, only -1 is true.</remarks>
+''' <param name="a_text">      [String] The text to parse. </param>
+''' <param name="a_value">     [Boolean] The parsed value. </param>
+''' <param name="a_details">   [String] details why parsing failed. </param>
+''' <returns>   [Boolean] True if the text was parsed. <returns>
+Public Function TryParseBoolean(ByVal a_text As String, ByRef a_value As Boolean, ByVal a_details As String) As Boolean
+    
+    Dim p_parsed As Boolean
+    p_parsed = False
+    
+    Dim p_trueValues As String
+    p_trueValues = "on,true"
+    
+    Dim p_falseValues As String
+    p_falseValues = "off,false"
+    
+    ' default to leave the value unchangd.
+    If VBA.vbNullString = a_text Then
+        
+        p_parsed = False
+        a_details = "Unable to parse an empty string '" & a_text & "' to Boolean."
+    
+    ElseIf VBA.IsNumeric(a_text) Then
+        
+        On Error Resume Next
+        ' any value other than zero is true.
+        a_value = 0 <> VBA.CInt(VBA.Val(a_text))
+        If Err.Number = 0 Then
+            p_parsed = True
+        Else
+            a_details = "Error " & VBA.CStr(Err.Number) & ", " & Err.Description & _
+                " converting '" & a_text & "' to Boolean using '0 <> VBA.CInt(VBA.Val(" & a_text & "))'."
+            p_parsed = False
+        End If
+        On Error GoTo 0
+        
+    Else
+    
+        Dim p_value As Variant
+        For Each p_value In VBA.Split(p_trueValues, ",")
+            If 1 = VBA.InStr(1, VBA.CStr(p_value), a_text, vbTextCompare) Then
+                p_parsed = True
+                a_value = True
+                Exit For
+            End If
+        Next
+        
+        If Not p_parsed Then
+            For Each p_value In VBA.Split(p_falseValues, ",")
+                If 1 = VBA.InStr(1, VBA.CStr(p_value), a_text, vbTextCompare) Then
+                    p_parsed = True
+                    a_value = False
+                    Exit For
+                End If
+            Next
+        End If
+        
+        If Not p_parsed Then
+            a_details = "Unable to convert '" & a_text & "' to Boolean."
+        End If
+        
+    End If
+
+    TryParseBoolean = p_parsed
+
+End Function
+
+''' <summary>   Tries to parse a number to double. </summary>
+''' <param name="a_text">      [String] The text to parse. </param>
+''' <param name="a_value">     [Double] The parsed value. </param>
+''' <param name="a_details">   [String] details why parsing failed. </param>
+''' <returns>   [Boolean] True if the text was parsed. <returns>
+Public Function TryParseDouble(ByVal a_text As String, ByRef a_value As Double, ByVal a_details As String) As Boolean
+    
+    ' default to leave the value unchangd.
+    If VBA.vbNullString = a_text Then
+        a_details = "Unable to parse an empty string '" & a_text & "' to Double."
+    ElseIf Not VBA.IsNumeric(a_text) Then
+        a_details = "Unable to parse a non-numeric value '" & a_text & "' to Double."
+    Else
+        On Error Resume Next
+        a_value = VBA.CDbl(VBA.Val(a_text))
+        If Err.Number = 0 Then
+            TryParseDouble = True
+        Else
+            a_details = "Error " & VBA.CStr(Err.Number) & ", " & Err.Description & _
+                " converting '" & a_text & "' to Double using VBA.CDbl(VBA.Val(" & a_text & "))."
+            TryParseDouble = False
+        End If
+        On Error GoTo 0
+    End If
+
+End Function
+
+''' <summary>   Tries to parse a number to Integer. </summary>
+''' <param name="a_text">      [String] The text to parse. </param>
+''' <param name="a_value">     [Integer] The parsed value. </param>
+''' <param name="a_details">   [String] details why parsing failed. </param>
+''' <returns>   [Boolean] True if the text was parsed. <returns>
+Public Function TryParseInteger(ByVal a_text As String, ByRef a_value As Integer, ByVal a_details As String) As Boolean
+    
+    ' default to leave the value unchangd.
+    If VBA.vbNullString = a_text Then
+        a_details = "Unable to parse an empty string '" & a_text & "' to Integer."
+    ElseIf Not VBA.IsNumeric(a_text) Then
+        a_details = "Unable to parse a non-numeric value '" & a_text & "' to Integer."
+    Else
+        On Error Resume Next
+        a_value = VBA.CInt(VBA.Val(a_text))
+        If Err.Number = 0 Then
+            TryParseInteger = True
+        Else
+            a_details = "Error " & VBA.CStr(Err.Number) & ", " & Err.Description & _
+                " converting '" & a_text & "' to Integer using VBA.CInt(VBA.Val(" & a_text & "))."
+            TryParseInteger = False
+        End If
+        On Error GoTo 0
+    End If
+
+End Function
+
+
+''' <summary>   Tries to parse a number to Long. </summary>
+''' <param name="a_text">      [String] The text to parse. </param>
+''' <param name="a_value">     [Long] The parsed value. </param>
+''' <param name="a_details">   [String] details why parsing failed. </param>
+''' <returns>   [Boolean] True if the text was parsed. <returns>
+Public Function TryParseLong(ByVal a_text As String, ByRef a_value As Long, ByVal a_details As String) As Boolean
+    
+    ' default to leave the value unchangd.
+    If VBA.vbNullString = a_text Then
+        a_details = "Unable to parse an empty string '" & a_text & "' to Long."
+    ElseIf Not VBA.IsNumeric(a_text) Then
+        a_details = "Unable to parse a non-numeric value '" & a_text & "' to Long."
+    Else
+        On Error Resume Next
+        a_value = VBA.CInt(VBA.Val(a_text))
+        If Err.Number = 0 Then
+            TryParseLong = True
+        Else
+            a_details = "Error " & VBA.CStr(Err.Number) & ", " & Err.Description & _
+                " converting '" & a_text & "' to Long using VBA.CInt(VBA.Val(" & a_text & "))."
+            TryParseLong = False
+        End If
+        On Error GoTo 0
+    End If
+
+End Function
+
+''' <summary>   Tries to parse a number to Single. </summary>
+''' <param name="a_text">      [String] The text to parse. </param>
+''' <param name="a_value">     [Single] The parsed value. </param>
+''' <param name="a_details">   [String] details why parsing failed. </param>
+''' <returns>   [Boolean] True if the text was parsed. <returns>
+Public Function TryParseSingle(ByVal a_text As String, ByRef a_value As Single, ByVal a_details As String) As Boolean
+    
+    ' default to leave the value unchangd.
+    If VBA.vbNullString = a_text Then
+        a_details = "Unable to parse an empty string '" & a_text & "' to Single."
+    ElseIf Not VBA.IsNumeric(a_text) Then
+        a_details = "Unable to parse a non-numeric value '" & a_text & "' to Single."
+    Else
+        On Error Resume Next
+        a_value = VBA.CSng(VBA.Val(a_text))
+        If Err.Number = 0 Then
+            TryParseSingle = True
+        Else
+            a_details = "Error " & VBA.CStr(Err.Number) & ", " & Err.Description & _
+                " converting '" & a_text & "' to Single using VBA.CDbl(VBA.Val(" & a_text & "))."
+            TryParseSingle = False
+        End If
+        On Error GoTo 0
+    End If
+
+End Function
+
+

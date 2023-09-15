@@ -63,6 +63,12 @@ Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
             Set p_outcome = TestTrimLeft
         Case 19
             Set p_outcome = TestTrimRight
+        Case 20
+            Set p_outcome = TestTextShouldParseToBoolean
+        Case 21
+            Set p_outcome = TestTextShouldParseToDouble
+        Case 22
+            Set p_outcome = TestTextShouldParseToLong
         Case Else
     End Select
     Set RunTest = p_outcome
@@ -72,7 +78,7 @@ End Function
 ''' <summary>   Runs a single test. </summary>
 Public Sub RunOneTest()
     'BeforeAll
-    RunTest 1
+    RunTest 22
     'AfterAll
 End Sub
 
@@ -85,7 +91,7 @@ Public Sub RunAllTests()
     This.PassedCount = 0
     This.FailedCount = 0
     This.InconclusiveCount = 0
-    This.TestCount = 19
+    This.TestCount = 22
     Dim p_testNumber As Integer
     For p_testNumber = 1 To This.TestCount
         Set p_outcome = RunTest(p_testNumber)
@@ -902,5 +908,319 @@ Public Function TestTrimRight() As cc_isr_Test_Fx.Assert
     Set TestTrimRight = p_outcome
 
 End Function
+
+''' + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+''' Parse numbers
+''' + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+''' <summary>   Unit test. Asserts text should parse to Boolean. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    
+    Dim p_text As String
+    Dim p_expectedValue As Boolean
+    Dim p_expectedOutcome As Boolean
+    Dim p_actualOutcome As Boolean
+    Dim p_actualValue As Boolean
+    Dim p_actualDetails As String
+    
+    p_text = "1"
+    p_expectedValue = True
+    p_expectedOutcome = True
+    p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should " & _
+            IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
+
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "fortytwo"
+        ' p_expectedValue value remains uncanged
+        p_expectedOutcome = False
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should " & _
+            IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "&HA"
+        p_expectedValue = True
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should succeed; " & p_actualDetails & ".")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "0"
+        p_expectedValue = False
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should " & _
+            IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "off"
+        p_expectedValue = False
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should " & _
+            IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "false"
+        p_expectedValue = False
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should " & _
+            IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "on"
+        p_expectedValue = True
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should " & _
+            IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "true"
+        p_expectedValue = True
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+            "parse of '" & p_text & "' to boolean should " & _
+            IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    ' test how parsing affects error handling
+    On Error Resume Next
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "true"
+        p_expectedValue = True
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
+    
+        ' cause an error and see if it is trapped.
+        Dim a_deviceByZeroErrorNumber As Integer
+        a_deviceByZeroErrorNumber = 11
+        Dim a_notANumber As Double
+        a_notANumber = 1& / 0&
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(a_deviceByZeroErrorNumber, Err.Number, _
+            "Error number should match divide by zero error.")
+   
+    End If
+    
+    On Error GoTo 0
+    
+    Debug.Print p_outcome.BuildReport("TestTextShouldParseToBoolean")
+    Set TestTextShouldParseToBoolean = p_outcome
+
+End Function
+
+''' <summary>   Unit test. Asserts text should parse to Double. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestTextShouldParseToDouble() As cc_isr_Test_Fx.Assert
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    
+    Dim p_text As String
+    Dim p_expectedValue As Double
+    Dim p_expectedOutcome As Boolean
+    Dim p_actualOutcome As Boolean
+    Dim p_actualValue As Double
+    Dim p_actualDetails As String
+    
+    p_text = "42.42"
+    p_expectedValue = 42.42
+    p_expectedOutcome = True
+    p_actualOutcome = StringExtensions.TryParseDouble(p_text, p_actualValue, p_actualDetails)
+    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "fortytwo"
+        ' p_expectedValue value remains unchanged
+        p_expectedOutcome = False
+        p_actualOutcome = StringExtensions.TryParseDouble(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "&HA"
+        p_expectedValue = 10
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseDouble(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    ' test how parsing affects error handling
+    On Error Resume Next
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "&HA"
+        p_expectedValue = 10
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseDouble(p_text, p_actualValue, p_actualDetails)
+    
+        ' cause an error and see if it is trapped.
+        Dim a_deviceByZeroErrorNumber As Integer
+        a_deviceByZeroErrorNumber = 11
+        Dim a_notANumber As Double
+        a_notANumber = 1& / 0&
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(a_deviceByZeroErrorNumber, Err.Number, _
+            "Error number should match divide by zero error.")
+   
+    End If
+    
+    On Error GoTo 0
+    
+    Debug.Print p_outcome.BuildReport("TestTextShouldParseToDouble")
+    Set TestTextShouldParseToDouble = p_outcome
+
+End Function
+
+''' <summary>   Unit test. Asserts text should parse to Long. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestTextShouldParseToLong() As cc_isr_Test_Fx.Assert
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    
+    Dim p_text As String
+    Dim p_expectedValue As Long
+    Dim p_expectedOutcome As Boolean
+    Dim p_actualOutcome As Boolean
+    Dim p_actualValue As Long
+    Dim p_actualDetails As String
+    
+    p_text = "42"
+    p_expectedValue = 42
+    p_expectedOutcome = True
+    p_actualOutcome = StringExtensions.TryParseLong(p_text, p_actualValue, p_actualDetails)
+    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "fortytwo"
+        ' p_expectedValue value remains uncanged
+        p_expectedOutcome = False
+        p_actualOutcome = StringExtensions.TryParseLong(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "&HA"
+        p_expectedValue = 10
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseLong(p_text, p_actualValue, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+            "parse of '" & p_text & "' should yield the expected value.")
+    End If
+    
+    ' test how parsing affects error handling
+    On Error Resume Next
+    
+    If p_outcome.AssertSuccessful Then
+        p_text = "&HA"
+        p_expectedValue = 10
+        p_expectedOutcome = True
+        p_actualOutcome = StringExtensions.TryParseLong(p_text, p_actualValue, p_actualDetails)
+    
+        ' cause an error and see if it is trapped.
+        Dim a_deviceByZeroErrorNumber As Long
+        a_deviceByZeroErrorNumber = 11
+        Dim a_notANumber As Double
+        a_notANumber = 1& / 0&
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(a_deviceByZeroErrorNumber, Err.Number, _
+            "Error number should match divide by zero error.")
+   
+    End If
+    
+    On Error GoTo 0
+    
+    Debug.Print p_outcome.BuildReport("TestTextShouldParseToLong")
+    Set TestTextShouldParseToLong = p_outcome
+
+End Function
+
+
 
 

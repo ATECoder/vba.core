@@ -75,6 +75,7 @@ $excel.EnableEvents = $true;
 $src = "C:\my\lib\vba\core\core\src\core\cc.isr.core.xlsm"
 LogInfo( "opening " + $src)
 $book = $excel.Workbooks.Open($src, $missing, $ReadOnly, $missing, $missing, $missing, $true)
+$book.Windows(1).Visible = $true
 LogInfo ( "Opened " + $book.Name + " read " + (&{If($ReadOnly) {"only"} Else {"write"}}) + "." )
 
 LogInfo( "project loaded. Script will close in 5 seconds" )
