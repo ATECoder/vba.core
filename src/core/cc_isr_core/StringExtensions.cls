@@ -1831,6 +1831,41 @@ Public Function TrimRight(ByVal a_text As String, ByVal a_char As String) As Str
     TrimRight = a_text
 End Function
 
+''' <summary>   Trims the given characters from the end of the given text. </summary>
+''' <param name="a_text">            [String] The text to trim. </param>
+''' <param name="a_trim">            [String] The characters to trim. </param>
+''' <param name="a_compareMethod">   [Optional, <see cref="VBA.VbCompareMethod"/>,
+'''                                  <see cref="VBA.VbCompareMethod.vbTextCompare"/>]
+'''                                  The compare method. </param>
+''' <returns>   [String]. <returns>
+Public Function TrimEnd(ByVal a_text As String, ByVal a_trim As String, _
+    Optional ByVal a_compareMethod As VBA.VbCompareMethod = VBA.VbCompareMethod.vbTextCompare) As String
+
+    ' get the location of the trim
+    Dim p_trimIndex As Integer
+    p_trimIndex = VBA.InStr(1, a_text, a_trim, a_compareMethod)
+    If p_trimIndex > 0 Then
+        TrimEnd = VBA.Left$(a_text, p_trimIndex - 1)
+    Else
+        TrimEnd = a_text
+    End If
+    
+End Function
+
+''' <summary>   Trims the given characters from the start of the given text. </summary>
+''' <param name="a_text">   [String] The text to trim. </param>
+''' <param name="a_trim">   [String] The characters to trim. </param>
+''' <returns>   [String]. <returns>
+Public Function TrimStart(ByVal a_text As String, ByVal a_trim As String) As String
+
+    If 1 = VBA.InStr(1, a_text, a_trim, vbTextCompare) Then
+        TrimStart = VBA.Right$(a_text, Len(a_text) - Len(a_trim))
+    Else
+        TrimStart = a_text
+    End If
+    
+End Function
+
 ''' + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 ''' Parse values
 ''' + + + + + + + + + + + + + + + + + + + + + + + + + + + +

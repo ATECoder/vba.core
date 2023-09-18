@@ -69,6 +69,10 @@ Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
             Set p_outcome = TestTextShouldParseToDouble
         Case 22
             Set p_outcome = TestTextShouldParseToLong
+        Case 23
+            Set p_outcome = TestTrimEnd
+        Case 24
+            Set p_outcome = TestTrimStart
         Case Else
     End Select
     Set RunTest = p_outcome
@@ -78,7 +82,7 @@ End Function
 ''' <summary>   Runs a single test. </summary>
 Public Sub RunOneTest()
     'BeforeAll
-    RunTest 22
+    RunTest 24
     'AfterAll
 End Sub
 
@@ -91,7 +95,7 @@ Public Sub RunAllTests()
     This.PassedCount = 0
     This.FailedCount = 0
     This.InconclusiveCount = 0
-    This.TestCount = 22
+    This.TestCount = 24
     Dim p_testNumber As Integer
     For p_testNumber = 1 To This.TestCount
         Set p_outcome = RunTest(p_testNumber)
@@ -906,6 +910,56 @@ Public Function TestTrimRight() As cc_isr_Test_Fx.Assert
 
     Debug.Print p_outcome.BuildReport("TestTrimRight")
     Set TestTrimRight = p_outcome
+
+End Function
+
+''' <summary>   Unit test. Trim end should pass. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestTrimEnd() As cc_isr_Test_Fx.Assert
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    Dim p_trim As String: p_trim = VBA.vbCrLf
+    Dim p_expected As String: p_expected = "expected"
+    Dim p_text As String: p_text = p_expected & p_trim
+    
+    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(Len(p_trim) + VBA.Len(p_expected), VBA.Len(p_text), _
+        "The length of the appended string should match the sum of the two strings.")
+
+    If p_outcome.AssertSuccessful Then
+    
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqualString(p_expected, _
+            cc_isr_Core.StringExtensions.TrimEnd(p_text, p_trim), VBA.VbCompareMethod.vbTextCompare, _
+            "The trimmed string should equal the expected string.")
+    
+    End If
+    
+    Debug.Print p_outcome.BuildReport("TestTrimEnd")
+    Set TestTrimEnd = p_outcome
+
+End Function
+
+''' <summary>   Unit test. Trim start should pass. </summary>
+''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
+Public Function TestTrimStart() As cc_isr_Test_Fx.Assert
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    Dim p_trim As String: p_trim = VBA.vbCrLf
+    Dim p_expected As String: p_expected = "expected"
+    Dim p_text As String: p_text = p_trim & p_expected
+    
+    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(Len(p_trim) + VBA.Len(p_expected), VBA.Len(p_text), _
+        "The length of the appended string should match the sum of the two strings.")
+
+    If p_outcome.AssertSuccessful Then
+    
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqualString(p_expected, _
+            cc_isr_Core.StringExtensions.TrimStart(p_text, p_trim), VBA.VbCompareMethod.vbTextCompare, _
+            "The trimmed string should equal the expected string.")
+    
+    End If
+    
+    Debug.Print p_outcome.BuildReport("TestTrimStart")
+    Set TestTrimStart = p_outcome
 
 End Function
 
