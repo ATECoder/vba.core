@@ -91,7 +91,7 @@ Public Function TestAppendingToEmptyBuilder() As cc_isr_Test_Fx.Assert
     p_expected = "a"
     p_builder.Append p_expected
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended value should equal expected value")
 
     Debug.Print p_outcome.BuildReport("TestAppendingToEmptyBuilder")
@@ -111,7 +111,7 @@ Public Function TestAppendingEmptyString() As cc_isr_Test_Fx.Assert
     p_expected = vbNullString
     p_builder.Append p_expected
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended empty value should equal p_expected value")
 
     Debug.Print p_outcome.BuildReport("TestAppendingEmptyString")
@@ -130,7 +130,7 @@ Public Function TestAppendingLongString() As cc_isr_Test_Fx.Assert
     Dim p_expected As String
     p_expected = StringExtensions.Repeat("a", 1000)
     p_builder.Append p_expected
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended a long value should equal p_expected value")
 
     Debug.Print p_outcome.BuildReport("TestAppendingLongString")
@@ -150,7 +150,7 @@ Public Function TestAppendingLineFeed() As cc_isr_Test_Fx.Assert
     p_expected = "a" & vbLf
     p_builder.Append p_expected
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended value with line feed should equal expected value")
 
     Debug.Print p_outcome.BuildReport("TestAppendingLineFeed")
@@ -171,7 +171,7 @@ Public Function TestAppendFormat() As cc_isr_Test_Fx.Assert
     Dim p_format As String: p_format = "{0}+{1}+{2}"
     p_builder.Appendformat p_format, "a", "b", "c"
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_builder.ToString, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_builder.ToString, _
             "Appended value with line feed should equal expected value")
 
     Debug.Print p_outcome.BuildReport("TestAppendFormat")

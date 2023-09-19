@@ -144,7 +144,7 @@ Public Function TestCollectionShouldBeEqual() As cc_isr_Test_Fx.Assert
     p_item = "a": p_left.Add p_item: p_right.Add p_item
     p_item = "b": p_left.Add p_item: p_right.Add p_item
     
-    Set p_outcome = Assert.IsTrue(CollectionExtensions.AreEqual(p_left, p_right), _
+    Set p_outcome = Assert.IsTrue(CollectionExtensions.areEqual(p_left, p_right), _
         "The collection should be equal")
 
     Debug.Print p_outcome.BuildReport("TestCollectionShouldBeEqual")
@@ -167,12 +167,12 @@ Public Function TestCollectionShouldNotBeEqual() As cc_isr_Test_Fx.Assert
     p_item = "b": p_left.Add p_item: p_right.Add p_item
     p_item = "c": p_left.Add p_item
     
-    Set p_outcome = Assert.IsFalse(CollectionExtensions.AreEqual(p_left, p_right), _
+    Set p_outcome = Assert.IsFalse(CollectionExtensions.areEqual(p_left, p_right), _
         "The collection should not be equal because they are of difference length")
 
     If p_outcome.AssertSuccessful Then
         p_right.Add p_item & "d"
-        Set p_outcome = Assert.IsFalse(CollectionExtensions.AreEqual(p_left, p_right), _
+        Set p_outcome = Assert.IsFalse(CollectionExtensions.areEqual(p_left, p_right), _
             "The collection should not be equal because they have difference items")
     End If
     Debug.Print p_outcome.BuildReport("TestCollectionShouldNotBeEqual")

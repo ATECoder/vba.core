@@ -123,7 +123,7 @@ End Sub
 Public Function TestCharAt() As cc_isr_Test_Fx.Assert
 
     Dim p_outcome As cc_isr_Test_Fx.Assert
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("a", StringExtensions.CharAt("foobar", 5), _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("a", StringExtensions.CharAt("foobar", 5), _
             "Should get the expected character from the string")
 
     Debug.Print p_outcome.BuildReport("TestCharAt")
@@ -158,7 +158,7 @@ Public Function TestEscapeSequences() As cc_isr_Test_Fx.Assert
             
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(8, p_escapes.Count, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(8, p_escapes.Count, _
                 "Number of escape sequences should match")
                 
     End If
@@ -171,12 +171,12 @@ Public Function TestEscapeSequences() As cc_isr_Test_Fx.Assert
         
             Set p_item = p_escapes(p_escape.value)
             
-            Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_escape.value, p_item.value, _
+            Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_escape.value, p_item.value, _
                     "For each escape value must match collection item value")
                     
             If Not p_outcome.AssertSuccessful Then Exit For
         
-            Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_escape.Literal, p_item.Literal, _
+            Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_escape.Literal, p_item.Literal, _
                     "For each escape replacement value must match collection item replacement value")
                     
             If Not p_outcome.AssertSuccessful Then Exit For
@@ -202,7 +202,7 @@ Public Function TestInsertRepelaceEscapeSequences() As cc_isr_Test_Fx.Assert
 
     Dim p_areEqual As Boolean: p_areEqual = cc_isr_Core.StringExtensions.AreEqualDebug(p_expected, p_actual)
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_actual, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_actual, _
             "Literal values should be inserted in place of the escaped sequences.")
             
     If p_outcome.AssertSuccessful Then
@@ -210,7 +210,7 @@ Public Function TestInsertRepelaceEscapeSequences() As cc_isr_Test_Fx.Assert
         p_expected = p_original
         p_original = p_actual
         p_actual = cc_isr_Core.StringExtensions.InsertEscapeSequences(p_original)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_actual, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_actual, _
                 "Escape sequences should be inserted in place of the literal characters.")
     End If
 
@@ -233,14 +233,14 @@ Public Function TestInsert() As cc_isr_Test_Fx.Assert
     Dim p_suffix As String
     
     p_position = 0: p_expected = "991234": p_suffix = "-th"
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
             StringExtensions.Insert(p_original, p_added, p_position), _
             "Added string '" & p_added & "' should be inserted into '" & _
             p_original & "' at the " & CStr(p_position) & p_suffix & " position.")
             
     If p_outcome.AssertSuccessful Then
         p_position = 1: p_expected = "991234": p_suffix = "-st"
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 StringExtensions.Insert(p_original, p_added, p_position), _
                 "Added string '" & p_added & "' should be inserted into '" & _
                 p_original & "' at the " & CStr(p_position) & p_suffix & " position.")
@@ -248,7 +248,7 @@ Public Function TestInsert() As cc_isr_Test_Fx.Assert
     
     If p_outcome.AssertSuccessful Then
         p_position = 2: p_expected = "199234": p_suffix = "-nd"
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 StringExtensions.Insert(p_original, p_added, p_position), _
                 "Added string '" & p_added & "' should be inserted into '" & _
                 p_original & "' at the " & CStr(p_position) & p_suffix & " position.")
@@ -256,7 +256,7 @@ Public Function TestInsert() As cc_isr_Test_Fx.Assert
     
     If p_outcome.AssertSuccessful Then
         p_position = 3: p_expected = "129934": p_suffix = "-rd"
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 StringExtensions.Insert(p_original, p_added, p_position), _
                 "Added string '" & p_added & "' should be inserted into '" & _
                 p_original & "' at the " & CStr(p_position) & p_suffix & " position.")
@@ -264,7 +264,7 @@ Public Function TestInsert() As cc_isr_Test_Fx.Assert
     
     If p_outcome.AssertSuccessful Then
         p_position = 4: p_expected = "123994": p_suffix = "-th"
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 StringExtensions.Insert(p_original, p_added, p_position), _
                 "Added string '" & p_added & "' should be inserted into '" & _
                 p_original & "' at the " & CStr(p_position) & p_suffix & " position.")
@@ -272,7 +272,7 @@ Public Function TestInsert() As cc_isr_Test_Fx.Assert
     
     If p_outcome.AssertSuccessful Then
         p_position = 100: p_expected = "123499": p_suffix = "-th (after the last)"
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 StringExtensions.Insert(p_original, p_added, p_position), _
                 "Added string '" & p_added & "' should be inserted into '" & _
                 p_original & "' at the " & CStr(p_position) & p_suffix & " position.")
@@ -291,13 +291,13 @@ Public Function TestPop() As cc_isr_Test_Fx.Assert
     Dim p_outcome As cc_isr_Test_Fx.Assert
     Dim p_delimitedString As String: p_delimitedString = "a,b,c"
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("a", _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("a", _
             StringExtensions.pop(p_delimitedString, ","), _
             "First element in " & p_delimitedString & " should pop")
             
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("b", _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("b", _
             StringExtensions.pop(p_delimitedString, ","), _
             "Second element in " & p_delimitedString & " should pop")
     
@@ -305,14 +305,14 @@ Public Function TestPop() As cc_isr_Test_Fx.Assert
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("c", _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("c", _
             StringExtensions.pop(p_delimitedString, ","), _
             "Third element in " & p_delimitedString & " should pop")
     End If
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(VBA.vbNullString, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(VBA.vbNullString, _
             StringExtensions.pop(p_delimitedString, ","), _
             "No element in " & p_delimitedString & " should pop")
             
@@ -338,7 +338,7 @@ Public Function TestRemoveWhiteSpaces() As cc_isr_Test_Fx.Assert
     p_expected = "Helloworld!"
     p_actual = cc_isr_Core.StringExtensions.RemoveWhiteSpace(p_original)
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, p_actual, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, p_actual, _
             "Should remove all white spaces from '" & p_original & "'.")
             
     Debug.Print p_outcome.BuildReport("TestRemoveWhiteSpaces")
@@ -352,7 +352,7 @@ End Function
 Public Function TestRepeat() As cc_isr_Test_Fx.Assert
     
     Dim p_outcome As cc_isr_Test_Fx.Assert
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("aaa", StringExtensions.Repeat("a", 3), _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("aaa", StringExtensions.Repeat("a", 3), _
             "Should constract a string with repreated strings")
             
     Debug.Print p_outcome.BuildReport("TestRepeat")
@@ -407,22 +407,22 @@ Public Function TestFormatStringParser() As cc_isr_Test_Fx.Assert
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(p_success, "'" & p_format & "' should parse: " & p_message)
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedItemIndex, p_itemIndex, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedItemIndex, p_itemIndex, _
         "'" & p_format & "' item index should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedFormatGroup, p_formatGroup, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedFormatGroup, p_formatGroup, _
             "'" & p_format & "' format group should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedPrecisionString, p_precisionString, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedPrecisionString, p_precisionString, _
             "'" & p_format & "' precision string should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedFormatSpecifier, p_formatSpecifier, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedFormatSpecifier, p_formatSpecifier, _
             "'" & p_format & "' format specifier should equal.")
     End If
     
@@ -439,22 +439,22 @@ Public Function TestFormatStringParser() As cc_isr_Test_Fx.Assert
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(p_success, "'" & p_format & "' should parse: " & p_message)
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedItemIndex, p_itemIndex, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedItemIndex, p_itemIndex, _
         "'" & p_format & "' item index should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedFormatGroup, p_formatGroup, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedFormatGroup, p_formatGroup, _
             "'" & p_format & "' format group should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedPrecisionString, p_precisionString, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedPrecisionString, p_precisionString, _
             "'" & p_format & "' precision string should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedFormatSpecifier, p_formatSpecifier, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedFormatSpecifier, p_formatSpecifier, _
             "'" & p_format & "' format specifier should equal.")
     End If
     
@@ -471,22 +471,22 @@ Public Function TestFormatStringParser() As cc_isr_Test_Fx.Assert
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(p_success, "'" & p_format & "' should parse: " & p_message)
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedItemIndex, p_itemIndex, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedItemIndex, p_itemIndex, _
         "'" & p_format & "' item index should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedFormatGroup, p_formatGroup, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedFormatGroup, p_formatGroup, _
             "'" & p_format & "' format group should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedPrecisionString, p_precisionString, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedPrecisionString, p_precisionString, _
             "'" & p_format & "' precision string should equal.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedFormatSpecifier, p_formatSpecifier, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedFormatSpecifier, p_formatSpecifier, _
             "'" & p_format & "' format specifier should equal.")
     End If
     
@@ -514,14 +514,14 @@ Public Function TestDateStringFormat() As cc_isr_Test_Fx.Assert
     p_format = "{0:MMMM dd, yyyy}"
     p_expected = "December 30, 1899"
     p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_dateTime)
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
             p_actual, "'" & p_format & "' should format CDate('" & p_stringValue & "' as expected.")
     
     p_stringValue = "12:00:00 AM"
     p_format = "{0:MMMM dd, yyyy}"
     p_expected = "December 30, 1899"
     p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_stringValue)
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
             p_actual, "'" & p_format & "' should format '" & p_stringValue & "' as expected.")
     
     Debug.Print p_outcome.BuildReport("TestDateStringFormat")
@@ -544,14 +544,14 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
     p_format = "a{0}{1}"
     p_expected = "abc"
     p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, "b", "c")
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
             p_actual, "'" & p_format & "' should format the expected value.")
             
     If p_outcome.AssertSuccessful Then
         p_format = "(B) Binary: {0:B}"
         p_expected = "(B) Binary: 10000101"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -559,7 +559,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(B) Binary: {0:B16}"
         p_expected = "(B) Binary: 1111111110000101"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
             
@@ -567,7 +567,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(C) Currency: {0:C}\n"
         p_expected = "(C) Currency: -123.45$" & VBA.vbLf
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -575,7 +575,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(C) Currency: {0:C}"
         p_expected = "(C) Currency: -123.00$"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
     
@@ -583,7 +583,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(D) Decimal:. . . . . . . . . {0:D}"
         p_expected = "(D) Decimal:. . . . . . . . . -123"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
     
@@ -592,7 +592,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(E) Scientific: . . . . . . . {0:E}"
         p_expected = "(E) Scientific: . . . . . . . -1.23450E2"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
     
@@ -600,7 +600,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(F) Fixed point:. . . . . . . {0:F}"
         p_expected = "(F) Fixed point:. . . . . . . -123.45"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
     
@@ -608,7 +608,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(F) Fixed point:. . . . . . . {0:F1}"
         p_expected = "(F) Fixed point:. . . . . . . -123.5"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -616,7 +616,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(G) General:. . . . . . . {0:G}"
         p_expected = "(G) General:. . . . . . . -1.23450E2"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -624,7 +624,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(G) General:. . . . . . . {0:G4}"
         p_expected = "(G) General:. . . . . . . -123.5"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -632,7 +632,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(N) Number: . . . . . . . . . {0:N}"
         p_expected = "(N) Number: . . . . . . . . . -123"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -640,7 +640,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(P) Percent:. . . . . . . . . {0:P}"
         p_expected = "(P) Percent:. . . . . . . . . -12,345%"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -648,7 +648,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(R) Round-trip: . . . . . . . {0:R}"
         p_expected = "(R) Round-trip: . . . . . . . -123.45"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, -123.45)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -656,7 +656,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(X) Hexadecimal:. . . . . . . {0:X}"
         p_expected = "(X) Hexadecimal:. . . . . . . FF85"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, CInt(-123))
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -664,7 +664,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(X) Hexadecimal:. . . . . . . {0:x}"
         p_expected = "(X) Hexadecimal:. . . . . . . ff85"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, CInt(-123))
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -674,7 +674,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(c) Custom format: . . . . . .{0:cYYYY-MM-DD (MMMM)}"
         p_expected = "(c) Custom format: . . . . . .2013-01-26 (January)"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -682,7 +682,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(d) Short date: . . . . . . . {0:d}"
         p_expected = "(d) Short date: . . . . . . . 1/26/2013"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -690,7 +690,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(D) Long date:. . . . . . . . {0:D}"
         p_expected = "(D) Long date:. . . . . . . . Saturday, January 26, 2013"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -701,7 +701,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(T) Long time:. . . . . . . . {0:T}"
         p_expected = "(T) Long time:. . . . . . . . 8:28:11 PM"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -709,7 +709,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(f) Full date/short time: . . {0:f}"
         p_expected = "(f) Full date/short time: . . Saturday, January 26, 2013 8:28 PM"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -717,7 +717,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(F) Full date/long time:. . . {0:F}"
         p_expected = "(F) Full date/long time:. . . Saturday, January 26, 2013 8:28:11 PM"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -725,7 +725,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_format = "(s) Sortable: . . . . . . . . {0:s}"
         p_expected = "(s) Sortable: . . . . . . . . 2013-01-26T20:28:11"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, p_date)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
 
@@ -736,7 +736,7 @@ Public Function TestStringFormat() As cc_isr_Test_Fx.Assert
         p_expected = """hello, world! " & VBA.vbLf & "'   100.00$'" & VBA.vbLf & "'100.00$   '"
         p_actual = cc_isr_Core.StringExtensions.StringFormat(p_format, "hello", "world", 100)
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "'" & p_format & "' should format the expected value.")
     End If
   
@@ -751,7 +751,7 @@ End Function
 Public Function TestStringFormatReplace() As cc_isr_Test_Fx.Assert
 
     Dim p_outcome As cc_isr_Test_Fx.Assert
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("aaa", _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("aaa", _
             StringExtensions.StringFormat("a{0}{1}", "a", "a"), _
             "Format should build the expected string")
 
@@ -837,7 +837,7 @@ End Function
 Public Function TestSubstring() As cc_isr_Test_Fx.Assert
     
     Dim p_outcome As cc_isr_Test_Fx.Assert
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("oo", StringExtensions.Substring("foobar", 1, 2), _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("oo", StringExtensions.Substring("foobar", 1, 2), _
             "Should get the expected part of the string")
 
     Debug.Print p_outcome.BuildReport("TestSubstring")
@@ -859,14 +859,14 @@ Public Function TestToBinary() As cc_isr_Test_Fx.Assert
     p_value = 5
     p_expected = "101"
     p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value)
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
             p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
     
     If p_outcome.AssertSuccessful Then
         p_value = 16
         p_expected = "10000"
         p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
     End If
     
@@ -874,7 +874,7 @@ Public Function TestToBinary() As cc_isr_Test_Fx.Assert
         p_value = 5
         p_expected = "00000101"
         p_actual = cc_isr_Core.StringExtensions.ToBinary(p_value, 8)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expected, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expected, _
                 p_actual, "decimal value '" & CStr(p_value) & "' should convert to as expected.")
     End If
     
@@ -891,7 +891,7 @@ Public Function TestTrimLeft() As cc_isr_Test_Fx.Assert
     
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("bar", _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("bar", _
         StringExtensions.TrimLeft("oobar", "o"), "String should be left trimmed.")
 
     Debug.Print p_outcome.BuildReport("TestTrimLeft")
@@ -905,7 +905,7 @@ Public Function TestTrimRight() As cc_isr_Test_Fx.Assert
 
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual("f", _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual("f", _
         StringExtensions.TrimRight("foo", "o"), "String should be right-trimmed.")
 
     Debug.Print p_outcome.BuildReport("TestTrimRight")
@@ -922,7 +922,7 @@ Public Function TestTrimEnd() As cc_isr_Test_Fx.Assert
     Dim p_expected As String: p_expected = "expected"
     Dim p_text As String: p_text = p_expected & p_trim
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(Len(p_trim) + VBA.Len(p_expected), VBA.Len(p_text), _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(Len(p_trim) + VBA.Len(p_expected), VBA.Len(p_text), _
         "The length of the appended string should match the sum of the two strings.")
 
     If p_outcome.AssertSuccessful Then
@@ -947,7 +947,7 @@ Public Function TestTrimStart() As cc_isr_Test_Fx.Assert
     Dim p_expected As String: p_expected = "expected"
     Dim p_text As String: p_text = p_trim & p_expected
     
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(Len(p_trim) + VBA.Len(p_expected), VBA.Len(p_text), _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(Len(p_trim) + VBA.Len(p_expected), VBA.Len(p_text), _
         "The length of the appended string should match the sum of the two strings.")
 
     If p_outcome.AssertSuccessful Then
@@ -984,12 +984,12 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
     p_expectedValue = True
     p_expectedOutcome = True
     p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should " & _
             IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
 
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -998,13 +998,13 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         ' p_expectedValue value remains uncanged
         p_expectedOutcome = False
         p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should " & _
             IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1013,12 +1013,12 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         p_expectedValue = True
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should succeed; " & p_actualDetails & ".")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1027,13 +1027,13 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         p_expectedValue = False
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should " & _
             IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1042,13 +1042,13 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         p_expectedValue = False
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should " & _
             IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1057,13 +1057,13 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         p_expectedValue = False
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should " & _
             IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1072,13 +1072,13 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         p_expectedValue = True
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should " & _
             IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1087,13 +1087,13 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         p_expectedValue = True
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseBoolean(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, _
             "parse of '" & p_text & "' to boolean should " & _
             IIf(p_expectedOutcome, "succeed", "fail") & "; details: '" & p_actualDetails & "'.")
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1111,7 +1111,7 @@ Public Function TestTextShouldParseToBoolean() As cc_isr_Test_Fx.Assert
         a_deviceByZeroErrorNumber = 11
         Dim a_notANumber As Double
         a_notANumber = 1& / 0&
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(a_deviceByZeroErrorNumber, Err.Number, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(a_deviceByZeroErrorNumber, Err.Number, _
             "Error number should match divide by zero error.")
    
     End If
@@ -1140,10 +1140,10 @@ Public Function TestTextShouldParseToDouble() As cc_isr_Test_Fx.Assert
     p_expectedValue = 42.42
     p_expectedOutcome = True
     p_actualOutcome = StringExtensions.TryParseDouble(p_text, p_actualValue, p_actualDetails)
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
 
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1152,11 +1152,11 @@ Public Function TestTextShouldParseToDouble() As cc_isr_Test_Fx.Assert
         ' p_expectedValue value remains unchanged
         p_expectedOutcome = False
         p_actualOutcome = StringExtensions.TryParseDouble(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1165,11 +1165,11 @@ Public Function TestTextShouldParseToDouble() As cc_isr_Test_Fx.Assert
         p_expectedValue = 10
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseDouble(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1187,7 +1187,7 @@ Public Function TestTextShouldParseToDouble() As cc_isr_Test_Fx.Assert
         a_deviceByZeroErrorNumber = 11
         Dim a_notANumber As Double
         a_notANumber = 1& / 0&
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(a_deviceByZeroErrorNumber, Err.Number, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(a_deviceByZeroErrorNumber, Err.Number, _
             "Error number should match divide by zero error.")
    
     End If
@@ -1216,10 +1216,10 @@ Public Function TestTextShouldParseToLong() As cc_isr_Test_Fx.Assert
     p_expectedValue = 42
     p_expectedOutcome = True
     p_actualOutcome = StringExtensions.TryParseLong(p_text, p_actualValue, p_actualDetails)
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
 
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1228,11 +1228,11 @@ Public Function TestTextShouldParseToLong() As cc_isr_Test_Fx.Assert
         ' p_expectedValue value remains uncanged
         p_expectedOutcome = False
         p_actualOutcome = StringExtensions.TryParseLong(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1241,11 +1241,11 @@ Public Function TestTextShouldParseToLong() As cc_isr_Test_Fx.Assert
         p_expectedValue = 10
         p_expectedOutcome = True
         p_actualOutcome = StringExtensions.TryParseLong(p_text, p_actualValue, p_actualDetails)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedOutcome, p_actualOutcome, p_actualDetails)
     End If
     
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedValue, p_actualValue, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedValue, p_actualValue, _
             "parse of '" & p_text & "' should yield the expected value.")
     End If
     
@@ -1263,7 +1263,7 @@ Public Function TestTextShouldParseToLong() As cc_isr_Test_Fx.Assert
         a_deviceByZeroErrorNumber = 11
         Dim a_notANumber As Double
         a_notANumber = 1& / 0&
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(a_deviceByZeroErrorNumber, Err.Number, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(a_deviceByZeroErrorNumber, Err.Number, _
             "Error number should match divide by zero error.")
    
     End If

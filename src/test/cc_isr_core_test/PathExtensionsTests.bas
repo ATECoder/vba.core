@@ -86,7 +86,7 @@ Public Function TestPathElementsShouldJoin() As cc_isr_Test_Fx.Assert
     
     Dim p_expectedDummyPath As String: p_expectedDummyPath = p_element1 & "\" & p_element2
     Dim p_actualDummyPath As String: p_actualDummyPath = PathExtensions.Join(p_element1, p_element2)
-    Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedDummyPath, _
+    Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedDummyPath, _
                                         p_actualDummyPath, _
                                         "The path elements should be joined")
     
@@ -98,7 +98,7 @@ Public Function TestPathElementsShouldJoin() As cc_isr_Test_Fx.Assert
         ' test joining without creating
         
         Dim p_actualPath As String: p_actualPath = PathExtensions.JoinAll(False, p_element1, p_element2, p_element3)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedPath, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedPath, _
                                                        p_actualPath, _
                                                        "The path elements should be joined")
      
@@ -110,7 +110,7 @@ Public Function TestPathElementsShouldJoin() As cc_isr_Test_Fx.Assert
         
         Dim p_actualFilePath As String: p_actualFilePath = PathExtensions.JoinFile(p_actualPath, p_fileName)
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedFilePath, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedFilePath, _
             p_actualFilePath, "The path path should be joined")
     
     End If
@@ -130,7 +130,7 @@ Public Function TestPathElementsShouldJoin() As cc_isr_Test_Fx.Assert
         
         p_actualPath = PathExtensions.JoinAll(True, p_element1, p_element2, p_element3)
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedPath, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedPath, _
             p_actualPath, "The path element should be joined")
     
     End If

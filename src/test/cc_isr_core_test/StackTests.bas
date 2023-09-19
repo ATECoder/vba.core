@@ -87,13 +87,13 @@ Public Function TestStackShouldConstruct() As cc_isr_Test_Fx.Assert
                                     "A Stack should be created.")
 
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedCount, _
                                         p_Stack.Count, _
                                         "The Stack count should initialize at " & VBA.CStr(p_expectedCount) & ".")
     End If
 
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedCapacity, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedCapacity, _
                                         p_Stack.Capacity, _
                                         "The Stack should have the expected capacity.")
     End If
@@ -117,13 +117,13 @@ Public Function TestStackShouldPush() As cc_isr_Test_Fx.Assert
                                     "A Stack should be created.")
 
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedCount, _
                                         p_Stack.Count, _
                                         "The Stack count should initialize at " & VBA.CStr(p_expectedCount) & ".")
     End If
 
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedCapacity, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedCapacity, _
                                         p_Stack.Capacity, _
                                         "The Stack should have the expected capacity.")
     End If
@@ -134,7 +134,7 @@ Public Function TestStackShouldPush() As cc_isr_Test_Fx.Assert
         p_lastItem = 1
         p_expectedCount = p_expectedCount + 1
         p_Stack.Push VBA.CStr(p_lastItem)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedCount, _
                                         p_Stack.Count, _
                                         "The Stack count should increment after Pushing.")
     End If
@@ -148,7 +148,7 @@ Public Function TestStackShouldPush() As cc_isr_Test_Fx.Assert
             DoEvents
         Next i
         p_expectedCount = p_Stack.Capacity
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedCount, _
                             p_Stack.Count, _
                             "The Stack count should set to full count after adding " & VBA.CStr(p_Stack.Capacity) & " items.")
     End If
@@ -157,7 +157,7 @@ Public Function TestStackShouldPush() As cc_isr_Test_Fx.Assert
         p_lastItem = p_lastItem + 1
         p_Stack.Push VBA.CStr(p_lastItem)
         p_expectedCount = p_Stack.Capacity
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedCount, _
                             p_Stack.Count, _
                             "The Stack count should remain at full capacity after adding beyond the Stack capacity.")
     End If
@@ -169,7 +169,7 @@ Public Function TestStackShouldPush() As cc_isr_Test_Fx.Assert
         p_index = 1
         p_expectedValue = IIf(p_lastItem > p_Stack.Capacity, p_lastItem - p_Stack.Capacity + 1, p_index)
         p_actualValue = p_Stack.peek(p_index)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(VBA.CStr(p_expectedValue), _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(VBA.CStr(p_expectedValue), _
                             p_actualValue, _
                             "The Stack should have the expected value at the " & VBA.CStr(p_index) & " index.")
     End If
@@ -178,7 +178,7 @@ Public Function TestStackShouldPush() As cc_isr_Test_Fx.Assert
         p_index = p_Stack.Capacity
         p_expectedValue = IIf(p_lastItem > p_Stack.Capacity, p_lastItem, p_index)
         p_actualValue = p_Stack.peek(p_index)
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(VBA.CStr(p_expectedValue), _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(VBA.CStr(p_expectedValue), _
                             p_actualValue, _
                             "The Stack should have the expected value at the " & VBA.CStr(p_index) & " index.")
     End If
@@ -190,7 +190,7 @@ Public Function TestStackShouldPush() As cc_isr_Test_Fx.Assert
             DoEvents
             p_actualValue = p_Stack.pop()
             If p_outcome.AssertSuccessful Then
-                Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(VBA.CStr(p_expectedValue), _
+                Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(VBA.CStr(p_expectedValue), _
                                     p_actualValue, _
                                     "The Stack should have the expected value at the " & VBA.CStr(p_index) & " index after poping to " & p_Stack.Count & " items.")
                 p_expectedValue = p_expectedValue - 1

@@ -13,6 +13,64 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
+''' <summary>   Clamp value between (including) minimum and maximum. </summary>
+''' <param name="a_value">   [Variant] The value to clamp. </param>
+''' <param name="a_min">     [Variant] The minimum value. </param>
+''' <param name="a_max">     [Variant] The maximum value. </param>
+''' <returns>   [Variant]. </retursn>
+Public Function Clamp(ByVal a_value As Variant, ByVal a_min As Variant, ByVal a_max As Variant) As Variant
+    a_value = IIf(a_value < a_min, a_min, a_value)
+    Clamp = IIf(a_value > a_max, a_max, a_value)
+End Function
+
+''' <summary>   Clamp value between (including) minimum and maximum. </summary>
+''' <param name="a_value">   [Byte] The value to clamp. </param>
+''' <param name="a_min">     [Byte] The minimum value. </param>
+''' <param name="a_max">     [Byte] The maximum value. </param>
+''' <returns>   [Byte]. </retursn>
+Public Function ClampByte(ByVal a_value As Byte, ByVal a_min As Byte, ByVal a_max As Byte) As Byte
+    a_value = IIf(a_value < a_min, a_min, a_value)
+    ClampByte = IIf(a_value > a_max, a_max, a_value)
+End Function
+
+''' <summary>   Clamp value between (including) minimum and maximum. </summary>
+''' <param name="a_value">   [Double] The value to clamp. </param>
+''' <param name="a_min">     [Double] The minimum value. </param>
+''' <param name="a_max">     [Double] The maximum value. </param>
+''' <returns>   [Double]. </retursn>
+Public Function ClampDouble(ByVal a_value As Double, ByVal a_min As Double, ByVal a_max As Double) As Double
+    a_value = IIf(a_value < a_min, a_min, a_value)
+    ClampDouble = IIf(a_value > a_max, a_max, a_value)
+End Function
+
+''' <summary>   Clamp value between (including) minimum and maximum. </summary>
+''' <param name="a_value">   [Integer] The value to clamp. </param>
+''' <param name="a_min">     [Integer] The minimum value. </param>
+''' <param name="a_max">     [Integer] The maximum value. </param>
+''' <returns>   [Integer]. </retursn>
+Public Function ClampInteger(ByVal a_value As Integer, ByVal a_min As Integer, ByVal a_max As Integer) As Integer
+    a_value = IIf(a_value < a_min, a_min, a_value)
+    ClampInteger = IIf(a_value > a_max, a_max, a_value)
+End Function
+
+''' <summary>   Clamp value between (including) minimum and maximum. </summary>
+''' <param name="a_value">   [Long] The value to clamp. </param>
+''' <param name="a_min">     [Long] The minimum value. </param>
+''' <param name="a_max">     [Long] The maximum value. </param>
+''' <returns>   [Long]. </retursn>
+Public Function ClampLong(ByVal a_value As Long, ByVal a_min As Long, ByVal a_max As Long) As Long
+    a_value = IIf(a_value < a_min, a_min, a_value)
+    ClampLong = IIf(a_value > a_max, a_max, a_value)
+End Function
+
+''' <summary>   Clamp value betweeen minimum and maximum. </summary>
+''' <param name="a_value">   [Single] The value to limit. </param>
+Public Function ClampSingle(ByVal a_value As Single, ByVal a_min As Single, ByVal a_max As Single) As Single
+    a_value = IIf(a_value < a_min, a_min, a_value)
+    ClampSingle = IIf(a_value > a_max, a_max, a_value)
+End Function
+
+
 ''' <summary>   Unbox a parameter array in case element zero is an array, which occurs when a parameter
 ''' array argument is passed to another function that expects a ParamArray argument.
 ''' </summary>

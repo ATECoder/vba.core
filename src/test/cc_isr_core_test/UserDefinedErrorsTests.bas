@@ -119,7 +119,7 @@ Public Sub BeforeEach()
     
     If This.BeforeEachAssert.AssertSuccessful Then
     
-        Set This.BeforeEachAssert = Assert.AreEqual(0, Err.Number, _
+        Set This.BeforeEachAssert = Assert.areEqual(0, Err.Number, _
             "Error Number should be 0.")
             
     End If
@@ -202,7 +202,7 @@ err_Handler:
         Dim p_expectedErrorSource As String
         p_expectedErrorSource = ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & thisProcedureName
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedErrorSource, _
                 VBA.Err.Source, "VBA.Err.Source should equal the expected value")
     
     End If
@@ -219,7 +219,7 @@ err_Handler:
    
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(1, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(1, _
             cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "VBA Error should be added to the error archive.")
     
@@ -230,7 +230,7 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Set p_error = cc_isr_Core_IO.UserDefinedErrors.PeekArchive
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_errorNumber, p_error.Number, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_errorNumber, p_error.Number, _
             "VBA Error should be the same as the error from the top of the stack.")
     
     End If
@@ -258,7 +258,7 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     p_expectedArchivedErrorsCount = 0
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedArchivedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedArchivedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "User defined errors error archive should be empty before buidlding the first standard error message.")
     End If
@@ -267,7 +267,7 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     p_expectedQueuedErrorsCount = 0
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedQueuedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should be empty before enqueueing the first error.")
     End If
@@ -310,7 +310,7 @@ err_Handler:
         Dim p_expectedErrorSource As String
         p_expectedErrorSource = ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & thisProcedureName
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedErrorSource, _
                 VBA.Err.Source, "VBA.Err.Source should equal the expected value")
     
     End If
@@ -319,7 +319,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedQueuedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should increment by one after raising an error.")
     End If
@@ -346,7 +346,7 @@ err_Handler:
     p_expectedArchivedErrorsCount = p_expectedArchivedErrorsCount + 1
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedArchivedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedArchivedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "User defined errors error archive stack should have a single error after buidlding the standard error message.")
     End If
@@ -355,7 +355,7 @@ err_Handler:
    
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedQueuedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should be empty after buidlding the standard error message.")
     End If
@@ -371,7 +371,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_lastError.Number, p_stackError.Number, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_lastError.Number, p_stackError.Number, _
                 "User defined errors stack should have the same error Number as the last error.")
     End If
    
