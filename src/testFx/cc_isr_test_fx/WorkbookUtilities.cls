@@ -240,10 +240,10 @@ End Function
 ''' <see href="https://stackoverflow.com/questions/28132276/get-a-list-of-the-macros-of-a-module-in-excel-and-then-call-all-those-macros"/>
 ''' <remarks>
 ''' <param name="a_module">    [<see cref="ModuleInfo"/>] ]The module info of the module containing the macros. </param>
-''' <param name="a_methods">   [ModuleTestMethods, Ref] Indicate module level test methods exit. </param>
+''' <param name="a_methods">   [Out, TestMethodFlags] The test methods that are included in this test module. </param>
 ''' <returns>   A Collection of macro names. </returns>
 Public Function EnumerateTestMacros(ByVal a_module As ModuleInfo, _
-        ByRef a_methods As ModuleTestMethods) As VBA.Collection
+        ByRef a_methods As TestMethodFlags) As VBA.Collection
 
     Dim p_macros As Collection: Set p_macros = New Collection
     If Not a_module Is Nothing Then
@@ -274,11 +274,11 @@ End Function
 ''' <remarks>
 ''' <param name="a_module">      [<see cref="ModuleInfo"/> The module info of the module containing the macros. </param>
 ''' <param name="a_component">   [<see cref="VBComponent"/>] The component to check for macro methods. </param>
-''' <param name="a_methods">     [ModuleTestMethods, Ref] Indicate module level test methods exit. </param>
+''' <param name="a_methods">     [Out, <see cref="TestMethodFlags"/>] The test method that were found in this test module. </param>
 ''' <returns>   A Collection of macro names. </returns>
 Public Function EnumerateComponentTestMacros(ByVal a_module As ModuleInfo, _
         ByVal a_component As VBComponent, _
-        ByRef a_methods As ModuleTestMethods) As VBA.Collection
+        ByRef a_methods As TestMethodFlags) As VBA.Collection
 
     a_methods = None
     Dim p_macros As VBA.Collection: Set p_macros = New VBA.Collection
@@ -292,13 +292,13 @@ Public Function EnumerateComponentTestMacros(ByVal a_module As ModuleInfo, _
             If Me.StartsWith(p_currentName, TestMethodPrefix) Then
                 p_macros.Add Factory.NewMacroInfo.InitializeModuleMacro(a_module, p_currentName)
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.BeforeAllMethodName, vbTextCompare) Then
-                a_methods = a_methods Or ModuleTestMethods.BeforeAll
+                a_methods = a_methods Or TestMethodFlags.BeforeAll
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.AfterAllMethodName, vbTextCompare) Then
-                a_methods = a_methods Or ModuleTestMethods.AfterAll
+                a_methods = a_methods Or TestMethodFlags.AfterAll
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.BeforeEachMethodName, vbTextCompare) Then
-                a_methods = a_methods Or ModuleTestMethods.BeforeEach
+                a_methods = a_methods Or TestMethodFlags.BeforeEach
             ElseIf 1 = VBA.InStr(1, p_currentName, ConstantsEnums.AfterEachMethodName, vbTextCompare) Then
-                a_methods = a_methods Or ModuleTestMethods.AfterEach
+                a_methods = a_methods Or TestMethodFlags.AfterEach
             End If
         End If
     Next

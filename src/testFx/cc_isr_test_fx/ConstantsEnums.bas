@@ -11,8 +11,8 @@ Public Const BeforeEachMethodName As String = "BeforeEach"
 Public Const AfterAllMethodName As String = "AfterAll"
 Public Const AfterEachMethodName As String = "AfterEach"
 
-''' <summary>   Enum types that lists the module test methods flags. </summary>
-Public Enum ModuleTestMethods
+''' <summary>   Enum types that lists the test methods flags. </summary>
+Public Enum TestMethodFlags
     None = 0
     BeforeAll = 1
     AfterAll = 2

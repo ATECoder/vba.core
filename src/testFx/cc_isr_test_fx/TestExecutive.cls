@@ -97,8 +97,8 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     a_testSheet.Range(TestNameColumn & p_rowNo).value = TestNameLabel
     a_testSheet.Range(OutcomeColumn & p_rowNo).value = TestOutcomeLabel
     
-    Dim p_moduleTestMethods As ModuleTestMethods
-    Dim p_macros As Collection: Set p_macros = WorkbookUtilities.EnumerateTestMacros(p_moduleInfo, p_moduleTestMethods)
+    Dim p_testMethods As TestMethodFlags
+    Dim p_macros As Collection: Set p_macros = WorkbookUtilities.EnumerateTestMacros(p_moduleInfo, p_testMethods)
     Dim p_macroInfo As MacroInfo
     
     Dim p_stopper As cc_isr_Core_IO.StopWatch: Set p_stopper = cc_isr_Core_IO.Factory.NewStopwatch
@@ -107,7 +107,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     
     Dim p_moduleMacroInfo As MacroInfo: Set p_moduleMacroInfo = cc_isr_Test_Fx.Factory.NewMacroInfo()
     
-    If ModuleTestMethods.BeforeAll = (p_moduleTestMethods And ModuleTestMethods.BeforeAll) Then
+    If TestMethodFlags.BeforeAll = (p_testMethods And TestMethodFlags.BeforeAll) Then
         p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.BeforeAllMethodName
         p_macroFullName = p_moduleMacroInfo.FullName
         If a_usingRemoteWorkbook Then
@@ -122,7 +122,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
         
         ' execute the Before Each module test method.
         
-        If ModuleTestMethods.BeforeEach = (p_moduleTestMethods And ModuleTestMethods.BeforeEach) Then
+        If TestMethodFlags.BeforeEach = (p_testMethods And TestMethodFlags.BeforeEach) Then
             p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.BeforeEachMethodName
             p_macroFullName = p_moduleMacroInfo.FullName
             If a_usingRemoteWorkbook Then
@@ -161,7 +161,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
         
         ' execute the After Each module test method.
         
-        If ModuleTestMethods.AfterEach = (p_moduleTestMethods And ModuleTestMethods.AfterEach) Then
+        If TestMethodFlags.AfterEach = (p_testMethods And TestMethodFlags.AfterEach) Then
             p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.AfterEachMethodName
             p_macroFullName = p_moduleMacroInfo.FullName
             If a_usingRemoteWorkbook Then
@@ -174,7 +174,7 @@ Public Sub Execute(ByVal a_testSheet As Worksheet, Optional a_usingRemoteWorkboo
     
     ' execute the After All module test method.
     
-    If ModuleTestMethods.AfterAll = (p_moduleTestMethods And ModuleTestMethods.AfterAll) Then
+    If TestMethodFlags.AfterAll = (p_testMethods And TestMethodFlags.AfterAll) Then
         p_moduleMacroInfo.InitializeModuleMacro p_moduleInfo, ConstantsEnums.AfterAllMethodName
         p_macroFullName = p_moduleMacroInfo.FullName
         If a_usingRemoteWorkbook Then
