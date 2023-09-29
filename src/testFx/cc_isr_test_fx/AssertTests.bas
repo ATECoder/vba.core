@@ -50,6 +50,10 @@ Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
             Set p_outcome = TestAssertingNonSamenessShouldReportNonSameness
         Case 10
             Set p_outcome = TestStringEqualityShouldWork
+        Case 11
+            Set p_outcome = TestShouldAssertCloseDoubleValues
+        Case 12
+            Set p_outcome = TestShouldAssertCloseSingleValues
         Case Else
     End Select
     Set RunTest = p_outcome
@@ -59,7 +63,7 @@ End Function
 ''' <summary>   Runs a single test. </summary>
 Public Sub RunOneTest()
     BeforeAll
-    RunTest 1
+    RunTest 12
     AfterAll
 End Sub
 
@@ -71,7 +75,7 @@ Public Sub RunAllTests()
     This.PassedCount = 0
     This.FailedCount = 0
     This.InconclusiveCount = 0
-    This.TestCount = 10
+    This.TestCount = 12
     Dim p_testNumber As Integer
     For p_testNumber = 1 To This.TestCount
         Set p_outcome = RunTest(p_testNumber)
@@ -124,7 +128,7 @@ Public Sub BeforeAll()
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
-    If p_outcome.AssertSuccessful Then
+    If p_outcome.AssertSuccessful And Not This.ErrTracer Is Nothing Then _
         ' report any leftover errors.
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
         If p_outcome.AssertSuccessful Then
@@ -185,7 +189,7 @@ Public Sub BeforeEach()
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
-    If p_outcome.AssertSuccessful Then
+    If p_outcome.AssertSuccessful And Not This.ErrTracer Is Nothing Then _
         ' report any leftover errors.
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
         If p_outcome.AssertSuccessful Then
@@ -241,7 +245,9 @@ exit_Handler:
     Set This.BeforeEachAssert = Nothing
 
     ' report any leftover errors.
-    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    If Not This.ErrTracer Is Nothing Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        
     If p_outcome.AssertSuccessful Then
         Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
     Else
@@ -295,7 +301,8 @@ exit_Handler:
     Set This.BeforeAllAssert = Nothing
 
     ' report any leftover errors.
-    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    If Not This.ErrTracer Is Nothing Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
     If p_outcome.AssertSuccessful Then
         Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
     Else
@@ -624,6 +631,139 @@ Public Function TestStringEqualityShouldWork() As Assert
     Set TestStringEqualityShouldWork = p_outcome
     
 End Function
+
+''' <summary>   Unit test. Asserts if double values are close or not. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
+Public Function TestShouldAssertCloseDoubleValues() As Assert
+
+    Const p_procedureName As String = "TestShouldAssertCloseDoubleValues"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
+    Dim p_outcome As Assert
+    
+    Dim p_expectedValue As Double
+    Dim p_actualValue As Double
+    Dim p_epsilon As Double
+    
+    Set p_outcome = Assert.Pass("entered " & p_procedureName)
+    
+    If p_outcome.AssertSuccessful Then
+    
+        p_expectedValue = 10.1
+        p_epsilon = 0.05
+        ' this fails if not reducing the difference
+        p_actualValue = p_expectedValue + 0.999 * p_epsilon
+        Set p_outcome = Assert.AreCloseDouble(p_expectedValue, p_actualValue, p_epsilon, _
+            "Values should be within Epsilon of each other.")
+    
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+    
+        p_expectedValue = 10.1
+        p_epsilon = 0.05
+        p_actualValue = p_expectedValue + 1.0001 * p_epsilon
+        Set p_outcome = Assert.AreNotCloseDouble(p_expectedValue, p_actualValue, p_epsilon, _
+            "Values should not be within Epsilon of each other.")
+    
+    End If
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful And Not This.ErrTracer Is Nothing Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
+    
+    Debug.Print p_outcome.BuildReport("TestShouldAssertCloseDoubleValues")
+    
+    Set TestShouldAssertCloseDoubleValues = p_outcome
+    
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+  
+End Function
+
+''' <summary>   Unit test. Asserts if Single values are close or not. </summary>
+''' <returns>   [<see cref="Assert"/>] with <see cref="Assert.AssertSuccessful"/> True if the test passed. </returns>
+Public Function TestShouldAssertCloseSingleValues() As Assert
+
+    Const p_procedureName As String = "TestShouldAssertCloseSingleValues"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
+    Dim p_outcome As Assert
+    
+    Dim p_expectedValue As Single
+    Dim p_actualValue As Single
+    Dim p_epsilon As Single
+    
+    Set p_outcome = Assert.Pass("entered " & p_procedureName)
+    
+    If p_outcome.AssertSuccessful Then
+    
+        p_expectedValue = 10.1
+        p_epsilon = 0.05
+        ' this fails if not reducing the difference
+        p_actualValue = p_expectedValue + 0.999 * p_epsilon
+        Set p_outcome = Assert.AreCloseSingle(p_expectedValue, p_actualValue, p_epsilon, _
+            "Values should be within Epsilon of each other.")
+    
+    End If
+    
+    If p_outcome.AssertSuccessful Then
+    
+        p_expectedValue = 10.1
+        p_epsilon = 0.05
+        p_actualValue = p_expectedValue + 1.0001 * p_epsilon
+        Set p_outcome = Assert.AreNotCloseSingle(p_expectedValue, p_actualValue, p_epsilon, _
+            "Values should not be within Epsilon of each other.")
+    
+    End If
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful And Not This.ErrTracer Is Nothing Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
+    
+    Debug.Print p_outcome.BuildReport("TestShouldAssertCloseSingleValues")
+    
+    Set TestShouldAssertCloseSingleValues = p_outcome
+    
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+  
+End Function
+
 
 
 

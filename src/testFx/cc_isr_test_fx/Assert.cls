@@ -99,10 +99,97 @@ Public Function BuildReport(ByVal a_testName As String, _
     
 End Function
 
+''' <summary>   Asserts that values are equal within the provided epsilon.
+''' If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [Double] The value the caller expects to have. </param
+''' <param name="a_actual">     [Double] The actual value. </param
+''' <param name="a_epsilon">    [Double] The maximum difference for closeness. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if values
+'''             are equal; otherwise, False. </returns>
+Public Function AreCloseDouble(ByVal a_expected As Double, ByVal a_actual As Double, _
+    ByVal a_epsilon As Double, ByVal a_message As String) As Assert
+
+    Set AreCloseDouble = Me.IsTrue(VBA.Abs(a_expected - a_actual) <= a_epsilon, a_message)
+    
+    If Not AreCloseDouble.AssertSuccessful Then
+        AreCloseDouble.AssertMessage = AreCloseDouble.AssertMessage & vbCrLf & _
+                "    Expected: " & VBA.CStr(a_expected) & vbCrLf & _
+                "    Actual:   " & VBA.CStr(a_actual) & vbCrLf & _
+                "    Epsilon:  " & VBA.CStr(a_epsilon)
+    End If
+End Function
+
+''' <summary>   Asserts that values are not equal within the provided epsilon.
+''' If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [Double] The value the caller expects to have. </param
+''' <param name="a_actual">     [Double] The actual value. </param
+''' <param name="a_epsilon">    [Double] The maximum difference for closeness. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             values are not equal; otherwise, false. </returns>
+Public Function AreNotCloseDouble(ByVal a_expected As Double, ByVal a_actual As Double, _
+    ByVal a_epsilon As Double, ByVal a_message As String) As Assert
+    
+    Set AreNotCloseDouble = Me.IsTrue(VBA.Abs(a_expected - a_actual) > a_epsilon, a_message)
+    
+    If Not AreNotCloseDouble.AssertSuccessful Then
+        AreNotCloseDouble.AssertMessage = AreNotCloseDouble.AssertMessage & vbCrLf & _
+                "    Expected: " & VBA.CStr(a_expected) & vbCrLf & _
+                "    Actual:   " & VBA.CStr(a_actual) & vbCrLf & _
+                "    Epsilon:  " & VBA.CStr(a_epsilon)
+    End If
+
+End Function
+
+''' <summary>   Asserts that values are equal within the provided epsilon.
+''' If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [Single] The value the caller expects to have. </param
+''' <param name="a_actual">     [Single] The actual value. </param
+''' <param name="a_epsilon">    [Single] The maximum difference for closeness. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if values
+'''             are equal; otherwise, False. </returns>
+Public Function AreCloseSingle(ByVal a_expected As Single, ByVal a_actual As Single, _
+    ByVal a_epsilon As Single, ByVal a_message As String) As Assert
+
+    Set AreCloseSingle = Me.IsTrue(VBA.Abs(a_expected - a_actual) <= a_epsilon, a_message)
+    
+    If Not AreCloseSingle.AssertSuccessful Then
+        AreCloseSingle.AssertMessage = AreCloseSingle.AssertMessage & vbCrLf & _
+                "    Expected: " & VBA.CStr(a_expected) & vbCrLf & _
+                "    Actual:   " & VBA.CStr(a_actual) & vbCrLf & _
+                "    Epsilon:  " & VBA.CStr(a_epsilon)
+    End If
+End Function
+
+''' <summary>   Asserts that values are not equal within the provided epsilon.
+''' If not, this will return a failed assertion. </summary>
+''' <param name="a_expected">   [Single] The value the caller expects to have. </param
+''' <param name="a_actual">     [Single] The actual value. </param
+''' <param name="a_epsilon">    [Single] The maximum difference for closeness. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
+''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if
+'''             values are not equal; otherwise, false. </returns>
+Public Function AreNotCloseSingle(ByVal a_expected As Single, ByVal a_actual As Single, _
+    ByVal a_epsilon As Single, ByVal a_message As String) As Assert
+    
+    Set AreNotCloseSingle = Me.IsTrue(VBA.Abs(a_expected - a_actual) > a_epsilon, a_message)
+    
+    If Not AreNotCloseSingle.AssertSuccessful Then
+        AreNotCloseSingle.AssertMessage = AreNotCloseSingle.AssertMessage & vbCrLf & _
+                "    Expected: " & VBA.CStr(a_expected) & vbCrLf & _
+                "    Actual:   " & VBA.CStr(a_actual) & vbCrLf & _
+                "    Epsilon:  " & VBA.CStr(a_epsilon)
+    End If
+
+End Function
+
+
 ''' <summary>   Asserts that values are equal. If not, this will return a failed assertion. </summary>
 ''' <param name="a_expected">   [Variant] The value the caller expects to have. </param
 ''' <param name="a_actual">     [Variant] The actual value. </param
-''' <param name=a_"message">    [String] A message to show in case the assertion failed. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
 ''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if values
 '''             are equal; otherwise, False. </returns>
 Public Function AreEqual(ByVal a_expected As Variant, ByVal a_actual As Variant, ByVal a_message As String) As Assert
@@ -137,7 +224,7 @@ End Function
 ''' <param name="a_expected">   [String] The value the caller expects to have. </param
 ''' <param name="a_actual">     [String] The actual value. </param
 ''' <param name="a_compare">    [VBA.VbCompareMethod] The compare method. </param
-''' <param name=a_"message">    [String] A message to show in case the assertion failed. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
 ''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> equals True if values
 '''             are equal; otherwise, False. </returns>
 Public Function AreEqualString(ByVal a_expected As String, ByVal a_actual As String, _
@@ -266,7 +353,7 @@ End Function
 '''             expected object. If not, this will return a failed assertion. </summary>
 ''' <param name="a_expected">   [Variant] The expected object. </param
 ''' <param name="a_actual">     [Variant] The actual object value. </param
-''' <param name=a_"message">    [String] A message to show in case the assertion failed. </param
+''' <param name="a_message">    [String] A message to show in case the assertion failed. </param
 ''' <returns>   [<see cref="Assert">] with <see cref="Assert.AssertSuccessful"/> Sames True if values
 '''             are Same; otherwise, False. </returns>
 Public Function AreSame(ByVal a_expected As Object, ByVal a_actual As Object, ByVal a_message As String) As Assert

@@ -82,8 +82,11 @@ Public Sub BeforeAll()
 exit_Handler:
 
     If p_outcome.AssertSuccessful Then
+        
         ' report any leftover errors.
-        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If Not This.ErrTracer Is Nothing Then _
+            Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        
         If p_outcome.AssertSuccessful Then
             Set p_outcome = Assert.Pass("Primed to run all tests.")
         Else
@@ -143,8 +146,11 @@ Public Sub BeforeEach()
 exit_Handler:
 
     If p_outcome.AssertSuccessful Then
+        
         ' report any leftover errors.
-        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If Not This.ErrTracer Is Nothing Then _
+            Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        
         If p_outcome.AssertSuccessful Then
              Set p_outcome = Assert.Pass("Primed pre-test #" & VBA.CStr(This.TestNumber))
         Else
@@ -198,7 +204,9 @@ exit_Handler:
     Set This.BeforeEachAssert = Nothing
 
     ' report any leftover errors.
-    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    If Not This.ErrTracer Is Nothing Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    
     If p_outcome.AssertSuccessful Then
         Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
     Else
@@ -252,7 +260,9 @@ exit_Handler:
     Set This.BeforeAllAssert = Nothing
 
     ' report any leftover errors.
-    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    If Not This.ErrTracer Is Nothing Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    
     If p_outcome.AssertSuccessful Then
         Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
     Else
@@ -468,7 +478,7 @@ Public Function TestModuleList() As Assert
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
-    If p_outcome.AssertSuccessful Then _
+    If p_outcome.AssertSuccessful And Not This.ErrTracer Is Nothing Then _
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
     Debug.Print p_outcome.BuildReport("TestModuleList")
