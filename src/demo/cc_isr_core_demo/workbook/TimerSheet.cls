@@ -60,7 +60,7 @@ Sub ResetClock()
     Range("B4") = TimeValue("00:00:15")
 
     ' display an unreported errors.
-    Me.TreaceErrorQueue
+    Me.TraceErrorQueue
 
 End Sub
 
@@ -74,7 +74,7 @@ Sub StartTimer()
     End If
     
     ' display an unreported errors.
-    Me.TreaceErrorQueue
+    Me.TraceErrorQueue
 
 End Sub
 
@@ -83,7 +83,7 @@ Sub PauseTimer()
   This.PauseRequested = True
 
   ' display an unreported errors.
-  Me.TreaceErrorQueue
+  Me.TraceErrorQueue
 
 End Sub
 
@@ -95,7 +95,7 @@ Sub AbortTimer()
   End If
   
   ' display an unreported errors.
-  Me.TreaceErrorQueue
+  Me.TraceErrorQueue
   
 End Sub
 
@@ -118,9 +118,9 @@ End Property
 
 ''' <summary>   Dequeues and displays the
 ''' <see cref="cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue">errors queue</see>. </summary>
-Public Sub TreaceErrorQueue()
+Public Sub TraceErrorQueue()
     
-    If cc_isr_Core_IO.UserDefinedErrors.ErrorsQueue.Count > 0 Then
+    If cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount > 0 Then
         Me.LastError = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(VBA.vbCrLf)
     Else
         Me.LastError = VBA.vbNullString
