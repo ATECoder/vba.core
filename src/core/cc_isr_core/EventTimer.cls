@@ -255,8 +255,31 @@ Private Sub Class_Terminate()
         
         ' wait for one timer interval to complete to ensure the timer
         ' events no longer trigger.
+        Dim p_isDone As Boolean: p_isDone = False
+        Dim p_waitMilliseconds As Long: p_waitMilliseconds = 2 * This.Interval
+        Dim p_seconds As Double: p_seconds = 0.001 * p_waitMilliseconds
+        ' wait at least two computer clock cycles (54 ms)
+        If p_seconds < 0.11 Then p_seconds = 0.11
+        Dim p_endTime As Double
+        p_endTime = cc_isr_Core_IO.CoreExtensions.DaysNow() + _
+            (p_seconds / cc_isr_Core_IO.CoreExtensions.SecondsPerDay)
         Dim stopper As cc_isr_Core_IO.StopWatch: stopper = cc_isr_Core_IO.Factory.NewStopwatch()
-        Do Until stopper.ElapsedMilliseconds > This.Interval Or This.WorkbookClosing
+        Do Until p_isDone
+            ' previous code failed to detect error as the workbook closed
+            ' while this loop was still running.
+            If Err.Number <> 0 Then
+                p_isDone = True
+            ElseIf m_remoteWorkbook Is Nothing Then
+                p_isDone = True
+            ElseIf This.WorkbookClosing Then
+                p_isDone = True
+            ElseIf stopper Is Nothing Then
+                p_isDone = True
+            ElseIf stopper.ElapsedMilliseconds > p_waitMilliseconds Then
+                p_isDone = True
+            ElseIf cc_isr_Core_IO.CoreExtensions.DaysNow() > p_endTime Then
+                p_isDone = True
+            End If
             VBA.DoEvents
         Loop
         
