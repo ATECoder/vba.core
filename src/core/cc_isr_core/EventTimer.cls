@@ -263,7 +263,7 @@ Private Sub Class_Terminate()
         Dim p_endTime As Double
         p_endTime = cc_isr_Core_IO.CoreExtensions.DaysNow() + _
             (p_seconds / cc_isr_Core_IO.CoreExtensions.SecondsPerDay)
-        Dim stopper As cc_isr_Core_IO.StopWatch: stopper = cc_isr_Core_IO.Factory.NewStopwatch()
+        Dim stopper As cc_isr_Core_IO.Stopwatch: stopper = cc_isr_Core_IO.Factory.NewStopwatch()
         Do Until p_isDone
             ' previous code failed to detect error as the workbook closed
             ' while this loop was still running.

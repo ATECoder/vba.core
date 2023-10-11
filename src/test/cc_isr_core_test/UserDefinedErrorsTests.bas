@@ -8,8 +8,10 @@ Option Explicit
 Private Type this_
     Name As String
     TestNumber As Integer
+    PreviousTestNumber As Integer
     BeforeAllAssert As cc_isr_Test_Fx.Assert
     BeforeEachAssert As cc_isr_Test_Fx.Assert
+    TestStopper As cc_isr_Core_IO.Stopwatch
     ErrTracer As IErrTracer
     TestCount As Integer
     RunCount As Integer
@@ -23,6 +25,7 @@ Private This As this_
 ''' <summary>   Runs the specified test. </summary>
 Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
     Dim p_outcome As cc_isr_Test_Fx.Assert
+    This.TestNumber = a_testNumber
     BeforeEach
     Select Case a_testNumber
         Case 1
@@ -74,75 +77,264 @@ Public Sub RunAllTests()
                 "; Inconclusive: " & VBA.CStr(This.InconclusiveCount) & "."
 End Sub
 
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Tests initialize and cleanup.
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
+''' <summary>   Prepares all tests. </summary>
+''' <remarks>   This method sets up the 'Before All' <see cref="cc_isr_Test_Fx.Assert"/>
+''' which serves to set the 'Before Each' <see cref="cc_isr_Test_Fx.Assert"/>.
+''' The error object and user defined errors state are left clear after this method. </remarks>
 Public Sub BeforeAll()
 
-    This.TestNumber = 0
+    Const p_procedureName As String = "BeforeAll"
     
-    Set This.BeforeAllAssert = Assert.IsTrue(True, "initialize the overall assert.")
-    
-    If This.BeforeAllAssert.AssertSuccessful Then
-    
-        ' clear the error state
-        cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
-    
-        If cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount <> 0 Then
-            Set This.BeforeAllAssert = Assert.Inconclusive("User defined errors error archive should be empty.")
-        End If
-    
-    End If
-    
-    If This.BeforeAllAssert.AssertSuccessful Then
-    
-        If cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount <> 0 Then
-            Set This.BeforeAllAssert = Assert.Inconclusive("User defined errors error queue should be empty.")
-        End If
-        
-    End If
-   
-End Sub
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
 
-Public Sub BeforeEach()
+    Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = Assert.Pass("Primed to run all tests.")
 
-    If This.BeforeAllAssert.AssertSuccessful Then
+    Set This.TestStopper = cc_isr_Core_IO.Factory.NewStopwatch
+    Set This.ErrTracer = New ErrTracer
     
-        Set This.BeforeEachAssert = Assert.IsTrue(True, "initialize the pre-test assert.")
-    
-    Else
-        
-        Set This.BeforeEachAssert = Assert.Inconclusive(This.BeforeAllAssert.AssertMessage)
-    
-    End If
-
     ' clear the error state.
     cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
+
+    ' Prime all tests
+    This.TestNumber = 0
+    This.PreviousTestNumber = 0
     
-    If This.BeforeEachAssert.AssertSuccessful Then
-    
-        Set This.BeforeEachAssert = Assert.areEqual(0, Err.Number, _
-            "Error Number should be 0.")
-            
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then
+        ' report any leftover errors.
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If p_outcome.AssertSuccessful Then
+            Set p_outcome = Assert.Pass("Primed to run all tests.")
+        Else
+            Set p_outcome = Assert.Inconclusive("Failed priming all tests;" & _
+                VBA.vbCrLf & p_outcome.AssertMessage)
+        End If
     End If
-   
-    This.TestNumber = This.TestNumber + 1
     
+    Set This.BeforeAllAssert = p_outcome
+    
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+
 End Sub
 
+''' <summary>   Prepares each test before it is run. </summary>
+''' <remarks>   This method sets up the 'Before Each' <see cref="cc_isr_Test_Fx.Assert"/>
+''' which serves to initialize the <see cref="cc_isr_Test_Fx.Assert"/> of each test.
+''' The error object and user defined errors state are left clear after this method. </remarks>
+Public Sub BeforeEach()
+
+    Const p_procedureName As String = "BeforeEach"
+    
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+
+    If This.BeforeAllAssert.AssertSuccessful Then
+        Set p_outcome = Assert.Pass("Primed pre-test #" & VBA.CStr(This.TestNumber) & ".")
+    Else
+        Set p_outcome = Assert.Inconclusive("Unable to prime pre-test #" & VBA.CStr(This.TestNumber) & _
+            ";" & VBA.vbCrLf & This.BeforeAllAssert.AssertMessage)
+    End If
+    
+    ' clear the error state.
+    cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
+   
+    ' Prepare the next test
+    If This.TestNumber = This.PreviousTestNumber Then _
+        This.TestNumber = This.PreviousTestNumber + 1
+   
+    ' clear the error state.
+    cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then
+        ' report any leftover errors.
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If p_outcome.AssertSuccessful Then
+             Set p_outcome = Assert.Pass("Primed pre-test #" & VBA.CStr(This.TestNumber))
+        Else
+            Set p_outcome = Assert.Inconclusive("Failed priming pre-test #" & VBA.CStr(This.TestNumber) & _
+                ";" & VBA.vbCrLf & p_outcome.AssertMessage)
+        End If
+    End If
+    
+    Set This.BeforeEachAssert = p_outcome
+
+    On Error GoTo 0
+    
+    This.TestStopper.Restart
+    
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+                       
+End Sub
+
+''' <summary>   Releases test elements after each tests is run. </summary>
+''' <remarks>   This method uses the <see cref="ErrTracer"/> to report any leftover errors
+''' in the user defined errors queue and stack. The error object and user defined errors
+''' state are left clear after this method. </remarks>
 Public Sub AfterEach()
+    
+    Const p_procedureName As String = "AfterEach"
+    
+    ' Trap errors to the error handler.
+    On Error GoTo err_Handler
+
+    Dim p_outcome As cc_isr_Test_Fx.Assert
+    Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
+
+    ' check if we can proceed with cleanup.
+    
+    If Not This.BeforeEachAssert.AssertSuccessful Then _
+        Set p_outcome = cc_isr_Test_Fx.Assert.Inconclusive("Unable to cleanup test #" & VBA.CStr(This.TestNumber) & _
+            ";" & VBA.vbCrLf & This.BeforeEachAssert.AssertMessage)
+
+    ' cleanup after each test.
+    This.PreviousTestNumber = This.TestNumber
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    ' release the 'Before Each' cc_isr_Test_Fx.Assert.
     Set This.BeforeEachAssert = Nothing
+
+    If p_outcome.AssertSuccessful Then
+    
+        ' report any leftover errors.
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If p_outcome.AssertSuccessful Then
+            Set p_outcome = cc_isr_Test_Fx.Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
+        Else
+            Set p_outcome = cc_isr_Test_Fx.Assert.Inconclusive("Errors reported cleaning up test #" & VBA.CStr(This.TestNumber) & _
+                ";" & VBA.vbCrLf & p_outcome.AssertMessage)
+        End If
+    
+    End If
+
+    If Not p_outcome.AssertSuccessful Then _
+        This.ErrTracer.TraceError p_outcome.AssertMessage
+    
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+
 End Sub
 
+''' <summary>   Releases the test class after all tests run. </summary>
+''' <remarks>   This method uses the <see cref="ErrTracer"/> to report any leftover errors
+''' in the user defined errors queue and stack. The error object and user defined errors
+''' state are left clear after this method. </remarks>
 Public Sub AfterAll()
     
+    Const p_procedureName As String = "AfterAll"
+    
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+    
+    Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = Assert.Pass("All tests cleaned up.")
+    
+    ' cleanup after all tests.
+    If This.BeforeAllAssert.AssertSuccessful Then
+    End If
+    
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    ' release the 'Before All' assert.
     Set This.BeforeAllAssert = Nothing
 
+    ' report any leftover errors.
+    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+    If p_outcome.AssertSuccessful Then
+        Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
+    Else
+        Set p_outcome = Assert.Inconclusive("Errors reported cleaning up all tests;" & _
+            VBA.vbCrLf & p_outcome.AssertMessage)
+    End If
+    
+    If Not p_outcome.AssertSuccessful Then _
+        This.ErrTracer.TraceError p_outcome.AssertMessage
+    
+    On Error GoTo 0
+    Exit Sub
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+
 End Sub
+
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
+'  Tests
+' + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
 ''' <summary>   Unit test. Asserts the existing of a user defined error. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of
 ''' <see cref="cc_isr_Test_Fx.Assert.AssertSuccessful"/> True if the test passed. </returns>
 Public Function TestUserDefinedErrorShouldExist() As cc_isr_Test_Fx.Assert
     
+    Const p_procedureName As String = "TestUserDefinedErrorShouldExist"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
     ' this should be added to the activate event of the workbook
@@ -153,20 +345,44 @@ Public Function TestUserDefinedErrorShouldExist() As cc_isr_Test_Fx.Assert
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(UserDefinedErrors.UserDefinedErrorExists(p_userError), _
                                                         p_userError.ToString(" should exist"))
                                                         
-    Debug.Print p_outcome.BuildReport("TestUserDefinedErrorShouldExist")
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
+    
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestUserDefinedErrorShouldExist = p_outcome
 
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+       
 End Function
 
 ''' <summary>   Unit test. Asserts building the error message. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestErrorMessageShouldBuild() As cc_isr_Test_Fx.Assert
 
-    Const thisProcedureName = "TestErrorMessageShouldBuild"
+    Const p_procedureName = "TestErrorMessageShouldBuild"
     
     ' Trap errors to the error handler
     On Error GoTo err_Handler
+    
     Dim p_errorNumber As Long
     
     Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = This.BeforeEachAssert
@@ -180,8 +396,10 @@ Public Function TestErrorMessageShouldBuild() As cc_isr_Test_Fx.Assert
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
+    
     Set TestErrorMessageShouldBuild = p_outcome
-    Debug.Print p_outcome.BuildReport("TestErrorMessageShouldBuild")
    
     On Error GoTo 0
     Exit Function
@@ -192,7 +410,7 @@ err_Handler:
     p_errorNumber = VBA.Err.Number
     
     ' build the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource thisProcedureName, "UserDefinedErrorsTests", ThisWorkbook
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, "UserDefinedErrorsTests", ThisWorkbook
     
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(Err.Source) > 0, _
             "VBA.Err.Source should not be empty.")
@@ -200,9 +418,9 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Dim p_expectedErrorSource As String
-        p_expectedErrorSource = ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & thisProcedureName
+        p_expectedErrorSource = ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & p_procedureName
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedErrorSource, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
                 VBA.Err.Source, "VBA.Err.Source should equal the expected value")
     
     End If
@@ -219,7 +437,7 @@ err_Handler:
    
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(1, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(1, _
             cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "VBA Error should be added to the error archive.")
     
@@ -230,7 +448,7 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Set p_error = cc_isr_Core_IO.UserDefinedErrors.PeekArchive
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_errorNumber, p_error.Number, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_errorNumber, p_error.Number, _
             "VBA Error should be the same as the error from the top of the stack.")
     
     End If
@@ -245,7 +463,7 @@ End Function
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
 
-    Const thisProcedureName = "TestRaisedErrorShouldBeReported"
+    Const p_procedureName = "TestRaisedErrorShouldBeReported"
     
     ' Trap errors to the error handler
     On Error GoTo err_Handler
@@ -258,7 +476,7 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     p_expectedArchivedErrorsCount = 0
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedArchivedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedArchivedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "User defined errors error archive should be empty before buidlding the first standard error message.")
     End If
@@ -267,7 +485,7 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     p_expectedQueuedErrorsCount = 0
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedQueuedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should be empty before enqueueing the first error.")
     End If
@@ -285,13 +503,15 @@ Public Function TestRaisedErrorShouldBeReported() As cc_isr_Test_Fx.Assert
     
     ' raise a user defined error
     cc_isr_Core_IO.GuardClauses.GuardNullReference Nothing, _
-        ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & thisProcedureName
+        ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & p_procedureName
 
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
+    
     Set TestRaisedErrorShouldBeReported = p_outcome
-    Debug.Print p_outcome.BuildReport("TestRaisedErrorShouldBeReported")
    
     On Error GoTo 0
     Exit Function
@@ -300,7 +520,7 @@ exit_Handler:
 err_Handler:
   
     ' build the error source
-    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource thisProcedureName, "UserDefinedErrorsTests", ThisWorkbook
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, "UserDefinedErrorsTests", ThisWorkbook
     
     Set p_outcome = cc_isr_Test_Fx.Assert.IsTrue(Len(Err.Source) > 0, _
             "VBA.Err.Source should not be empty.")
@@ -308,9 +528,9 @@ err_Handler:
     If p_outcome.AssertSuccessful Then
     
         Dim p_expectedErrorSource As String
-        p_expectedErrorSource = ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & thisProcedureName
+        p_expectedErrorSource = ThisWorkbook.VBProject.Name & ".UserDefinedErrorsTests." & p_procedureName
         
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedErrorSource, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedErrorSource, _
                 VBA.Err.Source, "VBA.Err.Source should equal the expected value")
     
     End If
@@ -319,7 +539,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedQueuedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should increment by one after raising an error.")
     End If
@@ -346,7 +566,7 @@ err_Handler:
     p_expectedArchivedErrorsCount = p_expectedArchivedErrorsCount + 1
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedArchivedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedArchivedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
             "User defined errors error archive stack should have a single error after buidlding the standard error message.")
     End If
@@ -355,7 +575,7 @@ err_Handler:
    
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_expectedQueuedErrorsCount, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_expectedQueuedErrorsCount, _
             cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount, _
             "User defined errors error queue should be empty after buidlding the standard error message.")
     End If
@@ -371,7 +591,7 @@ err_Handler:
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = cc_isr_Test_Fx.Assert.areEqual(p_lastError.Number, p_stackError.Number, _
+        Set p_outcome = cc_isr_Test_Fx.Assert.AreEqual(p_lastError.Number, p_stackError.Number, _
                 "User defined errors stack should have the same error Number as the last error.")
     End If
    

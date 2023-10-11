@@ -22,7 +22,7 @@ Private Function IErrTracer_AssertLeftoverErrors(Optional ByVal a_delimiter As S
 
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
-    Set p_outcome = Assert.areEqual(0, _
+    Set p_outcome = Assert.AreEqual(0, _
         cc_isr_Core_IO.UserDefinedErrors.ArchivedErrorCount, _
         "Error stack should be empty upon completion this test.")
 
@@ -31,7 +31,7 @@ Private Function IErrTracer_AssertLeftoverErrors(Optional ByVal a_delimiter As S
         If cc_isr_Core_IO.UserDefinedErrors.QueuedErrorCount > 0 Then
             p_leftoverErrorMessage = cc_isr_Core_IO.ErrorMessageBuilder.BuildStandardErrorMessage(a_delimiter)
             IErrTracer_TraceError p_leftoverErrorMessage
-            Set p_outcome = Assert.Fail("Found errors in the error queue: " & VBA.vbCrLf & _
+            Set p_outcome = Assert.fail("Found errors in the error queue: " & VBA.vbCrLf & _
                 p_leftoverErrorMessage)
         End If
     End If

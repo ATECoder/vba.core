@@ -8,8 +8,10 @@ Option Explicit
 Private Type this_
     Name As String
     TestNumber As Integer
+    PreviousTestNumber As Integer
     BeforeAllAssert As cc_isr_Test_Fx.Assert
     BeforeEachAssert As cc_isr_Test_Fx.Assert
+    TestStopper As cc_isr_Core_IO.Stopwatch
     ErrTracer As IErrTracer
     TestCount As Integer
     RunCount As Integer
@@ -27,6 +29,7 @@ Private This As this_
 ''' <summary>   Runs the specified test. </summary>
 Public Function RunTest(ByVal a_testNumber As Integer) As cc_isr_Test_Fx.Assert
     Dim p_outcome As cc_isr_Test_Fx.Assert
+    This.TestNumber = a_testNumber
     BeforeEach
     Select Case a_testNumber
         Case 1
@@ -110,16 +113,15 @@ Public Sub BeforeAll()
 
     Dim p_outcome As cc_isr_Test_Fx.Assert: Set p_outcome = Assert.Pass("Primed to run all tests.")
 
-    This.Name = "CoreExtensionTests"
-    
+    Set This.TestStopper = cc_isr_Core_IO.Factory.NewStopwatch
     Set This.ErrTracer = New ErrTracer
     
     ' clear the error state.
     cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
 
     ' Prime all tests
-
     This.TestNumber = 0
+    This.PreviousTestNumber = 0
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -166,8 +168,6 @@ Public Sub BeforeEach()
     ' Trap errors to the error handler
     On Error GoTo err_Handler
 
-    This.TestNumber = This.TestNumber + 1
-
     Dim p_outcome As cc_isr_Test_Fx.Assert
 
     If This.BeforeAllAssert.AssertSuccessful Then
@@ -181,6 +181,11 @@ Public Sub BeforeEach()
     cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
    
     ' Prepare the next test
+    If This.TestNumber = This.PreviousTestNumber Then _
+        This.TestNumber = This.PreviousTestNumber + 1
+   
+    ' clear the error state.
+    cc_isr_Core_IO.UserDefinedErrors.ClearErrorState
 
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
@@ -199,6 +204,9 @@ exit_Handler:
     Set This.BeforeEachAssert = p_outcome
 
     On Error GoTo 0
+    
+    This.TestStopper.Restart
+    
     Exit Sub
 
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -230,25 +238,34 @@ Public Sub AfterEach()
     Dim p_outcome As cc_isr_Test_Fx.Assert
     Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
 
+    ' check if we can proceed with cleanup.
+    
+    If Not This.BeforeEachAssert.AssertSuccessful Then _
+        Set p_outcome = cc_isr_Test_Fx.Assert.Inconclusive("Unable to cleanup test #" & VBA.CStr(This.TestNumber) & _
+            ";" & VBA.vbCrLf & This.BeforeEachAssert.AssertMessage)
+
     ' cleanup after each test.
-    If This.BeforeEachAssert.AssertSuccessful Then
-    End If
+    This.PreviousTestNumber = This.TestNumber
     
 ' . . . . . . . . . . . . . . . . . . . . . . . . . . .
 exit_Handler:
 
-    ' release the 'Before Each' assert.
+    ' release the 'Before Each' cc_isr_Test_Fx.Assert.
     Set This.BeforeEachAssert = Nothing
 
-    ' report any leftover errors.
-    Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
     If p_outcome.AssertSuccessful Then
-        Set p_outcome = Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
-    Else
-        Set p_outcome = Assert.Inconclusive("Errors reported cleaning up test #" & VBA.CStr(This.TestNumber) & _
-            ";" & VBA.vbCrLf & p_outcome.AssertMessage)
-    End If
     
+        ' report any leftover errors.
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors()
+        If p_outcome.AssertSuccessful Then
+            Set p_outcome = cc_isr_Test_Fx.Assert.Pass("Test #" & VBA.CStr(This.TestNumber) & " cleaned up.")
+        Else
+            Set p_outcome = cc_isr_Test_Fx.Assert.Inconclusive("Errors reported cleaning up test #" & VBA.CStr(This.TestNumber) & _
+                ";" & VBA.vbCrLf & p_outcome.AssertMessage)
+        End If
+    
+    End If
+
     If Not p_outcome.AssertSuccessful Then _
         This.ErrTracer.TraceError p_outcome.AssertMessage
     
@@ -331,6 +348,11 @@ End Sub
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestWaitShouldEqualOrExceedDuration() As cc_isr_Test_Fx.Assert
 
+    Const p_procedureName As String = "TestWaitShouldEqualOrExceedDuration"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
     Dim p_expectedDuration As Double
@@ -345,9 +367,33 @@ Public Function TestWaitShouldEqualOrExceedDuration() As cc_isr_Test_Fx.Assert
             "Wait time " & CStr(p_actualDuration) & " should be shorter that double the specified duration of " & CStr(2 * p_expectedDuration) & " .")
     End If
     
-    Debug.Print p_outcome.BuildReport("TestWaitShouldEqualOrExceedDuration")
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
 
+    If p_outcome.AssertSuccessful Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
+    
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
+    
     Set TestWaitShouldEqualOrExceedDuration = p_outcome
+    
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+    
     
 End Function
 
@@ -355,6 +401,11 @@ End Function
 '''             to the expected resolution but smaller than double of that resoltion. </summary>
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestNowResolution() As cc_isr_Test_Fx.Assert
+
+    Const p_procedureName As String = "TestNowResolution"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
 
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
@@ -391,9 +442,33 @@ Public Function TestNowResolution() As cc_isr_Test_Fx.Assert
     
     End If
     
-    Debug.Print p_outcome.BuildReport("TestNowResolution")
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
+    
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestNowResolution = p_outcome
+    
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+    
     
 End Function
 
@@ -401,17 +476,22 @@ End Function
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestDefaultValues() As cc_isr_Test_Fx.Assert
 
+    Const p_procedureName As String = "TestDefaultValues"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
-    Set p_outcome = Assert.areEqual(False, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbBoolean), _
+    Set p_outcome = Assert.AreEqual(False, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbBoolean), _
         "The default value of VBA.VbVarType.vbBoolean should equal.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.areEqual(0, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbByte), _
+        Set p_outcome = Assert.AreEqual(0, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbByte), _
             "The default value of VBA.VbVarType.vbByte should equal.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.areEqual(Empty, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbArray), _
+        Set p_outcome = Assert.AreEqual(Empty, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbArray), _
             "The default value of VBA.VbVarType.vbArray should equal.")
     
     If p_outcome.AssertSuccessful Then _
@@ -427,12 +507,36 @@ Public Function TestDefaultValues() As cc_isr_Test_Fx.Assert
             "The default value of VBA.VbVarType.vbObject should be nothing.")
     
     If p_outcome.AssertSuccessful Then _
-        Set p_outcome = Assert.areEqual(0, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbLongLong), _
+        Set p_outcome = Assert.AreEqual(0, cc_isr_Core_IO.CoreExtensions.GetDefaultValue(VBA.VbVarType.vbLongLong), _
             "The default value of VBA.VbVarType.vbLongLong should equal.")
     
-    Debug.Print p_outcome.BuildReport("TestDefaultValues")
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
 
+    If p_outcome.AssertSuccessful Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
+    
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
+    
     Set TestDefaultValues = p_outcome
+    
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+    
 
 End Function
 
@@ -441,8 +545,11 @@ End Function
 ''' <returns>   An <see cref="cc_isr_Test_Fx.Assert"/> instance of <see cref="Assert.AssertSuccessful"/>   True if the test passed. </returns>
 Public Function TestParameterArrayPropagated() As cc_isr_Test_Fx.Assert
     
-    On Error Resume Next
-    
+    Const p_procedureName As String = "TestParameterArrayPropagated"
+
+    ' Trap errors to the error handler
+    On Error GoTo err_Handler
+
     Dim p_outcome As cc_isr_Test_Fx.Assert
     
     Dim p_dummyVariant As Variant
@@ -453,19 +560,19 @@ Public Function TestParameterArrayPropagated() As cc_isr_Test_Fx.Assert
     Dim p_tokens As Variant
     p_tokens = Method1("a", "b", "c")
     
-    Set p_outcome = Assert.areEqual(VBA.Err.Number, 0, _
+    Set p_outcome = Assert.AreEqual(VBA.Err.Number, 0, _
         "The parameter array should pass without errors")
         
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = Assert.areEqual(TypeName(p_dummyArray), TypeName(p_tokens), _
+        Set p_outcome = Assert.AreEqual(TypeName(p_dummyArray), TypeName(p_tokens), _
         "The nested parameter array type should match the expected type")
     
     End If
         
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = Assert.areEqual(TypeName(p_dummyArray), TypeName(p_tokens(0)), _
+        Set p_outcome = Assert.AreEqual(TypeName(p_dummyArray), TypeName(p_tokens(0)), _
         "The first element of the nested parameter array type should match the expected type")
     
     End If
@@ -474,23 +581,45 @@ Public Function TestParameterArrayPropagated() As cc_isr_Test_Fx.Assert
     
         p_unboxedTokens = CoreExtensions.UnboxParameterArray(p_tokens)
         
-        Set p_outcome = Assert.areEqual(TypeName(p_dummyArray), TypeName(p_unboxedTokens), _
+        Set p_outcome = Assert.AreEqual(TypeName(p_dummyArray), TypeName(p_unboxedTokens), _
         "The unboxed parameter array type should match the expected type")
         
     End If
     
     If p_outcome.AssertSuccessful Then
     
-        Set p_outcome = Assert.areEqual(TypeName(p_dummyVariant), TypeName(p_unboxedTokens(0)), _
+        Set p_outcome = Assert.AreEqual(TypeName(p_dummyVariant), TypeName(p_unboxedTokens(0)), _
         "The first element of the nested parameter array type should match the expected type")
     
     End If
     
-    On Error GoTo 0
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+exit_Handler:
+
+    If p_outcome.AssertSuccessful Then _
+        Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
-    Debug.Print p_outcome.BuildReport("TestDefaultValues")
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestParameterArrayPropagated = p_outcome
+    
+    On Error GoTo 0
+    Exit Function
+
+' . . . . . . . . . . . . . . . . . . . . . . . . . . .
+err_Handler:
+  
+    ' append the error source
+    cc_isr_Core_IO.ErrorMessageBuilder.AppendErrSource p_procedureName, This.Name, ThisWorkbook
+    
+    ' enqueue the error or append its source to the last error.
+    cc_isr_Core_IO.UserDefinedErrors.EnqueueErrorObject
+    
+    ' exit this procedure (not an active handler)
+    On Error Resume Next
+    GoTo exit_Handler
+    
 
 End Function
 
@@ -550,7 +679,7 @@ Public Function TestByteShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 2
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
             "ClampByte( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
         
@@ -561,7 +690,7 @@ Public Function TestByteShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
             "ClampByte( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -571,7 +700,7 @@ Public Function TestByteShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
             "ClampByte( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -581,7 +710,7 @@ Public Function TestByteShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
             "ClampByte( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -591,7 +720,7 @@ Public Function TestByteShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampByte(p_value, p_min, p_max), _
             "ClampByte( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -602,7 +731,8 @@ exit_Handler:
     If p_outcome.AssertSuccessful Then _
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
-    Debug.Print p_outcome.BuildReport("TestByteShouldClamp")
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestByteShouldClamp = p_outcome
 
@@ -645,7 +775,7 @@ Public Function TestDoubleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 2
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
             "ClampDouble( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
         
@@ -656,7 +786,7 @@ Public Function TestDoubleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
             "ClampDouble( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -666,7 +796,7 @@ Public Function TestDoubleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
             "ClampDouble( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -676,7 +806,7 @@ Public Function TestDoubleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
             "ClampDouble( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -686,7 +816,7 @@ Public Function TestDoubleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampDouble(p_value, p_min, p_max), _
             "ClampDouble( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -697,7 +827,8 @@ exit_Handler:
     If p_outcome.AssertSuccessful Then _
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
-    Debug.Print p_outcome.BuildReport("TestDoubleShouldClamp")
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestDoubleShouldClamp = p_outcome
 
@@ -740,7 +871,7 @@ Public Function TestIntegerShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 2
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
             "ClampInteger( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
         
@@ -751,7 +882,7 @@ Public Function TestIntegerShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
             "ClampInteger( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -761,7 +892,7 @@ Public Function TestIntegerShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
             "ClampInteger( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -771,7 +902,7 @@ Public Function TestIntegerShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
             "ClampInteger( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -781,7 +912,7 @@ Public Function TestIntegerShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampInteger(p_value, p_min, p_max), _
             "ClampInteger( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -792,7 +923,8 @@ exit_Handler:
     If p_outcome.AssertSuccessful Then _
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
-    Debug.Print p_outcome.BuildReport("TestIntegerShouldClamp")
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestIntegerShouldClamp = p_outcome
 
@@ -835,7 +967,7 @@ Public Function TestLongShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 2
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
             "ClampLong( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
         
@@ -846,7 +978,7 @@ Public Function TestLongShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
             "ClampLong( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -856,7 +988,7 @@ Public Function TestLongShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
             "ClampLong( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -866,7 +998,7 @@ Public Function TestLongShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
             "ClampLong( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -876,7 +1008,7 @@ Public Function TestLongShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampLong(p_value, p_min, p_max), _
             "ClampLong( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -887,7 +1019,8 @@ exit_Handler:
     If p_outcome.AssertSuccessful Then _
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
-    Debug.Print p_outcome.BuildReport("TestLongShouldClamp")
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestLongShouldClamp = p_outcome
 
@@ -930,7 +1063,7 @@ Public Function TestSingleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 2
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
             "ClampSingle( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
         
@@ -941,7 +1074,7 @@ Public Function TestSingleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
             "ClampSingle( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -951,7 +1084,7 @@ Public Function TestSingleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
             "ClampSingle( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -961,7 +1094,7 @@ Public Function TestSingleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
             "ClampSingle( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -971,7 +1104,7 @@ Public Function TestSingleShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.ClampSingle(p_value, p_min, p_max), _
             "ClampSingle( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -982,7 +1115,8 @@ exit_Handler:
     If p_outcome.AssertSuccessful Then _
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
-    Debug.Print p_outcome.BuildReport("TestSingleShouldClamp")
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestSingleShouldClamp = p_outcome
 
@@ -1025,7 +1159,7 @@ Public Function TestVariantShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 2
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
             "Clamp( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
         
@@ -1036,7 +1170,7 @@ Public Function TestVariantShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
             "Clamp( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -1046,7 +1180,7 @@ Public Function TestVariantShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 1
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
             "Clamp( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -1056,7 +1190,7 @@ Public Function TestVariantShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
             "Clamp( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -1066,7 +1200,7 @@ Public Function TestVariantShouldClamp() As cc_isr_Test_Fx.Assert
         p_min = 1
         p_max = 10
         p_expected = 10
-        Set p_outcome = Assert.areEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
+        Set p_outcome = Assert.AreEqual(p_expected, cc_isr_Core_IO.CoreExtensions.Clamp(p_value, p_min, p_max), _
             "Clamp( " & VBA.CStr(p_value) & ", " & VBA.CStr(p_min) & ", " & VBA.CStr(p_max) & _
             ") should equal expected value.")
     End If
@@ -1077,7 +1211,8 @@ exit_Handler:
     If p_outcome.AssertSuccessful Then _
         Set p_outcome = This.ErrTracer.AssertLeftoverErrors
     
-    Debug.Print p_outcome.BuildReport("TestVariantShouldClamp")
+    Debug.Print "Test " & Format(This.TestNumber, "00") & " " & p_outcome.BuildReport(p_procedureName) & _
+        " Elapsed time: " & VBA.Format$(This.TestStopper.ElapsedMilliseconds, "0.0") & " ms."
     
     Set TestVariantShouldClamp = p_outcome
 
