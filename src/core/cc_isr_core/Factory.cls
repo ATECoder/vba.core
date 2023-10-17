@@ -29,6 +29,12 @@ Public Function NewCancelEventArgs() As CancelEventArgs
     Set NewCancelEventArgs = New CancelEventArgs
 End Function
 
+''' <summary>   Instantiates a new <see cref="EventArgs"/> object. </summary>
+''' <returns>   [<see cref="EventArgs"/>]. </returns>
+Public Function NewEventArgs() As EventArgs
+    Set NewEventArgs = New EventArgs
+End Function
+
 ''' <summary>   Instantiates an instance of an <see cref="EventTimer"/> object. </summary>
 ''' <returns>   [<see cref="EventTimer"/>]. </returns>
 Public Function NewEventTimer() As EventTimer
