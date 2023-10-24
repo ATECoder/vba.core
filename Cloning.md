@@ -19,6 +19,6 @@ Clone the repositories into the following folders (parents of the .git folder):
 ```
 %vba%\core\core
 ```
-where %vba% is the root folder of the VBA libraries, e.g., %my%\lib\vba, and %my%, e.g., c:\my is the overall root folder.
+where %vba% is the root folder of the VBA libraries, e.g., %my%\lib\vba, and %my%, e.g., c:\my, is the overall root folder.
 
-[external repositories]: ExternalReposCommits.csv
+[external repositories]: ./ExternalReposCommits.csv

@@ -27,13 +27,6 @@ The main types provided by this library are:
 * _PathExtensions_ - Singleton. Path extensions.
 * _VbComponentExtensions_ - Singleton. Extension methods for the VBA VB Component object.
 
-## Scripts
-
-* _Deploy_: copies files to the build folder.
-
-[cc.isr.Core]: https://github.com/ATECoder/vba.core
-[cc.isr.core.io]: https://github.com/ATECoder/vba.core/src/io
-
 [ISR]: https://www.integratedscientificresources.com
 
 [Microsoft Scripting Runtime]: c:\windows\system32\scrrun.dll

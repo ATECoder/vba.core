@@ -7,6 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+''' <summary>   Timer Sheet. </summary>
+''' - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 Option Explicit
 
 Private Const m_lastErrorMessageCell As String = "C13"

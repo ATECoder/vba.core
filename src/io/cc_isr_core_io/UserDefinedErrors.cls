@@ -158,7 +158,7 @@ Private Sub AddUserDefinedError(ByVal a_userError As UserDefinedError)
 End Sub
 
 ''' <summary>   Returns true if the specified error number is a user defined error. </summary>
-''' <para name"a_errorNumber">   [Long] The error number.  </param>
+''' <para name"a_errorNumber">   [Long] The error number. </param>
 ''' <returns>   [Boolean]. </returns>
 Public Function IsUserDefinedError(ByVal a_errorNumber As Long) As Boolean
     

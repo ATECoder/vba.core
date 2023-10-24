@@ -238,7 +238,7 @@ End Function
 ''' <summary>   Checks if the two user defined errors are the same. </summary>
 ''' <remarks>   This method is aimed at comparing with a user defiend error that might be
 ''' derived from the VBA error object and, as such, does not have the same name and might have a
-''' new source but still could be aised in proximity to the user defined error.  </remarks>
+''' new source but still could be aised in proximity to the user defined error. </remarks>
 ''' <param name="a_error">           [<See cref="UserDefinedError"/>] The error to check for equality. </param>
 ''' <param name="a_compareMethod">   [Optional, <See cref="VBA.VbCompareMethod"/>, VBA.VbCompareMethod.vbTextCompare ]
 '''                                  the comparison method. </param>

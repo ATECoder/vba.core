@@ -25,7 +25,7 @@ Public Sub RemoveWorkbookBrokenReferences()
 End Sub
 
 ''' <summary>   Checks if the project has broken references. </summary>
-''' <param name="a_project">    [VBIDE.VBProject] The project which references are to be removed.  </param>
+''' <param name="a_project">    [VBIDE.VBProject] The project which references are to be removed. </param>
 ''' <returns>   [Boolean]. </returns>
 Public Function HasBrokenReferences(ByVal a_project As VBIDE.VBProject) As Boolean
 
@@ -44,7 +44,7 @@ Public Function HasBrokenReferences(ByVal a_project As VBIDE.VBProject) As Boole
 End Function
 
 ''' <summary>   Removes any broken library references. </summary>
-''' <param name="a_project">    [VBIDE.VBProject] The project which references are to be removed.  </param>
+''' <param name="a_project">    [VBIDE.VBProject] The project which references are to be removed. </param>
 Public Sub RemoveBrokenReferences(ByVal a_project As VBIDE.VBProject)
 
     Dim p_reference As VBIDE.Reference, i As Long
@@ -61,7 +61,7 @@ End Sub
 
 ''' <summary>   Removes any broken library references. </summary>
 ''' <param name="a_referenceName">    [String] The name of the reference. </param>
-''' <param name="a_project">    [VBIDE.VBProject] The project which references are to be removed.  </param>
+''' <param name="a_project">    [VBIDE.VBProject] The project which references are to be removed. </param>
 Public Sub RemoveReference(ByVal a_project As VBIDE.VBProject, ByVal a_referenceName As String)
 
     Dim p_reference As VBIDE.Reference
@@ -76,8 +76,8 @@ Public Sub RemoveReference(ByVal a_project As VBIDE.VBProject, ByVal a_reference
 End Sub
 
 ''' <summary>   Selects a refence by name in the specified project. </summary>
-''' <param name="a_project">         [VBIDE.VBProject] The project which references are to be found.  </param>
-''' <param name="a_referenceName">   [String] The reference name to find.  </param>
+''' <param name="a_project">         [VBIDE.VBProject] The project which references are to be found. </param>
+''' <param name="a_referenceName">   [String] The reference name to find. </param>
 ''' <returns>   [VBIDE.Reference] or [Nothing]. </returns>
 Public Function FindReferenceByName(ByVal a_project As VBIDE.VBProject, _
         ByVal a_referenceName As String) As VBIDE.Reference
@@ -96,8 +96,8 @@ Public Function FindReferenceByName(ByVal a_project As VBIDE.VBProject, _
 End Function
 
 ''' <summary>   Returns true if the reference exists in the specified project. </summary>
-''' <param name="a_project">         [VBIDE.VBProject] The project which references are to be found.  </param>
-''' <param name="a_referenceName">   [String] The reference name to find.  </param>
+''' <param name="a_project">         [VBIDE.VBProject] The project which references are to be found. </param>
+''' <param name="a_referenceName">   [String] The reference name to find. </param>
 ''' <returns>   [Boolean] true if found. </returns>
 Public Function ReferenceExists(ByVal a_project As VBIDE.VBProject, _
         ByVal a_referenceName As String) As Boolean
@@ -114,7 +114,7 @@ Public Function ReferenceExists(ByVal a_project As VBIDE.VBProject, _
 End Function
 
 ''' <summary>   Returns the workbooks that are refenced in the specified project. </summary>
-''' <param name="a_project">   [VBIDE.VBProject] The project which references are to be found.  </param>
+''' <param name="a_project">   [VBIDE.VBProject] The project which references are to be found. </param>
 ''' <returns>   [Collection] of workbooks. </returns>
 Public Function ReferencedWorkbooks(ByVal a_project As VBIDE.VBProject) As Collection
 
@@ -132,7 +132,7 @@ Public Function ReferencedWorkbooks(ByVal a_project As VBIDE.VBProject) As Colle
 End Function
 
 ''' <summary>   Add a reference to the project using the GUID for the reference library. </summary>
-''' <param name="a_guid">    [String] The GUID.  </param>
+''' <param name="a_guid">    [String] The GUID. </param>
 ''' <returns>   [VBIDE.Reference] or [Nothing]. </returns>
 Public Function AddReferenceByGUID(ByVal a_project As VBIDE.VBProject, _
         ByVal a_guid As String, ByVal a_major As Long, ByVal a_minor As Long) As VBIDE.Reference
@@ -145,7 +145,7 @@ Public Function AddReferenceByGUID(ByVal a_project As VBIDE.VBProject, _
 End Function
 
 ''' <summary>   Adds a reference by name. Returns the reference if it was successfully added. </summary>
-''' <param name="a_project">          [VBIDE.VBProject] The project which references are to be found.  </param>
+''' <param name="a_project">          [VBIDE.VBProject] The project which references are to be found. </param>
 ''' <param name="a_referenceName">    [String] The name of the reference. </param>
 ''' <param name="a_referencePath">    [String] The reference path. </param>
 ''' <param name="a_force">            [Boolean, False] True to force replacing the reference if it
@@ -204,7 +204,7 @@ End Function
 
 ''' <summary>   Adds a project folder reference by name if the reference file exists in the
 ''' project folder. Returns the reference if it was successfully added. </summary>
-''' <param name="a_project">          [VBIDE.VBProject] The project which references are to be found.  </param>
+''' <param name="a_project">          [VBIDE.VBProject] The project which references are to be found. </param>
 ''' <param name="a_referenceName">    [String] The name of the reference. </param>
 ''' <param name="a_force">            [Boolean, False] True to force replacing the reference if it
 '''                                   exists. </param>

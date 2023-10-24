@@ -6,11 +6,11 @@
 <a name="FacilitatedBy"></a>
 ## Facilitated By
 * [Funduc Search and Replace]
-* [michael neu] - Web Excel
+* [Stack overflow]
 
 <a name="Acknowledgments"></a>
 ## Acknowledgments
-* [Stack overflow] - Joel Spolsky  
+* [michael neu] - Web Excel
 
 [michael neu]: https://github.com/michaelneu
 [Stack overflow]: https://www.stackoveflow.com

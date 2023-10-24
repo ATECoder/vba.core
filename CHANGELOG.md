@@ -1,6 +1,11 @@
 # Change log
 All notable changes to these libraries will be documented in this file in a format based on [Keep a Change log]
 
+## [1.0.8696] - 2023-10-23
+* Update documentation. Removed unused objects. 
+* IO: Wokrbook extensions: Add workbook document property methods.
+* Update document properties tot he current version.
+
 ## [1.0.8623] - 2023-08-10
 * Add a message tracer interface.
 

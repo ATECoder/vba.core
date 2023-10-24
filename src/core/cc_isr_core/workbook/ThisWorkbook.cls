@@ -16,6 +16,25 @@ End Type
 
 Private This As this_
 
+''' <summary>   Updates this workbook document info. </summary>
+Private Sub UpdateDocumentInfo()
+    On Error Resume Next
+    
+    Dim p_revision As String: p_revision = "1.0.8696"
+    Dim p_created As Variant: p_created = VBA.DateValue("7/15/2023 10:01:01 AM")
+    
+    cc_isr_Core_IO.WorkbookExtensions.UpdateDocumentProperty _
+        ThisWorkbook, cc_isr_Core_IO.WorkbookExtensions.RevisionPropertyName, "Revision " & p_revision
+    
+    cc_isr_Core_IO.WorkbookExtensions.UpdateDocumentProperty _
+        ThisWorkbook, cc_isr_Core_IO.WorkbookExtensions.CreationDateName, p_created
+    
+    cc_isr_Core_IO.WorkbookExtensions.UpdateDocumentProperty _
+        ThisWorkbook, cc_isr_Core_IO.WorkbookExtensions.DocuemntVersionName, p_revision
+
+    On Error GoTo 0
+End Sub
+
 ''' <summary>   Returns true if the collection is nothing or empty. </summary>
 ''' <param name="a_collection">   [Collection] the collection. </param>
 ''' <returns>   [Boolean]. </value>
@@ -175,6 +194,15 @@ err_Handler:
     On Error Resume Next
     GoTo exit_Handler
     
+End Sub
+
+''' <summary>   Handles the workbook before save event. </summary>
+''' <remarks>   Updates the document info as necessary. </remarks>
+Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+
+    ' update the document info to the current revision as necessary.
+    UpdateDocumentInfo
+
 End Sub
 
 ''' <summary>   Handles the workbook open event. </summary>

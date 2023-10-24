@@ -34,8 +34,8 @@ Testing information is included in the [Testing] document.
 [cc.isr.Core]: https://github.com/ATECoder/vba.core
 [cc.isr.Core.Demo]: https://github.com/ATECoder/vba.core.demo
 [Testing]: ./cc.isr.core.demo.testing.md
-[Deploy]: ./deploy.ps
-[Localize]: ./localize.ps
+[Deploy]: ./deploy.ps1
+[Localize]: ./localize.ps1
 
 [ISR]: https://www.integratedscientificresources.com
 

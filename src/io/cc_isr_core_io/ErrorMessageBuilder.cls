@@ -38,7 +38,7 @@ End Function
 ''' <param name="a_errModuleName">      [String] Specifies the module name. </param>
 ''' <param name="a_errProjectName">     [Optional, String] Specifies the project name; otherwise the project
 '''                                     name of the active workbook is used. </param>
-''' <returns>   A Standard error source string to project.module.procedure.  </returns>
+''' <returns>   A Standard error source string to project.module.procedure. </returns>
 Friend Function BuildErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleName As String, _
         Optional ByVal a_errProjectName As String = vbNullString) As String
 
@@ -71,7 +71,7 @@ End Function
 ''' <param name="a_procedureName">   [String] Specifies the name of the procedure. </param>
 ''' <param name="a_moduleName">      [String] Specifies the module name. </param>
 ''' <param name="a_workbook">        [Excel.Workbook] Specifies the workbook. </param>
-''' <returns>   A Standard error source string to project.module.procedure.  </returns>
+''' <returns>   A Standard error source string to project.module.procedure. </returns>
 Friend Function BuildErrorSource(ByVal a_procedureName As String, ByVal a_moduleName As String, _
         ByVal a_workbook As Excel.Workbook) As String
 
@@ -112,7 +112,7 @@ End Sub
 ''' <param name="a_errModuleName">      [String] Specifies the module name. </param>
 ''' <param name="a_workbook">           [<] Specifies the project name; otherwise the project
 '''                                     name of the active workbook is used. </param>
-''' <returns>   [String] The appedned error source.  </returns>
+''' <returns>   [String] The appedned error source. </returns>
 Public Function AppendErrSource(ByVal a_errProcedureName As String, ByVal a_errModuleName As String, _
         ByVal a_workbook As Excel.Workbook) As String
 
