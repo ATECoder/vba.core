@@ -1,0 +1,2 @@
+RemoteRepoName,LocalRepoName,RemoteRepoURL,TargetDirectory
+vba.core,core,https://github.com/ATECoder/vba.core.git,lib\vba\core
